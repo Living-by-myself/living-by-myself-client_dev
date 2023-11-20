@@ -1,11 +1,14 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
+import WriteHeader from './WriteHeader';
 
 const RootLayout = () => {
+  const location = useLocation();
   return (
     <div>
-      <Header />
+      {location.pathname === '/community/write' ? <WriteHeader /> : <Header />}
+
       <Outlet />
     </div>
   );
