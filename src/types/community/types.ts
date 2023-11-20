@@ -10,4 +10,5 @@ export interface Post {
   commentCnt: number;
   likeCnt: number;
   fileUrls: string | null;
+  existsLike?: boolean;
 }

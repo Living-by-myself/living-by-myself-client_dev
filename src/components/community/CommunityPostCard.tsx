@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { styleFont } from 'src/styles/styleFont';
 import { Post } from 'src/types/community/types';
 import styled from 'styled-components';
+import { addResizeToUrl } from 'src/utilities/image';
 
 interface CommunityPostCardProps {
   post: Post;
@@ -29,7 +30,7 @@ const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
         {/* 이미지속성 있고 없고로 조건부 렌더링 */}
         {post.fileUrls ? (
           <S.ImageBox>
-            <S.Image alt="이미지명" src={post.fileUrls} />
+            <S.Image alt="이미지명" src={addResizeToUrl(post.fileUrls)} />
           </S.ImageBox>
         ) : (
           <></>
