@@ -5,11 +5,14 @@ import { styleFont } from 'src/styles/styleFont';
 import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { postComment } from 'src/api/community';
 import { useParams } from 'react-router-dom';
+import useCommentMutate from 'src/api/communityMutate';
+import { set } from 'react-hook-form';
 
 const CommentInput = () => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [text, setText] = useState('');
   const param = useParams() as { id: string };
+  const { WriteComment } = useCommentMutate(param.id);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value);
@@ -20,21 +23,17 @@ const CommentInput = () => {
       textareaRef.current.style.height = scrollHeight + 'px';
     }
   };
-  const queryClient = useQueryClient();
-  //   const { isPending, submittedAt, variables, mutate, isError } = useMutation({
-  //     mutationFn: () => postComment({ postId: param.id, comment: text }),
-  //     onSettled: async () => {
-  //       return await queryClient.invalidateQueries({ queryKey: ['comment', param.id] });
-  //     }
-  //   });
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    WriteComment(param.id, text);
+  };
 
   return (
     <S.Container
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(text);
+        onSubmit();
+        setText('');
       }}
     >
       <S.InputArea
@@ -49,7 +48,7 @@ const CommentInput = () => {
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            console.log(text);
+            onSubmit();
           }
         }}
       >
