@@ -14,18 +14,6 @@ interface CommunityResponse {
 }
 
 const CommunityWriteForm = () => {
-  // // 폼데이터화
-  // const formData = new FormData();
-  // const requestDto = {
-  //   title: data.title,
-  //   description: data.description,
-  //   category: data.category
-  // };
-  // formData.append('requestDto', JSON.stringify(requestDto));
-  // for (let i = 0; i < data.images.length; i++) {
-  //   formData.append('fileName', data.images[i]);
-  // }
-
   return (
     <S.Container>
       <form onSubmit={() => {}}>
