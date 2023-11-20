@@ -1,0 +1,63 @@
+import { useForm } from 'react-hook-form';
+
+import InputImages from './InputImages';
+import styled from 'styled-components';
+import axios, { AxiosPromise } from 'axios';
+import CommunityWriteCategory, { CommunityWriteFormData } from './CommunityWriteCategoty';
+import CommunityWriteText from './CommunityWriteText';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+interface CommunityResponse {
+  msg: string;
+  stausCode: number;
+}
+
+const CommunityWriteForm = () => {
+  // // 폼데이터화
+  // const formData = new FormData();
+  // const requestDto = {
+  //   title: data.title,
+  //   description: data.description,
+  //   category: data.category
+  // };
+  // formData.append('requestDto', JSON.stringify(requestDto));
+  // for (let i = 0; i < data.images.length; i++) {
+  //   formData.append('fileName', data.images[i]);
+  // }
+
+  return (
+    <S.Container>
+      <form onSubmit={() => {}}>
+        {/* 작성버튼을 눌러야함 근데 그 작성버튼은 상위 컴포넌트에 있어야함 */}
+        <button type="submit" onClick={() => {}}>
+          작성
+        </button>
+        {/* 카테고리 */}
+        <CommunityWriteCategory />
+
+        {/* 이미지 */}
+        <S.ImageContainer>
+          <InputImages />
+        </S.ImageContainer>
+        <S.TextContainer>
+          <CommunityWriteText />
+        </S.TextContainer>
+      </form>
+    </S.Container>
+  );
+};
+
+export default CommunityWriteForm;
+
+const S = {
+  Container: styled.div``,
+  TextContainer: styled.div`
+    padding: 0 16px;
+  `,
+  ImageContainer: styled.div`
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+  `
+};
