@@ -102,8 +102,7 @@ export const postComment = async ({ postId, comment }: PostCommentOption) => {
         }
       }
     );
-
-    return response.data;
+    console.log(response);
   } catch (error) {
     console.log(error);
   }
