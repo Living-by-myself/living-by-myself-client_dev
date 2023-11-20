@@ -1,7 +1,8 @@
 import React from 'react';
+import FindPassword from 'src/components/auth/FindPassword';
 
 const PasswordFindPage = () => {
-  return <div>PasswordFindPage</div>;
+  return <FindPassword/>;
 };
 
 export default PasswordFindPage;
