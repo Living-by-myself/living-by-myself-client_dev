@@ -6,15 +6,20 @@ import styled from 'styled-components';
 import SelectBox from 'src/components/selectBox/SelectBox';
 import { useState } from 'react';
 
+import { useStore } from 'zustand';
+import { CommunityWriteStore } from 'src/store/communityStore';
+
 export interface CommunityWriteFormData {
   title: string;
   description: string;
-  images: FileList;
-  category: string;
+  images: FileList | null;
+  category: CommunityCategory;
 }
 
 const CommunityWriteCategory = () => {
-  const [category, setCategory] = useState<CommunityCategory>();
+  // const [category, setCategory] = useState<CommunityCategory>();
+
+  const { setCategory } = CommunityWriteStore();
 
   return (
     <S.Container>

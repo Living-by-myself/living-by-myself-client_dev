@@ -7,6 +7,8 @@ import ImagePreview from './ImagePreview';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import { set } from 'react-hook-form';
+import { useStore } from 'zustand';
+import { CommunityWriteImageStore } from 'src/store/communityStore';
 
 interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: 'file';
@@ -16,13 +18,8 @@ interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const InputImages = () => {
-  const [files, setFiles] = React.useState<File[]>([]);
-
+  const { files, setFiles, removeFile } = CommunityWriteImageStore();
   const fileInput = useRef<HTMLInputElement>(null);
-
-  const removeFile = (file: File) => {
-    setFiles((prev) => prev.filter((item) => item !== file));
-  };
 
   return (
     <>

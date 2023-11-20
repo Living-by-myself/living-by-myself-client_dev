@@ -4,6 +4,7 @@ import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { CommunityWriteFormData } from './CommunityWriteCategoty';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
+import { CommunityWriteStore } from 'src/store/communityStore';
 
 interface CommunityWriteTextProps {
   watch: UseFormWatch<CommunityWriteFormData>;
@@ -12,41 +13,27 @@ interface CommunityWriteTextProps {
 }
 
 const CommunityWriteText = () => {
-  // const textareaRef1 = useRef<HTMLTextAreaElement | null>(null);
-
-  // const titleHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   // 첫 번째 textarea 높이 조절
-
-  //   if (e.currentTarget.value.length > 20) {
-  //     alert('제목은 20자 이내로 입력해주세요.');
-  //     return;
-  //   }
-  //   setValue('title', e.currentTarget.value);
-  //   if (textareaRef1 && textareaRef1.current) {
-  //     textareaRef1.current.style.height = 'auto';
-  //     const scrollHeight = textareaRef1.current.scrollHeight;
-  //     textareaRef1.current.style.height = scrollHeight + 'px';
-  //   }
-  // };
-
-  // const textareaRef2 = useRef<HTMLTextAreaElement | null>(null);
-
-  // const bodyHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   setValue('description', e.currentTarget.value);
-  //   console.log(watch('description'));
-  //   // 두 번째 textarea 높이 조절
-  //   if (textareaRef2 && textareaRef2.current) {
-  //     textareaRef2.current.style.height = 'auto';
-  //     const scrollHeight = textareaRef2.current.scrollHeight;
-  //     textareaRef2.current.style.height = scrollHeight + 'px';
-  //   }
-  // };
+  const { title, description, setTitle, setDescription } = CommunityWriteStore();
 
   return (
     <S.Container>
-      <S.Title type="text" maxLength={20} placeholder="20자 이내 제목" />
+      <S.Title
+        type="text"
+        maxLength={20}
+        placeholder="20자 이내 제목"
+        value={title}
+        onChange={(e) => {
+          setTitle(e.target.value);
+        }}
+      />
 
-      <S.Body placeholder="20자 이상 내용" />
+      <S.Body
+        placeholder="20자 이상 내용"
+        value={description}
+        onChange={(e) => {
+          setDescription(e.target.value);
+        }}
+      />
     </S.Container>
   );
 };
