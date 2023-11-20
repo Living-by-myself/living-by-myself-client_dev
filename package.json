@@ -1,6 +1,5 @@
 {
   "name": "frontend",
-  "proxy": "https://tracelover.shop/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,6 +8,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@types/http-proxy-middleware": "^1.0.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
@@ -17,6 +17,9 @@
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "exlint": "^0.1.6",
+    "force": "^0.0.3",
+    "http-proxy-middleware": "^2.0.6",
     "lucide-react": "^0.292.0",
     "prettier": "^3.1.0",
     "react": "^18.2.0",
