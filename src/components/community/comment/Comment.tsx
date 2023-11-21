@@ -4,6 +4,9 @@ import { styleFont } from 'src/styles/styleFont';
 import { COLORS } from 'src/styles/styleConstants';
 import CommunityUserProfile from '../CommunityUserProfile';
 import CommentLike from './CommentLike';
+import CommentUserProfile from './CommentUserProfile';
+import CommentInput from './CommentInput';
+import { useState } from 'react';
 // import PostDetailUser from "../../postDetail/user";
 // import CommentLike from "../like";
 
@@ -12,15 +15,27 @@ interface Props {
 }
 
 const Comment = ({ comment }: Props) => {
+  const [isEdit, setIsEdit] = useState(false);
   return (
     <S.Container>
       {/* 댓글 유저 정보 컴포넌트 */}
       {/* <CommunityUserProfile /> */}
       {/* <S.NickName>{comment.nickName}</S.NickName> */}
-      <S.CommentBody>{comment.description}</S.CommentBody>
 
-      {/* 댓글좋아요 컴포넌트 */}
-      <CommentLike likeCnt={comment.likeCnt} id={comment.id} existsLike={comment.existsLike} />
+      {isEdit ? (
+        <CommentInput
+          description={comment.description}
+          commentId={comment.id as unknown as string}
+          setIsEdit={setIsEdit}
+        />
+      ) : (
+        <>
+          <CommentUserProfile comment={comment} setIsEdit={setIsEdit} />
+          <S.CommentBody>{comment.description}</S.CommentBody>
+          {/* 댓글좋아요 컴포넌트 */}
+          <CommentLike likeCnt={comment.likeCnt} id={comment.id} existsLike={comment.existsLike} />
+        </>
+      )}
     </S.Container>
   );
 };

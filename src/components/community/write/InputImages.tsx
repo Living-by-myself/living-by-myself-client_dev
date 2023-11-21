@@ -9,6 +9,7 @@ import { styleFont } from 'src/styles/styleFont';
 import { set } from 'react-hook-form';
 import { useStore } from 'zustand';
 import { CommunityWriteImageStore } from 'src/store/communityStore';
+import { useLocation } from 'react-router-dom';
 
 interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: 'file';
@@ -20,6 +21,7 @@ interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const InputImages = () => {
   const { files, setFiles, removeFile } = CommunityWriteImageStore();
   const fileInput = useRef<HTMLInputElement>(null);
+  const location = useLocation();
 
   return (
     <>
@@ -40,18 +42,25 @@ const InputImages = () => {
           }
         }}
       />
-      <S.InputButton
-        onClick={() => {
-          fileInput.current?.click();
-        }}
-        type="button"
-      >
-        <Icon name="camera" size={16} color={COLORS.GRAY[500]} />
-        <S.FileCount>{files.length}</S.FileCount>
-      </S.InputButton>
-      {files.map((file, index) => (
-        <ImagePreview file={file} removeFile={removeFile} />
-      ))}
+      {location.pathname === '/community/write' ? (
+        <>
+          <S.InputButton
+            onClick={() => {
+              fileInput.current?.click();
+            }}
+            type="button"
+          >
+            <Icon name="camera" size={16} color={COLORS.GRAY[500]} />
+            <S.FileCount>{files.length}</S.FileCount>
+          </S.InputButton>
+
+          {files.map((file, index) => (
+            <ImagePreview file={file} removeFile={removeFile} />
+          ))}
+        </>
+      ) : (
+        <S.Caption>첨부된 이미지는 수정할 수 없습니다.</S.Caption>
+      )}
     </>
   );
 };
@@ -82,5 +91,9 @@ const S = {
   `,
   FileCount: styled.span`
     ${styleFont.body2}
+  `,
+  Caption: styled.div`
+    ${styleFont.body2}
+    color: ${COLORS.GRAY[400]};
   `
 };

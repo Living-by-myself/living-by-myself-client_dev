@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { getUserProfile } from 'src/api/community/user';
+import { UserStore } from 'src/store/userStore';
 import styled from 'styled-components';
 
 const Header = () => {
+  const { setUser } = UserStore();
+
+  const getUser = async () => {
+    const response = await getUserProfile();
+    setUser(response);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
   return (
     <S.Container>
       <S.MenuList>메뉴영역</S.MenuList>

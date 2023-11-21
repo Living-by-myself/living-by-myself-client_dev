@@ -62,6 +62,7 @@ const Router = () => {
 
           <Route path="/community/:id" element={<CommunityDetailPage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
+          <Route path="/community/:id/edit" element={<CommunityWritePage />} />
 
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/chat/:id" element={<ChatDetailPage />} />
