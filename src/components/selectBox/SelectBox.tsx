@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CommunityCategory } from 'src/pages/community/CommunityPage';
+import { CommunityWriteStore } from 'src/store/communityStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled, { css } from 'styled-components';
@@ -15,12 +16,14 @@ interface SelectBoxProps {
 }
 
 const SelectBox = ({ option, setSelect }: SelectBoxProps) => {
+  const { category } = CommunityWriteStore();
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelect(e.target.value);
   };
 
   return (
-    <S.Select onChange={handleChange}>
+    <S.Select onChange={handleChange} value={category}>
       {option?.map((item) => {
         return (
           <option key={item.type} value={item.type}>

@@ -1,10 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { CommunityWriteFormData } from './CommunityWriteCategoty';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import { CommunityWriteStore } from 'src/store/communityStore';
+import { useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { Post } from 'src/types/community/types';
 
 interface CommunityWriteTextProps {
   watch: UseFormWatch<CommunityWriteFormData>;
@@ -14,6 +17,16 @@ interface CommunityWriteTextProps {
 
 const CommunityWriteText = () => {
   const { title, description, setTitle, setDescription } = CommunityWriteStore();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (location.pathname !== '/community/write') {
+      const postData = queryClient.getQueryData<Post>(['post', location.pathname.split('/')[2]]);
+      setTitle(postData!.title);
+      setDescription(postData!.description);
+    }
+  }, []);
 
   return (
     <S.Container>

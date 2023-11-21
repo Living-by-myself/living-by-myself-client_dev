@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { token } from 'src/api/testAuth';
+
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled, { css } from 'styled-components';
@@ -10,6 +10,8 @@ interface Props {
   id: number;
   existsLike: boolean;
 }
+
+const token = localStorage.getItem('atk');
 
 const CommunityLike = ({ likeCnt, id, existsLike }: Props) => {
   const [like, setLike] = useState({ likeCnt, existsLike });
