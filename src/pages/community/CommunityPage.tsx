@@ -8,8 +8,9 @@ import { styleFont } from 'src/styles/styleFont';
 import CommunityPostCard from 'src/components/community/CommunityPostCard';
 import { Post } from 'src/types/community/types';
 import { useQuery } from '@tanstack/react-query';
-import { getPostList } from 'src/api/community/community';
+import { getCommunityPostList } from 'src/api/community/community';
 import SelectBox from 'src/components/selectBox/SelectBox';
+import { Link } from 'react-router-dom';
 
 export const COMMUNITYCATEGORY = [
   { type: 'ALL', name: '전체' },
@@ -28,7 +29,7 @@ const CommunityPage = () => {
   const [filter, setFilter] = useState<CommunityFilter>('asc');
   const { data, isLoading, isError } = useQuery<Post[]>({
     queryKey: ['posts', category],
-    queryFn: () => getPostList({ category, filter })
+    queryFn: () => getCommunityPostList({ category, filter })
   });
 
   if (isLoading) return <div>로딩중</div>;
@@ -42,7 +43,13 @@ const CommunityPage = () => {
       </S.FilterArea>
       <S.CommunityList>
         {data?.map((item) => {
-          return <CommunityPostCard key={item.id} post={item} />;
+          return (
+            <li key={item.id}>
+              <Link to={`/community/${item.id}`}>
+                <CommunityPostCard post={item} />
+              </Link>
+            </li>
+          );
         })}
       </S.CommunityList>
     </MobileContainer>
@@ -63,7 +70,7 @@ export const S = {
     /* z-index: 100; */
     background-color: ${COLORS.GRAY[0]};
   `,
-  CommunityList: styled.div`
+  CommunityList: styled.ul`
     width: 100%;
     padding: 0 16px;
     /* margin-top: 50px; */

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getUserProfile } from 'src/api/community/user';
+import { getUserProfile } from 'src/api/user/user';
 import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import Button from '../button/Button';

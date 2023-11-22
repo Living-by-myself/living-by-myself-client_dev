@@ -2,18 +2,46 @@ import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
-import userStore from 'src/store/userStore';
+import userStore, { UserProfile } from 'src/store/userStore';
+import { updateUserProfileImage } from 'src/api/user/user';
+import { useRef } from 'react';
 
 const MyPageUserBasicInfo = () => {
-  const { profile: user } = userStore();
+  const ref = useRef<HTMLInputElement>(null);
+  const { profile: user, setProfile } = userStore();
+
+  const onInputProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        const newProfile = { ...user, profileImage: result };
+        setProfile(newProfile as UserProfile);
+
+        const formData = new FormData();
+        formData.append('fileName', file);
+        updateUserProfileImage(formData);
+      };
+    }
+  };
 
   return (
     <S.Container>
       <S.ProfileImageBox>
-        <S.ProfileChangeBtn>
+        <S.ProfileChangeBtn
+          onClick={() => {
+            ref.current?.click();
+          }}
+        >
+          <input ref={ref} type="file" accept="image/*" onChange={onInputProfileImage} hidden />
           <Icon name="camera" size="16px" />
         </S.ProfileChangeBtn>
-        <S.ProfileImage src="https://via.placeholder.com/70" />
+        <S.ProfileImage
+          src={user?.profileImage === null ? 'https://via.placeholder.com/70' : (user!.profileImage as string)}
+        />
       </S.ProfileImageBox>
       <S.UserName>{user?.nickname}</S.UserName>
       <S.UserInfo>
