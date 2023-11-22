@@ -28,7 +28,6 @@ import MyPageGroupBuyPage from 'src/pages/mypage/MyPageGroupBuyPage';
 import UserUpdateInfoPage from 'src/pages/user/UserUpdateInfoPage';
 import PasswordUpdatePage from 'src/pages/user/PasswordUpdatePage';
 import PointChargePage from 'src/pages/user/PointChargePage';
-import ModalView from 'src/components/modal/ModalView';
 
 const Router = () => {
   return (
