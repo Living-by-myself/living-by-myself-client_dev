@@ -1,6 +1,11 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 const token = localStorage.getItem('atk');
+
+export const axiosBaseInstance = axios.create({
+  baseURL: 'https://tracelover.shop'
+})
+
 const axiosInstance = axios.create({
   withCredentials: true,
   baseURL: 'https://tracelover.shop'
