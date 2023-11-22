@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CommunityCategory, CommunityFilter } from 'src/pages/community/CommunityPage';
 import { Post } from 'src/types/community/types';
-
+import axiosInstance from '../AxiosInstance';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface getPostListOption {
@@ -29,11 +29,8 @@ export const getPostList = async (option: getPostListOption) => {
   try {
     const url = getPostListURL(option);
 
-    const response = await axios.get(url, {
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const response = await axiosInstance.get(url, {
+      withCredentials: true
     });
 
     if (option.category === 'ALL') {
@@ -48,12 +45,8 @@ export const getPostList = async (option: getPostListOption) => {
 
 export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
   try {
-    const response = await axios.get(`https://tracelover.shop/home/communities/${option.postId}`, {
-      withCredentials: true,
-
-      headers: {
-        Authorization: token
-      }
+    const response = await axiosInstance.get(`/home/communities/${option.postId}`, {
+      withCredentials: true
     });
     return response.data;
   } catch (error) {
@@ -63,17 +56,14 @@ export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
 
 export const getCommentList = async (option: getPostIdOption): Promise<any> => {
   try {
-    const response = await axios.get(
-      `https://tracelover.shop/home/community/${option.postId}/comments?page=0&size=10`,
-      {
-        withCredentials: true,
-        headers: {
-          Authorization: token,
-          'Content-Type': 'application/json'
-        }
+    const response = await axiosInstance.get(`/home/community/${option.postId}/comments?page=0&size=10`, {
+      withCredentials: true,
+      headers: {
+        Authorization: token,
+        'Content-Type': 'application/json'
       }
-    );
-    console.log(response.data);
+    });
+
     return response.data;
   } catch (error) {
     console.log(error);
@@ -82,10 +72,9 @@ export const getCommentList = async (option: getPostIdOption): Promise<any> => {
 
 export const addPost = async (formData: FormData) => {
   try {
-    const response = await axios.post('https://tracelover.shop/home/communities', formData, {
+    const response = await axiosInstance.post('/home/communities', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: token
+        'Content-Type': 'multipart/form-data'
       }
     });
     console.log(response);
@@ -96,11 +85,7 @@ export const addPost = async (formData: FormData) => {
 
 export const deletePost = async (postId: string) => {
   try {
-    const response = await axios.delete(`https://tracelover.shop/home/communities/${postId}`, {
-      headers: {
-        Authorization: token
-      }
-    });
+    const response = await axiosInstance.delete(`/home/communities/${postId}`, {});
     console.log(response);
   } catch (error) {
     console.log(error);
@@ -115,9 +100,8 @@ interface UpdatePostOption {
 export const updatePost = async ({ postId, formData }: UpdatePostOption) => {
   console.log(postId);
   try {
-    const response = await axios.put(`https://tracelover.shop/home/communities/${postId}`, formData, {
+    const response = await axiosInstance.put(`/home/communities/${postId}`, formData, {
       headers: {
-        Authorization: token,
         'Content-Type': 'multipart/form-data'
       }
     });

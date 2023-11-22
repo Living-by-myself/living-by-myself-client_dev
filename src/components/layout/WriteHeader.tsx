@@ -34,24 +34,18 @@ const WriteHeader = () => {
               category: category
             };
             formData.append('requestDto', JSON.stringify(requestDto));
-            console.log(files.length);
+
             if (files.length === 0) {
-              console.log('이미지없는 게시물');
-              // 이미지없는 게시물 fileName확인
-              // formData.append('fileName', '');
             } else {
-              console.log('이미지있는 게시물');
               for (let i = 0; i < files.length; i++) {
                 formData.append('fileName', files![i]);
               }
             }
 
             if (location.pathname === '/community/write') {
-              console.log('게시글 추가');
               addPostHandler(formData);
               navigate('/community');
             } else {
-              console.log('게시글 수정');
               const id = location.pathname.split('/')[2];
               updatePostHandler(id, formData);
               navigate(`/community/${id}`);
