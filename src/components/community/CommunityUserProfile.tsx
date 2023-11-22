@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useCommunityMutate from 'src/api/community/communityMutate';
 import { getUserBasicProfile } from 'src/api/community/user';
-import { UserStore } from 'src/store/userStore';
+import userStore from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
@@ -38,7 +38,7 @@ interface User {
 
 const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserProfileProps) => {
   const [user, setUser] = useState<UserProps>(info);
-  const { user: loginUser } = UserStore();
+  const { profile: loginUser } = userStore();
   const { deletePostHandler } = useCommunityMutate();
   const navigate = useNavigate();
   const param = useParams() as { id: string };

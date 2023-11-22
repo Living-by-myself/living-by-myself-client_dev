@@ -1,4 +1,4 @@
-import { UserStore } from 'src/store/userStore';
+import userStore from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
@@ -6,7 +6,7 @@ import styled from 'styled-components';
 export const getWonString = (price: number) => price.toLocaleString('ko-KR');
 
 const MyPagePayment = () => {
-  const { user } = UserStore();
+  const { profile: user } = userStore();
 
   return (
     <S.Container>

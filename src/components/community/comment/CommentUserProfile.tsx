@@ -3,10 +3,11 @@ import styled from 'styled-components';
 
 import { styleFont } from 'src/styles/styleFont';
 import { COLORS } from 'src/styles/styleConstants';
-import { UserStore } from 'src/store/userStore';
+
 import { Comments } from './CommentList';
 import useCommentMutate from 'src/api/comment/commentMutate';
 import { useParams } from 'react-router-dom';
+import userStore from 'src/store/userStore';
 
 interface Props {
   comment: Comments;
@@ -15,7 +16,7 @@ interface Props {
 
 const CommentUserProfile = ({ comment, setIsEdit }: Props) => {
   const param = useParams() as { id: string };
-  const { user } = UserStore();
+  const { profile: user } = userStore();
 
   const { deleteCommentHandler } = useCommentMutate(param.id);
 

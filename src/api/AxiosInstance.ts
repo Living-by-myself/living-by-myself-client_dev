@@ -2,6 +2,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 const token = localStorage.getItem('atk');
 const axiosInstance = axios.create({
+  withCredentials: true,
   baseURL: 'https://tracelover.shop'
 });
 

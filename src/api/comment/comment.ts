@@ -1,4 +1,6 @@
 import axios from 'axios';
+import axiosInstance from '../AxiosInstance';
+import { getPostIdOption } from '../community/community';
 
 const token = localStorage.getItem('atk');
 
@@ -6,21 +8,29 @@ interface PostCommentOption {
   postId: string;
   comment: string;
 }
-export const postComment = async ({ postId, comment }: PostCommentOption) => {
-  console.log(comment);
+
+export const getCommentList = async (option: getPostIdOption): Promise<any> => {
   try {
-    const response = await axios.post(
-      `https://tracelover.shop/home/community/${postId}/comments`,
+    const response = await axiosInstance.get(`/home/community/${option.postId}/comments?page=0&size=10`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const postComment = async ({ postId, comment }: PostCommentOption) => {
+  try {
+    const response = await axiosInstance.post(
+      `/home/community/${postId}/comments`,
       {
         description: comment
       },
-      {
-        withCredentials: true,
-        headers: {
-          Authorization: token,
-          'Content-Type': 'application/json'
-        }
-      }
+      {}
     );
     console.log(response);
   } catch (error) {
@@ -30,12 +40,7 @@ export const postComment = async ({ postId, comment }: PostCommentOption) => {
 
 export const deleteComment = async (commentId: string) => {
   try {
-    const response = await axios.delete(`https://tracelover.shop/home/community/comments/${commentId}`, {
-      withCredentials: true,
-      headers: {
-        Authorization: token
-      }
-    });
+    const response = await axiosInstance.delete(`/home/community/comments/${commentId}`, {});
     console.log(response);
   } catch (error) {
     console.log(error);
@@ -49,19 +54,35 @@ interface UpdateCommentOption {
 
 export const updateComment = async ({ commentId, comment }: UpdateCommentOption) => {
   try {
-    const response = await axios.patch(
-      `https://tracelover.shop/home/community/comments/${commentId}`,
+    const response = await axiosInstance.patch(
+      `/home/community/comments/${commentId}`,
       {
         description: comment
       },
       {
-        withCredentials: true,
         headers: {
-          Authorization: token,
           'Content-Type': 'application/json'
         }
       }
     );
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addCommentLike = async (commentId: string) => {
+  try {
+    const response = await axiosInstance.post(`/home/community/comment/${commentId}/like`, {}, {});
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteCommentLike = async (commentId: string) => {
+  try {
+    const response = await axiosInstance.delete(`/home/community/comment/${commentId}/like`, {});
     console.log(response);
   } catch (error) {
     console.log(error);

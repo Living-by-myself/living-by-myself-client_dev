@@ -4,14 +4,14 @@ import { Post } from 'src/types/community/types';
 import axiosInstance from '../AxiosInstance';
 import { useQueryClient } from '@tanstack/react-query';
 
-interface getPostListOption {
+export interface getPostListOption {
   page?: number;
   size?: number;
   category: CommunityCategory;
   filter: CommunityFilter;
 }
 
-interface getPostIdOption {
+export interface getPostIdOption {
   postId: string | undefined;
 }
 
@@ -54,22 +54,6 @@ export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
   }
 };
 
-export const getCommentList = async (option: getPostIdOption): Promise<any> => {
-  try {
-    const response = await axiosInstance.get(`/home/community/${option.postId}/comments?page=0&size=10`, {
-      withCredentials: true,
-      headers: {
-        Authorization: token,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const addPost = async (formData: FormData) => {
   try {
     const response = await axiosInstance.post('/home/communities', formData, {
@@ -105,6 +89,24 @@ export const updatePost = async ({ postId, formData }: UpdatePostOption) => {
         'Content-Type': 'multipart/form-data'
       }
     });
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addPostLike = async (postId: string) => {
+  try {
+    const response = await axiosInstance.post(`/home/community/${postId}/like`, {}, {});
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deletePostLike = async (postId: string) => {
+  try {
+    const response = await axiosInstance.delete(`/home/community/${postId}/like`, {});
     console.log(response);
   } catch (error) {
     console.log(error);
