@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { z } from 'zod';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
-import { token } from 'src/api/testAuth';
 
 const Dummy = [
   {
@@ -50,6 +49,7 @@ const schema = z.object({
 const ChatDetailPage = () => {
   const userId = 1;
   const [message, setMessage] = useState('');
+  const token = localStorage.getItem('atk');
 
   const { register, handleSubmit } = useForm<ChatFormData>({
     resolver: zodResolver(schema)
@@ -57,11 +57,11 @@ const ChatDetailPage = () => {
 
   // socket 연결 시도
   useEffect(() => {
-    console.log(token);
+    console.log('token : ', token);
     const client = new StompJs.Client({
       brokerURL: 'wss://tracelover.shop/home/chat', // 웹 소켓 서버로 접속
       connectHeaders: {
-        Authorization: token
+        Authorization: token!
       },
       debug: (str) => {
         console.log(str);
