@@ -1,39 +1,65 @@
-import axios from 'axios';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { COLORS } from 'src/styles/styleConstants';
 import styled from 'styled-components';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { validatePassword } from './Validate';
+import { findPasswordToken } from 'src/store/userStore';
+import { PasswordResetType } from 'src/types/user/types';
 
-interface PasswordResetType {
-  newPassword: string;
-  newPasswordCheck: string;
-}
+
+const schema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, { message: '8자리 이상의 비밀번호를 입력해주세요.' })
+      .refine(validatePassword, {
+        message: '영문, 숫자, 특수문자(!@#$%^&*()_+)를 포함한 8자 이상의 비밀번호를 입력해주세요.'
+      }),
+    newPasswordCheck: z
+      .string()
+      .min(8, { message: '8자리 이상의 비밀번호를 입력해주세요.' })
+      .refine(validatePassword, {
+        message: '영문, 숫자, 특수문자(!@#$%^&*()_+)를 포함한 8자 이상의 비밀번호를 입력해주세요.'
+      })
+  })
+  .refine((passwordConfirm) => passwordConfirm.newPassword === passwordConfirm.newPasswordCheck, {
+    message: '비밀번호가 일치하지 않습니다.',
+    path: ['newPasswordCheck']
+  });
 
 const PasswordReset = () => {
-  const { register, handleSubmit } = useForm<PasswordResetType>({ mode: 'onSubmit' });
+  const {
+    register,
+    formState: { errors },
+    handleSubmit
+  } = useForm<PasswordResetType>({ mode: 'onSubmit', resolver: zodResolver(schema) });
 
-  const navigate = useNavigate()
+  const { token, setToken } = findPasswordToken();
+
+  const navigate = useNavigate();
+
+
   const onSubmit: SubmitHandler<PasswordResetType> = async (data) => {
     const { newPassword, newPasswordCheck } = data;
-    console.log('서브밋실행');
     try {
-      const res = await axios.patch(
-        'https://tracelover.shop/home/auth/new-password',
+      const res = await axiosBaseInstance.patch(
+        '/home/auth/new-password',
         {
           newPassword,
           newPasswordCheck
         },
         {
           headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjNAZGV2LmNvbSIsImF1dGgiOiJNRU1CRVIiLCJleHAiOjE3MDA1OTcwNDEsImlhdCI6MTcwMDU5MzQ0MX0.0yjFGUZO4pjmTh6F8KCoGqY3JcAuk3wDT6LGP5mmDF8'
+            Authorization: token
           }
         }
       );
-      alert(res.data.msg)
-      navigate('/login')
-      console.log(res)
+      alert(res.data.msg);
+      navigate('/login');
     } catch (error) {
       console.log(error);
     }
@@ -46,14 +72,15 @@ const PasswordReset = () => {
         <S.Form onSubmit={handleSubmit(onSubmit)}>
           <S.FormRow>
             <label>비밀번호</label>
-            <h2>영문,숫자를 포함한 8자 이상의 비밀번호를 입력해주세요.</h2>
-            <input placeholder="비밀번호" {...register('newPassword')}></input>
+            <h2>영문,숫자,특수문자를 포함한 8자 이상의 비밀번호를 입력해주세요.</h2>
+            <input placeholder="비밀번호" type="password" {...register('newPassword')}></input>
+            <S.ErrorMessage>{errors.newPassword?.message}</S.ErrorMessage>
           </S.FormRow>
           <S.FormRow>
             <label>비밀번호 확인</label>
-            <input placeholder="비밀번호 확인" {...register('newPasswordCheck')}></input>
+            <input placeholder="비밀번호 확인" type="password" {...register('newPasswordCheck')}></input>
+            <S.ErrorMessage>{errors.newPasswordCheck?.message}</S.ErrorMessage>
           </S.FormRow>
-
           <S.Button type="submit">비밀번호 변경</S.Button>
         </S.Form>
       </S.ContainerInner>
@@ -75,7 +102,7 @@ const S = {
   Title: styled.h1`
     display: flex;
     justify-content: center;
-    padding: 5.5rem;
+    padding: 5.5rem 0px;
     font-size: 38px;
   `,
   Form: styled.form`
@@ -114,5 +141,8 @@ const S = {
       cursor: not-allowed;
       pointer-events: none;
     }
+  `,
+  ErrorMessage: styled.p`
+    color: ${COLORS.RED[300]};
   `
 };

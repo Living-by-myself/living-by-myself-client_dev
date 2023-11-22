@@ -53,4 +53,29 @@ userStore.subscribe((state) => {
   state.isLogged = !!state.token;
 });
 
+
+
+
+
+
+interface UserStoreAction {
+  user: UserProfile | null;
+  setUser: (user: UserProfile | null) => void;
+}
+
+interface findPasswordTokenAction {
+  token : string;
+  setToken:(token:string) => void;
+}
+
+export const UserStore = create<UserStoreAction>((set, get) => ({
+  user: null,
+  setUser: (user: UserProfile | null) => set({ user })
+}));
+
+export const findPasswordToken = create<findPasswordTokenAction>((set)=>({
+  token:'',
+  setToken:(token: string) => set({token})
+}))
+
 export default userStore;
