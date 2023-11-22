@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { addPostLike, deletePostLike } from 'src/api/community/community';
+import { addCommunityPostLike, deleteCommunityPostLike } from 'src/api/community/community';
 
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -27,10 +27,10 @@ const CommunityLike = ({ likeCnt, id, existsLike }: Props) => {
         $isLike={like.existsLike}
         onClick={async () => {
           if (like.existsLike) {
-            deletePostLike(id as unknown as string);
+            deleteCommunityPostLike(id as unknown as string);
             setLike({ likeCnt: like.likeCnt - 1, existsLike: !like.existsLike });
           } else {
-            addPostLike(id as unknown as string);
+            addCommunityPostLike(id as unknown as string);
             setLike({ likeCnt: like.likeCnt + 1, existsLike: !like.existsLike });
           }
         }}

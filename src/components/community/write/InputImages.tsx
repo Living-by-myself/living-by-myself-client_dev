@@ -13,8 +13,8 @@ import { useLocation } from 'react-router-dom';
 
 interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: 'file';
-  maxImageNum: number;
-  currentImageNum: number;
+  maxImageNum?: number;
+  currentImageNum?: number;
   onRemoveFile?: (fileList: FileList) => void;
 }
 

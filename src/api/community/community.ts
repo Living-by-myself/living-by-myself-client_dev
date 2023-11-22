@@ -17,7 +17,7 @@ export interface getPostIdOption {
 
 const token = localStorage.getItem('atk');
 
-const getPostListURL = (option: getPostListOption) => {
+const getCommunityPostListURL = (option: getPostListOption) => {
   if (option.category === 'ALL') {
     return 'https://tracelover.shop/home/communities';
   } else {
@@ -25,9 +25,9 @@ const getPostListURL = (option: getPostListOption) => {
   }
 };
 
-export const getPostList = async (option: getPostListOption) => {
+export const getCommunityPostList = async (option: getPostListOption) => {
   try {
-    const url = getPostListURL(option);
+    const url = getCommunityPostListURL(option);
 
     const response = await axiosInstance.get(url, {
       withCredentials: true
@@ -43,7 +43,7 @@ export const getPostList = async (option: getPostListOption) => {
   }
 };
 
-export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
+export const getCommunityPostDetail = async (option: getPostIdOption): Promise<any> => {
   try {
     const response = await axiosInstance.get(`/home/communities/${option.postId}`, {
       withCredentials: true
@@ -54,7 +54,7 @@ export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
   }
 };
 
-export const addPost = async (formData: FormData) => {
+export const addCommunityPost = async (formData: FormData) => {
   try {
     const response = await axiosInstance.post('/home/communities', formData, {
       headers: {
@@ -67,7 +67,7 @@ export const addPost = async (formData: FormData) => {
   }
 };
 
-export const deletePost = async (postId: string) => {
+export const deleteCommunityPost = async (postId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/communities/${postId}`, {});
     console.log(response);
@@ -81,7 +81,7 @@ interface UpdatePostOption {
   formData: FormData;
 }
 
-export const updatePost = async ({ postId, formData }: UpdatePostOption) => {
+export const updateCommunityPost = async ({ postId, formData }: UpdatePostOption) => {
   console.log(postId);
   try {
     const response = await axiosInstance.put(`/home/communities/${postId}`, formData, {
@@ -95,7 +95,7 @@ export const updatePost = async ({ postId, formData }: UpdatePostOption) => {
   }
 };
 
-export const addPostLike = async (postId: string) => {
+export const addCommunityPostLike = async (postId: string) => {
   try {
     const response = await axiosInstance.post(`/home/community/${postId}/like`, {}, {});
     console.log(response);
@@ -104,7 +104,7 @@ export const addPostLike = async (postId: string) => {
   }
 };
 
-export const deletePostLike = async (postId: string) => {
+export const deleteCommunityPostLike = async (postId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/community/${postId}/like`, {});
     console.log(response);

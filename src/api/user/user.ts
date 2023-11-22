@@ -20,7 +20,7 @@ export const loginWithEmailPassword = async ({ username, password }: LoginUserTy
 
 export const getUserProfile = async () => {
   try {
-    const response = await axiosInstance.get('https://tracelover.shop/home/profile', {});
+    const response = await axiosInstance.get('/home/profile', {});
 
     return response.data;
   } catch (error) {
@@ -30,7 +30,20 @@ export const getUserProfile = async () => {
 
 export const getUserBasicProfile = async (userId: string) => {
   try {
-    const response = await axiosInstance.get(`https://tracelover.shop/home/profile/other/${userId}`, {});
+    const response = await axiosInstance.get(`/home/profile/other/${userId}`, {});
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateUserProfileImage = async (formData: FormData) => {
+  try {
+    const response = await axiosInstance.put('/home/profile/image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (error) {
     console.log(error);

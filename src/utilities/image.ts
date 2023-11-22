@@ -20,3 +20,8 @@ export function addResizeToUrl(originalUrl: string): string {
     return originalUrl;
   }
 }
+
+export const getImageUrls = (fileUrls: string | null) => {
+  if (!fileUrls) return [];
+  return fileUrls.split(',');
+};

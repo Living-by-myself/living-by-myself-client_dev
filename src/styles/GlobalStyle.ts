@@ -38,6 +38,11 @@ time, mark, audio, video {
 	vertical-align: baseline;
 }
 
+a{
+	text-decoration: none;
+	color: inherit;
+}
+
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
 	display: block;
