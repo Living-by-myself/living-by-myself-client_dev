@@ -1,11 +1,12 @@
 import React from 'react';
-import { UserStore } from 'src/store/userStore';
+import userStore from 'src/store/userStore';
+
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
 
 const NavUserProfile = () => {
-  const { user } = UserStore();
+  const { profile: user } = userStore();
 
   return (
     <S.UserContainer>

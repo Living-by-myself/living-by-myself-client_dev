@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { get } from 'http';
-import { getCommentList } from 'src/api/community/community';
+import { getCommentList } from 'src/api/comment/comment';
 import { styleFont } from 'src/styles/styleFont';
 import Comment from './Comment';
 

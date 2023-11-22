@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { addCommentLike, deleteCommentLike } from 'src/api/comment/comment';
 import Icon from 'src/components/icon/Icon';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -14,35 +15,18 @@ interface Props {
 const token = localStorage.getItem('atk');
 
 const CommentLike = ({ likeCnt, existsLike, id }: Props) => {
-  const [like, setlike] = useState({ existsLike, likeCnt });
-
-  const Like = async () => {
-    console.log(id);
-    try {
-      const response = await axios.post(
-        `https://tracelover.shop/home/community/comment/${id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: token
-          }
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [like, setLike] = useState({ existsLike, likeCnt });
 
   return (
     <S.Container
       $existsLike={like.existsLike}
       onClick={async () => {
         if (like.existsLike) {
-          setlike({ existsLike: !like.existsLike, likeCnt: like.likeCnt - 1 });
+          deleteCommentLike(id as unknown as string);
+          setLike({ existsLike: !like.existsLike, likeCnt: like.likeCnt - 1 });
         } else {
-          await Like();
-          setlike({ existsLike: !like.existsLike, likeCnt: like.likeCnt + 1 });
+          addCommentLike(id as unknown as string);
+          setLike({ existsLike: !like.existsLike, likeCnt: like.likeCnt + 1 });
         }
       }}
     >

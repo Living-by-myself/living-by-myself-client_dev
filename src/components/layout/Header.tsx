@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { getUserProfile } from 'src/api/community/user';
-import { UserStore } from 'src/store/userStore';
 import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
@@ -12,26 +11,27 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from './ui/SearchBar';
 import useOverlay from 'src/hooks/useOverlay';
 import NavModal from './ui/NavModal';
+import userStore from 'src/store/userStore';
 
 const Header = () => {
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const { pathname } = useLocation();
   const overlay = useOverlay();
   const navigate = useNavigate();
-  const { user, setUser } = UserStore();
+  const { isLogged, profile: user, setProfile: setUser } = userStore();
 
   const openNavModal = () => {
     overlay.open(({ close }) => <NavModal onClose={close} />);
   };
 
-  const getUser = async () => {
-    const response = await getUserProfile();
-    setUser(response);
-  };
+  // const getUser = async () => {
+  //   const response = await getUserProfile();
+  //   setUser(response);
+  // };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
   return (
     <S.Container>
       <S.Header>
@@ -59,7 +59,7 @@ const Header = () => {
 
         <S.RightMenu>
           <SearchBar />
-          {user?.nickname ? (
+          {isLogged ? (
             <>
               <Button variants="icon" onClick={() => navigate('/mypage')}>
                 <Icon name="bell" color="#212121" />

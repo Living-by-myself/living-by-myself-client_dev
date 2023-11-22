@@ -7,6 +7,7 @@ export const axiosBaseInstance = axios.create({
 })
 
 const axiosInstance = axios.create({
+  withCredentials: true,
   baseURL: 'https://tracelover.shop'
 });
 

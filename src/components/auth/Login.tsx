@@ -1,61 +1,64 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { SubmitHandler, set, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 import { COLORS } from 'src/styles/styleConstants';
 import axios from 'axios';
 import { styleFont } from 'src/styles/styleFont';
-interface LoginUserType {
+import { getUserProfile, loginWithEmailPassword } from 'src/api/user/user';
+import userStore from 'src/store/userStore';
+
+export interface LoginUserType {
   username: string;
   password: string;
 }
 
 const Login = () => {
-  const { register,handleSubmit } = useForm<LoginUserType>();
+  const { register, handleSubmit } = useForm<LoginUserType>();
+  const { setProfile, setToken } = userStore();
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginUserType> = async (data) => {
-    const {username,password} = data;
+    // 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
+    const tokenData = loginWithEmailPassword(data);
+    setToken(await tokenData.then((res) => res.atk));
+    const userData = getUserProfile();
+    setProfile(await userData);
 
-    try {
-      const res = await axios.post('https://tracelover.shop/home/users/login', {
-      username,
-      password,
-    });
-    localStorage.setItem("atk",res.data.atk)
-    localStorage.setItem("rtk",res.data.rtk)
-    } catch (error:any) {
-      alert(error.response.data.msg)
-    }
-    
-
+    // setUser(await userData);
+    navigate('/');
   };
 
   return (
     <S.Container>
       <S.Title>로그인</S.Title>
       <S.ContainerInner>
-      <S.Form onSubmit={handleSubmit(onSubmit)}>
-        <S.FormRow>
-          <label>이메일</label>
-          <input type="email" placeholder="이메일" {...register('username')}></input>
-        </S.FormRow>
-        <S.FormRow>
-          <label>비밀번호</label>
-          <input type="password" placeholder="비밀번호" {...register('password')}></input>
-        </S.FormRow>
-        <S.Button>로그인</S.Button>
-      </S.Form>
-      <S.LinkContainer>
-        <Link to="/password-find">비밀번호 찾기</Link>
-        <Link to="/signup">회원가입</Link>
-      </S.LinkContainer>
-      <S.socialLoginContainer>
-        <h1>SNS 계정으로 간편 로그인/회원가입</h1>
-        <div>
-          <button><img src='/imgs/kakao.png'/></button>
-          <button ><img src='/imgs/google.png'/></button>
-        </div>
-      </S.socialLoginContainer>
+        <S.Form onSubmit={handleSubmit(onSubmit)}>
+          <S.FormRow>
+            <label>이메일</label>
+            <input type="email" placeholder="이메일" {...register('username')}></input>
+          </S.FormRow>
+          <S.FormRow>
+            <label>비밀번호</label>
+            <input type="password" placeholder="비밀번호" {...register('password')}></input>
+          </S.FormRow>
+          <S.Button>로그인</S.Button>
+        </S.Form>
+        <S.LinkContainer>
+          <Link to="/password-find">비밀번호 찾기</Link>
+          <Link to="/signup">회원가입</Link>
+        </S.LinkContainer>
+        <S.socialLoginContainer>
+          <h1>SNS 계정으로 간편 로그인/회원가입</h1>
+          <div>
+            <button>
+              <img src="/imgs/kakao.png" />
+            </button>
+            <button>
+              <img src="/imgs/google.png" />
+            </button>
+          </div>
+        </S.socialLoginContainer>
       </S.ContainerInner>
     </S.Container>
   );
@@ -68,14 +71,14 @@ const S = {
     width: 100%;
     max-width: 400px;
   `,
-  ContainerInner:styled.div`
+  ContainerInner: styled.div`
     display: flex;
     flex-direction: column;
   `,
-  Title:styled.h1`
-  display: flex;
-  justify-content: center;
-  padding: 5.5rem;
+  Title: styled.h1`
+    display: flex;
+    justify-content: center;
+    padding: 5.5rem;
     font-size: 38px;
   `,
   Form: styled.form`
@@ -119,21 +122,21 @@ const S = {
     padding: 2rem 0px;
     gap: 4rem;
     justify-content: center;
-    a{
+    a {
       color: ${COLORS.GRAY[900]};
       text-decoration: none;
       ${styleFont.body1}
     }
   `,
-  socialLoginContainer:styled.div`
+  socialLoginContainer: styled.div`
     display: flex;
     gap: 2rem;
     flex-direction: column;
     text-align: center;
-    h1{
+    h1 {
       color: ${COLORS.GRAY[500]};
     }
-    div{
+    div {
       display: flex;
       justify-content: center;
       gap: 0.4rem;
