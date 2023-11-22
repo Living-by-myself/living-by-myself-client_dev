@@ -34,7 +34,7 @@ export const CommunityWriteImageStore = create<CommunityWriteImageStore>((set, g
   setFiles: (files: File[]) => set({ files }),
   removeFile: (file: File) => {
     const { files } = get();
-    const newFiles = files.filter((f) => f !== file);
+    const newFiles = files!.filter((f) => f !== file);
     set({ files: newFiles });
   }
 }));

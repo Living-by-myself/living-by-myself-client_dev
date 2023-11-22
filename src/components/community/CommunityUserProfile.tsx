@@ -1,10 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import useCommunityMutate from 'src/api/community/communityMutate';
+import { getUserBasicProfile } from 'src/api/community/user';
+import { UserStore } from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
-import { getUserBasicProfile } from 'src/api/user';
 
 const info = {
   level: 1,
@@ -35,11 +38,27 @@ interface User {
 
 const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserProfileProps) => {
   const [user, setUser] = useState<UserProps>(info);
+  const { user: loginUser } = UserStore();
+  const { deletePostHandler } = useCommunityMutate();
+  const navigate = useNavigate();
+  const param = useParams() as { id: string };
+  const queryClient = useQueryClient();
+
+  const postData = queryClient.getQueryData(['post', param.id as unknown as string]);
 
   const { data, isLoading, isError } = useQuery<User>({
     queryKey: ['user', userId],
     queryFn: () => getUserBasicProfile(userId as unknown as string)
   });
+
+  const navigateEditPage = () => {
+    navigate(`/community/${param.id}/edit`);
+  };
+
+  const handleDelete = () => {
+    deletePostHandler(param.id as unknown as string);
+    navigate('/community');
+  };
 
   if (isLoading) return <div>로딩중</div>;
   if (isError) return <div>에러</div>;
@@ -57,6 +76,12 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
           <S.Time> · {getCreatedAtAsString}</S.Time>
         </S.LocationTimeBox>
       </S.InfoContainer>
+      {loginUser!.nickname === data.nickname && (
+        <S.ButtonArea>
+          <S.EditButton onClick={navigateEditPage}>수정</S.EditButton>
+          <S.DeleteButton onClick={handleDelete}>삭제</S.DeleteButton>
+        </S.ButtonArea>
+      )}
     </S.UserContainer>
   );
 };
@@ -67,6 +92,13 @@ const S = {
   UserContainer: styled.div`
     display: flex;
   `,
+  ButtonArea: styled.div`
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+  `,
+  EditButton: styled.div``,
+  DeleteButton: styled.div``,
   ProfileImg: styled.img`
     width: 30px;
     height: 30px;

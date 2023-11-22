@@ -28,6 +28,7 @@ import MyPageGroupBuyPage from 'src/pages/mypage/MyPageGroupBuyPage';
 import UserUpdateInfoPage from 'src/pages/user/UserUpdateInfoPage';
 import PasswordUpdatePage from 'src/pages/user/PasswordUpdatePage';
 import PointChargePage from 'src/pages/user/PointChargePage';
+import ModalView from 'src/components/modal/ModalView';
 
 const Router = () => {
   return (
@@ -62,6 +63,7 @@ const Router = () => {
 
           <Route path="/community/:id" element={<CommunityDetailPage />} />
           <Route path="/community/write" element={<CommunityWritePage />} />
+          <Route path="/community/:id/edit" element={<CommunityWritePage />} />
 
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/chat/:id" element={<ChatDetailPage />} />
