@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { BrowserRouter, Route } from 'react-router-dom';
 import Router from './shared/Router';
+import ModalView from './components/modal/ModalView';
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,7 @@ function App() {
       <ReactQueryDevtools initialIsOpen={false} />
       <BrowserRouter>
         <Router />
+        <ModalView />
       </BrowserRouter>
     </QueryClientProvider>
   );

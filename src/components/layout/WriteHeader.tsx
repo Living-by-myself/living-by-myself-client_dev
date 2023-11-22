@@ -1,13 +1,18 @@
 import axios from 'axios';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { token } from 'src/api/testAuth';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useCommunityMutate from 'src/api/community/communityMutate';
 import { CommunityWriteImageStore, CommunityWriteStore } from 'src/store/communityStore';
 import styled from 'styled-components';
+
+const token = localStorage.getItem('atk');
 
 const WriteHeader = () => {
   const { title, description, category } = CommunityWriteStore();
   const { files } = CommunityWriteImageStore();
+  const location = useLocation();
+  const { addPostHandler, updatePostHandler } = useCommunityMutate();
+
   const navigate = useNavigate();
   return (
     <S.Container>
@@ -22,8 +27,6 @@ const WriteHeader = () => {
       <S.ButtonBox>
         <button
           onClick={async () => {
-            console.log(title, description, category, files);
-
             const formData = new FormData();
             const requestDto = {
               title: title,
@@ -31,21 +34,23 @@ const WriteHeader = () => {
               category: category
             };
             formData.append('requestDto', JSON.stringify(requestDto));
-            for (let i = 0; i < files.length; i++) {
-              formData.append('fileName', files[i]);
+
+            if (files.length === 0) {
+            } else {
+              for (let i = 0; i < files.length; i++) {
+                formData.append('fileName', files![i]);
+              }
             }
-            try {
-              const response = await axios.post('https://tracelover.shop/home/communities', formData, {
-                headers: {
-                  Authorization: token
-                }
-              });
-              console.log(response);
-            } catch (error) {
-              console.log(error);
+
+            if (location.pathname === '/community/write') {
+              addPostHandler(formData);
+              navigate('/community');
+            } else {
+              const id = location.pathname.split('/')[2];
+              updatePostHandler(id, formData);
+              navigate(`/community/${id}`);
             }
           }}
-
           // 서버에 보내는 코드
         >
           작성버튼!

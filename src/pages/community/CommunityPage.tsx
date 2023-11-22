@@ -8,10 +8,10 @@ import { styleFont } from 'src/styles/styleFont';
 import CommunityPostCard from 'src/components/community/CommunityPostCard';
 import { Post } from 'src/types/community/types';
 import { useQuery } from '@tanstack/react-query';
-import { getPostList } from 'src/api/community';
+import { getPostList } from 'src/api/community/community';
 import SelectBox from 'src/components/selectBox/SelectBox';
 
-export const COMMUNITYCATEGOTY = [
+export const COMMUNITYCATEGORY = [
   { type: 'ALL', name: '전체' },
   { type: 'FREE', name: '자유' },
   { type: 'COOK', name: '요리' },
@@ -37,8 +37,8 @@ const CommunityPage = () => {
   return (
     <MobileContainer>
       <S.FilterArea>
-        <SelectBox option={COMMUNITYCATEGOTY} setSelect={setCategory} />
-        <SelectBox option={COMMUNITYFILTER} setSelect={setFilter} />
+        <SelectBox option={COMMUNITYCATEGORY} filter={category} setSelect={setCategory} />
+        <SelectBox option={COMMUNITYFILTER} filter={filter} setSelect={setFilter} />
       </S.FilterArea>
       <S.CommunityList>
         {data?.map((item) => {
@@ -58,9 +58,14 @@ export const S = {
     gap: 8px;
     padding: 12px 16px;
     border-bottom: 1px solid ${COLORS.GRAY[400]};
+    /* height: 50px; */
+    /* position: fixed; */
+    /* z-index: 100; */
+    background-color: ${COLORS.GRAY[0]};
   `,
   CommunityList: styled.div`
     width: 100%;
     padding: 0 16px;
+    /* margin-top: 50px; */
   `
 };

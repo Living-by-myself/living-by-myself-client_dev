@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { CommunityCategory } from 'src/pages/community/CommunityPage';
+import { CommunityWriteStore } from 'src/store/communityStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled, { css } from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 interface SelectProps {
   type?: string;
@@ -12,15 +14,23 @@ interface SelectProps {
 interface SelectBoxProps {
   setSelect: React.Dispatch<React.SetStateAction<any>>;
   option?: SelectProps[];
+  filter?: string;
 }
 
-const SelectBox = ({ option, setSelect }: SelectBoxProps) => {
+const SelectBox = ({ option, setSelect, filter }: SelectBoxProps) => {
+  const { category, setCategory } = CommunityWriteStore();
+  const location = useLocation();
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelect(e.target.value);
+    if (location.pathname === '/community') {
+      setSelect(e.target.value);
+    } else {
+      setCategory(e.target.value as CommunityCategory);
+    }
   };
 
   return (
-    <S.Select onChange={handleChange}>
+    <S.Select onChange={handleChange} value={filter ? filter : category}>
       {option?.map((item) => {
         return (
           <option key={item.type} value={item.type}>

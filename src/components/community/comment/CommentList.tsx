@@ -4,16 +4,24 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { get } from 'http';
-import { getCommentList } from 'src/api/community';
+import { getCommentList } from 'src/api/community/community';
 import { styleFont } from 'src/styles/styleFont';
 import Comment from './Comment';
 
 export interface Comments {
-  id: number;
   description: string;
-  nickName: string;
-  likeCnt: number;
   existsLike: boolean;
+  getCreatedAtAsString: string;
+  getModifiedAtAsString: string;
+  id: number;
+  likeCnt: number;
+  user: CommentUserProps;
+}
+
+export interface CommentUserProps {
+  id: number;
+  nickname: string;
+  profileImage: string;
 }
 
 const CommentList = () => {

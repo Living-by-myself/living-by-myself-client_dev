@@ -1,61 +1,67 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
-import { postComment } from 'src/api/community';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import useCommentMutate from 'src/api/comment/commentMutate';
+import { set } from 'react-hook-form';
 
-const CommentInput = () => {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+interface CommentInputProps {
+  commentId?: string;
+  description?: string;
+  setIsEdit?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const CommentInput = ({ commentId, description, setIsEdit }: CommentInputProps) => {
   const [text, setText] = useState('');
   const param = useParams() as { id: string };
+  const { WriteComment, updateCommentHandler } = useCommentMutate(param.id);
 
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.currentTarget.value);
-    // textarea 높이 조절
-    if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = '0px';
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = scrollHeight + 'px';
+  };
+
+  const onSubmit = () => {
+    if (commentId && description && setIsEdit) {
+      updateCommentHandler(commentId, text);
+      setIsEdit(false);
+    } else {
+      WriteComment(param.id, text);
     }
   };
-  const queryClient = useQueryClient();
-  //   const { isPending, submittedAt, variables, mutate, isError } = useMutation({
-  //     mutationFn: () => postComment({ postId: param.id, comment: text }),
-  //     onSettled: async () => {
-  //       return await queryClient.invalidateQueries({ queryKey: ['comment', param.id] });
-  //     }
-  //   });
 
-  const onSubmit = () => {};
+  useEffect(() => {
+    if (commentId && description) {
+      setText(description);
+    }
+  }, []);
 
   return (
     <S.Container
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(text);
+        onSubmit();
+        setText('');
       }}
     >
-      <S.InputArea
-        ref={textareaRef}
-        value={text}
-        onChange={onChange}
-        placeholder="내용을 입력하세요."
-        rows={1}
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            console.log(text);
-          }
-        }}
-      >
-        {/* <S.CommentInput placeholder="댓글을 입력해주세요." /> */}
-      </S.InputArea>
-      <S.CommentBtn>등록</S.CommentBtn>
+      <S.InputArea value={text} onChange={onChange} placeholder="내용을 입력하세요." />
+      {/* <S.CommentInput placeholder="댓글을 입력해주세요." /> */}
+
+      {commentId && description && setIsEdit ? (
+        <>
+          <S.CommentBtn
+            onClick={() => {
+              setIsEdit(false);
+            }}
+          >
+            취소
+          </S.CommentBtn>
+          <S.CommentBtn>수정</S.CommentBtn>
+        </>
+      ) : (
+        <S.CommentBtn>등록</S.CommentBtn>
+      )}
     </S.Container>
   );
 };
@@ -67,7 +73,7 @@ const S = {
     display: flex;
     gap: 8px;
   `,
-  InputArea: styled.textarea`
+  InputArea: styled.input`
     background-color: ${COLORS.GRAY[200]};
     display: flex;
     align-items: center;
