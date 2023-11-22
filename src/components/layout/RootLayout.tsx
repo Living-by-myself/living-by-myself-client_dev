@@ -10,7 +10,7 @@ const RootLayout = () => {
   const HeaderChanger = (location: any) => {
     const pathArr = location.pathname.split('/');
     const pathname = pathArr[pathArr.length - 1];
-    console.log(pathname);
+
     switch (pathname) {
       case 'write':
         return <WriteHeader />;
