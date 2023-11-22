@@ -1,11 +1,12 @@
-import { UserStore } from 'src/store/userStore';
 import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
+import userStore from 'src/store/userStore';
 
 const MyPageUserBasicInfo = () => {
-  const { user } = UserStore();
+  const { profile: user } = userStore();
+
   return (
     <S.Container>
       <S.ProfileImageBox>
@@ -35,9 +36,7 @@ const S = {
     margin-bottom: 15px;
   `,
   ProfileImageBox: styled.div`
-    /* display: flex; */
     position: relative;
-    /* flex-direction: column; */
   `,
   ProfileImage: styled.img`
     width: 70px;

@@ -1,8 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { set } from 'react-hook-form';
+import { getMyBadge } from 'src/api/mypage/mypage';
 import Badge from 'src/components/mypage/Badge';
-import { UserStore } from 'src/store/userStore';
+import userStore from 'src/store/userStore';
 import { MobileContainer } from 'src/styles/styleBox';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -23,49 +25,19 @@ import styled from 'styled-components';
 
 const dummyData = [];
 
-interface BadgeProps {
+export interface BadgeProps {
   type: string;
 }
 
 const MyPageBadgePage = () => {
   const [badge, setBadge] = useState<BadgeProps[]>([]);
-  const [data, setData] = useState<BadgeProps[]>([]);
-  const { user } = UserStore();
+  // const [data, setData] = useState<BadgeProps[]>([]);
+  const { profile: user } = userStore();
 
-  // const getBadge = async () => {
-  //   try {
-  //     const response = await axios({
-  //       method: 'get',
-  //       url: `https://tracelover.shop/home/profile/badge`,
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `${localStorage.getItem('atk')}`
-  //       }
-  //     });
-  //     console.log(response.data);
-  //     setData(response.data as BadgeProps[]);
-  //   } catch (error) {
-  //     throw new Error('실패');
-  //   }
-  // };
+  const { data, isError, isLoading } = useQuery(['badge'], getMyBadge);
 
-  // useEffect(() => {
-  //   getBadge();
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log('배지 재실행');
-  //   const dummy = [...data];
-  //   if (dummy.length < 9) {
-  //     const length = dummy.length;
-
-  //     for (let i = 0; i < 9 - length; i++) {
-  //       dummy.push({ type: 'none' });
-  //     }
-  //   }
-  //   setBadge(dummy);
-  // }, [data]);
+  if (isLoading) return <div>로딩중</div>;
+  if (isError) return <div>에러</div>;
 
   return (
     <MobileContainer>
@@ -77,7 +49,7 @@ const MyPageBadgePage = () => {
         <S.UserInfo>총 00개의 배지를 모으셨어요!</S.UserInfo>
         <S.BadgeContainer>
           {/* 난중에 컴포넌트 분리하고 map */}
-          {badge.map((item, index) => {
+          {data?.map((item, index) => {
             return <Badge key={index} type={item.type}></Badge>;
           })}
         </S.BadgeContainer>
