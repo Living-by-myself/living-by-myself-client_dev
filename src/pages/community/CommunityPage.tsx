@@ -37,8 +37,8 @@ const CommunityPage = () => {
   return (
     <MobileContainer>
       <S.FilterArea>
-        <SelectBox option={COMMUNITYCATEGORY} setSelect={setCategory} />
-        <SelectBox option={COMMUNITYFILTER} setSelect={setFilter} />
+        <SelectBox option={COMMUNITYCATEGORY} filter={category} setSelect={setCategory} />
+        <SelectBox option={COMMUNITYFILTER} filter={filter} setSelect={setFilter} />
       </S.FilterArea>
       <S.CommunityList>
         {data?.map((item) => {
@@ -58,9 +58,14 @@ export const S = {
     gap: 8px;
     padding: 12px 16px;
     border-bottom: 1px solid ${COLORS.GRAY[400]};
+    /* height: 50px; */
+    /* position: fixed; */
+    /* z-index: 100; */
+    background-color: ${COLORS.GRAY[0]};
   `,
   CommunityList: styled.div`
     width: 100%;
     padding: 0 16px;
+    /* margin-top: 50px; */
   `
 };

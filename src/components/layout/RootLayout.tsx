@@ -1,7 +1,9 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
+import styled from 'styled-components';
 import WriteHeader from './WriteHeader';
+import ModalView from '../modal/ModalView';
 
 const RootLayout = () => {
   const location = useLocation();
@@ -20,12 +22,22 @@ const RootLayout = () => {
   };
 
   return (
-    <div>
+    <S.ViewContainer>
       {HeaderChanger(location)}
-
-      <Outlet />
-    </div>
+      <S.OutletContainer>
+        <Outlet />
+      </S.OutletContainer>
+    </S.ViewContainer>
   );
 };
 
 export default RootLayout;
+
+const S = {
+  ViewContainer: styled.div`
+    position: relative;
+  `,
+  OutletContainer: styled.div`
+    /* padding-top: 50px; */
+  `
+};
