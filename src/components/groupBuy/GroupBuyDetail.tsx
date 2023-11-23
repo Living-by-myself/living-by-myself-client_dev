@@ -1,23 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { COLORS } from 'src/styles/styleConstants';
 import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Navigation } from 'swiper/modules';
+import SwiperImage from './SwiperImage';
+import axiosInstance from 'src/api/AxiosInstance';
+import { useQuery } from '@tanstack/react-query';
 
 const GroupBuyDetail = () => {
+  const location = useLocation();
+  const id = location.state.id;
+  console.log(id);
+  const navigate = useNavigate();
 
-    const location = useLocation()
-    const id = location.state.id
-    console.log(id)
-    const navigate = useNavigate()
+
+
+  const getGroupBuyDetailData = async(id:any) => {
+    const response = await axiosInstance.get(`/home/group-buying/${id}`)
+    return response.data
+  };
+
+  const {data} = useQuery({
+    queryKey: ['GroupBuy', id],
+    queryFn: () => getGroupBuyDetailData(id)
+  })
+  console.log(data)
+
+
   return (
     <S.Container>
-      <S.ItemImage>
-        <li></li>
-        <li></li>
-        <li></li>
-      </S.ItemImage>
+        <SwiperImage/>
       <S.InfoInner>
         <S.UserInfoWrap>
           <S.UserInfoInner>
@@ -69,9 +84,7 @@ const GroupBuyDetail = () => {
       <S.FnWrap>
         <S.HeartIcon>♡</S.HeartIcon>
         <S.ChatButton>채팅하기</S.ChatButton>
-        <S.GroupBuyButton 
-        onClick={()=>navigate(`/group-buy/${id!}/order`)}
-        >공동구매하기</S.GroupBuyButton>
+        <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`)}>공동구매하기</S.GroupBuyButton>
       </S.FnWrap>
     </S.Container>
   );
@@ -84,6 +97,14 @@ const S = {
     width: 100%;
     max-width: 400px;
     position: relative;
+  `,
+  CustomSwiper: styled(Swiper)`
+    width: 100%;
+    height: 360px;
+  `,
+  SwiperSlide: styled(SwiperSlide)`
+    width: 100%;
+    height: 360px;
   `,
   ItemImage: styled.ul`
     width: 100%;
@@ -196,10 +217,12 @@ const S = {
     width: 100%;
     background-color: #fff;
     border-top: solid 1px ${COLORS.GRAY[500]};
-    position: sticky; left: 0; bottom: 0;
+    position: sticky;
+    left: 0;
+    bottom: 0;
     padding: 10px 10px;
   `,
-  HeartIcon:styled.button`
+  HeartIcon: styled.button`
     font-size: 26px;
   `,
   GroupBuyButton: styled.button`
