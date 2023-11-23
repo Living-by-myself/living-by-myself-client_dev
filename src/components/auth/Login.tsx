@@ -5,7 +5,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { COLORS } from 'src/styles/styleConstants';
 import axios from 'axios';
 import { styleFont } from 'src/styles/styleFont';
-import { getUserProfile, loginWithEmailPassword } from 'src/api/user/user';
+import { getKakaoLoginToken, getUserProfile, loginWithEmailPassword } from 'src/api/user/user';
 import userStore from 'src/store/userStore';
 import { axiosBaseInstance } from 'src/api/AxiosInstance';
 
@@ -19,34 +19,53 @@ const Login = () => {
   const { setProfile, setToken } = userStore();
   const navigate = useNavigate();
 
-  const [searchParams,setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const onSubmit: SubmitHandler<LoginUserType> = async (data) => {
-    // 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
+    // 패스워드랑 이메일로 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
     const tokenData = loginWithEmailPassword(data);
     setToken(await tokenData.then((res) => res.atk));
+
+    //소셜로그인도 토큰값을 가져오기때문에 가져와서 localStorge에 rtk , atk저장 후 리턴
+    // setToken <=전역 상태관리에 atk 토큰값을 저장
+
+    // ------------------------------------------
+
     const userData = getUserProfile();
     setProfile(await userData);
-
-    // setUser(await userData);
     navigate('/');
   };
 
   //주소로 이동해서 해당 인가코드를 백엔드에 보내주면 response로 atk와rtk 데이터가 들어옴 안됨
   //코드를 먼저 추출하고 싶은데 이것부터 안됨
-  const kakaoLoginHandler = async() => {
-    window.location.href='https://kauth.kakao.com/oauth/authorize?client_id=e0f83d1dd78b2ff718e744149d8af2b4&redirect_uri=https://tracelover.shop/home/oauth/kakao&response_type=code'
-    const code = new URL(window.location.href).searchParams.get("code");
-    console.log(code)
-    try {
-  
-      const res = await axios.post(`https://tracelover.shop/home/oauth/kakao?${code}`)
-    console.log(res)
-    } catch (error) {
-      console.log(error)
-    }
-    
-  }
+  const kakaoLoginHandler = async () => {
+    const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
+    const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
+
+    window.open(`https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`);
+
+    // window.addEventListener('popstate', function () {
+    //   // 리다이렉트 URL에서 인가 코드 받아오기
+    //   const code = window.location.href.split('?')[1].split('=')[1];
+    //   console.log('리다이렉트');
+    //   console.log(code);
+    //   // 인가 코드를 서버로 전송
+    //   getKakaoLoginToken(code as string);
+    // });
+
+    // 인가 코드를 서버로 전송하는 함수
+
+    // try {
+    //   // code:
+    //   axios.get('https://tracelover.shop/home/oauth/kakao?code=', {
+    //     params: {
+    //       code: window.location.href.split('?')[1].split('=')[1]
+    //     }
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
 
   return (
     <S.Container>
@@ -71,10 +90,14 @@ const Login = () => {
           <h1>SNS 계정으로 간편 로그인/회원가입</h1>
           <div>
             <button>
-              <a onClick={kakaoLoginHandler}><img src="/imgs/kakao.png"/></a>
+              <a onClick={kakaoLoginHandler}>
+                <img src="/imgs/kakao.png" />
+              </a>
             </button>
             <button>
-            <Link to='https://accounts.google.com/o/oauth2/v2/auth?client_id=480627412963-2kv4rhdck7u0svv6urq7req1ro0jq8hv.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile'><img src="/imgs/google.png" /></Link>
+              <Link to="https://accounts.google.com/o/oauth2/v2/auth?client_id=480627412963-2kv4rhdck7u0svv6urq7req1ro0jq8hv.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile">
+                <img src="/imgs/google.png" />
+              </Link>
             </button>
           </div>
         </S.socialLoginContainer>

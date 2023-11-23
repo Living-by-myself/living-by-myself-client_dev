@@ -20,7 +20,9 @@ export const loginWithEmailPassword = async ({ username, password }: LoginUserTy
 
 export const getUserProfile = async () => {
   try {
-    const response = await axiosInstance.get('/home/profile', {});
+    const response = await axiosInstance.get('/home/profile', {
+      responseType: 'json'
+    });
 
     return response.data;
   } catch (error) {
@@ -40,10 +42,27 @@ export const getUserBasicProfile = async (userId: string) => {
 export const updateUserProfileImage = async (formData: FormData) => {
   try {
     const response = await axiosInstance.put('/home/profile/image', formData, {
+      withCredentials: true,
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getKakaoLoginToken = async (code: string) => {
+  try {
+    const response = await axios.get('https://tracelover.shop/home/oauth/kakao?code=', {
+      params: {
+        code: code
+      }
+    });
+    console.log(response.data);
+    localStorage.setItem('atk', response.data.atk);
+    localStorage.setItem('rtk', response.data.rtk);
     return response.data;
   } catch (error) {
     console.log(error);
