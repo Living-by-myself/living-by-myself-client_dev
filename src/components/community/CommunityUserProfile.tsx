@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useCommunityMutate from 'src/api/community/communityMutate';
-import { getUserBasicProfile } from 'src/api/user/user';
+import { getOtherUserProfile } from 'src/api/user/user';
 import userStore from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -48,7 +48,7 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
 
   const { data, isLoading, isError } = useQuery<User>({
     queryKey: ['user', userId],
-    queryFn: () => getUserBasicProfile(userId as unknown as string)
+    queryFn: () => getOtherUserProfile(userId as unknown as string)
   });
 
   const navigateEditPage = () => {

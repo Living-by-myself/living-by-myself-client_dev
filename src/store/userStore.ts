@@ -17,6 +17,7 @@ export interface UserProfile {
   level: number;
   address: string | null;
   cash: number;
+  userId: number;
   // beobJeongDong: string | null;
 }
 
@@ -27,7 +28,8 @@ const initValue = {
     level: 10,
     address: '서울 강남구',
     beobJeongDong: '11111',
-    cash: 12345
+    cash: 12345,
+    userId: 0
   },
   token: '12345',
   isLogged: true
@@ -53,19 +55,14 @@ userStore.subscribe((state) => {
   state.isLogged = !!state.token;
 });
 
-
-
-
-
-
 interface UserStoreAction {
   user: UserProfile | null;
   setUser: (user: UserProfile | null) => void;
 }
 
 interface findPasswordTokenAction {
-  token : string;
-  setToken:(token:string) => void;
+  token: string;
+  setToken: (token: string) => void;
 }
 
 export const UserStore = create<UserStoreAction>((set, get) => ({
@@ -73,9 +70,9 @@ export const UserStore = create<UserStoreAction>((set, get) => ({
   setUser: (user: UserProfile | null) => set({ user })
 }));
 
-export const findPasswordToken = create<findPasswordTokenAction>((set)=>({
-  token:'',
-  setToken:(token: string) => set({token})
-}))
+export const findPasswordToken = create<findPasswordTokenAction>((set) => ({
+  token: '',
+  setToken: (token: string) => set({ token })
+}));
 
 export default userStore;
