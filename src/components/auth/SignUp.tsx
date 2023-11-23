@@ -63,6 +63,7 @@ const SignUp = () => {
         });
         alert("인증번호 전송")
       } catch (error:any) {
+        console.log(error)
         alert(error.response.data.msg)
       }
     
