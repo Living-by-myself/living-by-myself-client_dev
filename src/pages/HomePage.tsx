@@ -17,16 +17,15 @@ const HomePage = () => {
   // );
 
   const kakaoLoginHandler = async () => {
-    // const code = new URL(window.location.href).searchParams.get('code');
     const res = await axios.get(`https://tracelover.shop/home/oauth/kakao`, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
       params: {
-        code: location.search
+        code: location.search //인가 코드
       }
     });
-    console.log(res);
+    console.log(res.data);
     // localStorage.setItem('atk', res.data.atk);
     // localStorage.setItem('rtk', res.data.rtk);
     // navigate('/');
