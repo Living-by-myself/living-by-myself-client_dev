@@ -29,7 +29,7 @@ export const getCommunityPostList = async (option: getPostListOption) => {
   try {
     const url = getCommunityPostListURL(option);
 
-    const response = await axiosInstance.get(url, {
+    const response = await axios.get(url, {
       withCredentials: true
     });
 

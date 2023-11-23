@@ -19,13 +19,17 @@ const Login = () => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginUserType> = async (data) => {
-    // 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
+    // 패스워드랑 이메일로 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
     const tokenData = loginWithEmailPassword(data);
     setToken(await tokenData.then((res) => res.atk));
+
+    //소셜로그인도 토큰값을 가져오기때문에 가져와서 localStorge에 rtk , atk저장 후 리턴
+    // setToken <=전역 상태관리에 atk 토큰값을 저장
+
+    // ------------------------------------------
+
     const userData = getUserProfile();
     setProfile(await userData);
-
-    // setUser(await userData);
     navigate('/');
   };
 

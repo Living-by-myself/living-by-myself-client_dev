@@ -4,8 +4,8 @@ import axiosInstance, { axiosBaseInstance } from './AxiosInstance';
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log(error)
-    if (error.response.code === "403") {
+    // 에러나면 무적권 체크하셈 토큰 만료됐는지
+    if (error) {
       const response = await postRefreshToken();
 
       if (response) {
@@ -38,7 +38,7 @@ const postRefreshToken = async () => {
         headers
       }
     );
-    console.log("토큰 검사중",data)
+    console.log('토큰 검사중', data);
 
     if (data.flag === 'success') {
       return data.data[0];
