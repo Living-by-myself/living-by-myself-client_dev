@@ -42,7 +42,7 @@ const Login = () => {
     const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
     const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
 
-    window.open(`https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`);
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`;
 
     // window.addEventListener('popstate', function () {
     //   // 리다이렉트 URL에서 인가 코드 받아오기
