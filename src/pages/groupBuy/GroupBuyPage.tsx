@@ -141,7 +141,7 @@ const GroupBuyPage = () => {
         {DUMMY_DATA.map((data) => {
           return (
             <li key={data.id} style={{ borderBottom: '1px solid #eee' }}>
-              <Link to={`/group-buy/${data.id}`}>
+              <Link to={`/group-buy/${data.id}`} state={{id:data.id}}>
                 <GroupBuyPostCard data={data} />
               </Link>
             </li>
