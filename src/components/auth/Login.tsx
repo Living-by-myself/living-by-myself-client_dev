@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SubmitHandler, set, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { COLORS } from 'src/styles/styleConstants';
 import axios from 'axios';
 import { styleFont } from 'src/styles/styleFont';
 import { getUserProfile, loginWithEmailPassword } from 'src/api/user/user';
 import userStore from 'src/store/userStore';
+import { axiosBaseInstance } from 'src/api/AxiosInstance';
 
 export interface LoginUserType {
   username: string;
@@ -17,6 +18,8 @@ const Login = () => {
   const { register, handleSubmit } = useForm<LoginUserType>();
   const { setProfile, setToken } = userStore();
   const navigate = useNavigate();
+
+  const [searchParams,setSearchParams] = useSearchParams()
 
   const onSubmit: SubmitHandler<LoginUserType> = async (data) => {
     // 패스워드랑 이메일로 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
@@ -32,6 +35,22 @@ const Login = () => {
     setProfile(await userData);
     navigate('/');
   };
+
+  //주소로 이동해서 해당 인가코드를 백엔드에 보내주면 response로 atk와rtk 데이터가 들어옴 안됨
+  //코드를 먼저 추출하고 싶은데 이것부터 안됨
+  const kakaoLoginHandler = async() => {
+    window.location.href='https://kauth.kakao.com/oauth/authorize?client_id=e0f83d1dd78b2ff718e744149d8af2b4&redirect_uri=https://tracelover.shop/home/oauth/kakao&response_type=code'
+    const code = new URL(window.location.href).searchParams.get("code");
+    console.log(code)
+    try {
+  
+      const res = await axios.post(`https://tracelover.shop/home/oauth/kakao?${code}`)
+    console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
 
   return (
     <S.Container>
@@ -56,10 +75,10 @@ const Login = () => {
           <h1>SNS 계정으로 간편 로그인/회원가입</h1>
           <div>
             <button>
-              <img src="/imgs/kakao.png" />
+              <a onClick={kakaoLoginHandler}><img src="/imgs/kakao.png"/></a>
             </button>
             <button>
-              <img src="/imgs/google.png" />
+            <Link to='https://accounts.google.com/o/oauth2/v2/auth?client_id=480627412963-2kv4rhdck7u0svv6urq7req1ro0jq8hv.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile'><img src="/imgs/google.png" /></Link>
             </button>
           </div>
         </S.socialLoginContainer>
