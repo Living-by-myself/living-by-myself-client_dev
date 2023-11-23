@@ -12,7 +12,7 @@ import { getUserProfile } from './api/user/user';
 const queryClient = new QueryClient();
 
 function App() {
-  const { isLogged, setProfile } = userStore();
+  const { isLogged, setProfile, setToken } = userStore();
 
   const handleProfile = useCallback(async () => {
     const token = localStorage.getItem('atk');
@@ -20,6 +20,7 @@ function App() {
     try {
       const res = await getUserProfile();
       setProfile(res);
+      setToken(token);
     } catch (e) {
       console.log(e);
     }
