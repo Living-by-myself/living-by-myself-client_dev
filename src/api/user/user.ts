@@ -30,9 +30,10 @@ export const getUserProfile = async () => {
   }
 };
 
-export const getUserBasicProfile = async (userId: string) => {
+export const getOtherUserProfile = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/other/${userId}`, {});
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.log(error);
