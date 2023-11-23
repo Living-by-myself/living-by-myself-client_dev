@@ -1,35 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
+import DaumPostcode from 'react-daum-postcode';
 import axios from 'axios';
 import axiosInstance from 'src/api/AxiosInstance';
+import Postcode from './Postcode';
 
 interface UserUpdateType {
   username: string;
   nickname: string;
   address: string;
+  detailAddress: string;
 }
 
 const UserUpdateInfo = () => {
   const { register, handleSubmit } = useForm<UserUpdateType>();
 
+  const [address, setAddress] = useState('');
+  const [isToggle, setIsToggle] = useState(false);
+
+  const completeHandler = (data: any) => {
+    setAddress(data.roadAddress);
+  };
+
   const onSubmit: SubmitHandler<UserUpdateType> = async (data) => {
-    const { address, nickname } = data;
+    const { nickname, detailAddress } = data;
     try {
-      const res = await axiosInstance.put('/home/profile', {
-        address,
+      await axiosInstance.put('/home/profile', {
+        address: `${address}, ${detailAddress}`,
         nickname
-      },{
-        withCredentials: true,
-      },
-      );
-      console.log(res)
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-    
   };
   return (
     <S.Container>
@@ -49,7 +54,17 @@ const UserUpdateInfo = () => {
           <S.FormRow>
             <label>주소</label>
             <h2>12자 이내의 한글 또는 영문,숫자</h2>
-            <input placeholder="주소" {...register('address')}></input>
+            {/* <input placeholder="주소" {...register('address')}></input>
+            <Postcode/> */}
+            <S.FormColumn>
+              <input value={address} readOnly placeholder="주소"></input>
+              <S.Button type="button" onClick={() => setIsToggle((e) => !e)}>
+                우편번호 찾기
+              </S.Button>
+            </S.FormColumn>
+            {isToggle && <DaumPostcode onComplete={completeHandler} />}
+
+            <input placeholder="상세주소" {...register('detailAddress')}></input>
           </S.FormRow>
           <S.Button type="submit">수정 완료</S.Button>
         </S.Form>
@@ -97,6 +112,10 @@ const S = {
       ${styleFont.body2}
       color: ${COLORS.GRAY[500]};
     }
+  `,
+  FormColumn: styled.div`
+    display: flex;
+    gap: 9px;
   `,
   Button: styled.button`
     display: inline-flex;
