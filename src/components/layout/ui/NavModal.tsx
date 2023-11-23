@@ -3,11 +3,12 @@ import BaseModal from 'src/components/modal/BaseModal';
 import Icon from 'src/components/icon/Icon';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { UserStore } from 'src/store/userStore';
+
 import { NAV_LINKS } from 'src/components/button/buttonConstants';
 import Button from 'src/components/button/Button';
 import { COLORS } from 'src/styles/styleConstants';
 import NavUserProfile from './NavUserProfile';
+import userStore from 'src/store/userStore';
 
 interface NavModalProps {
   onClose: () => void;
@@ -16,7 +17,7 @@ interface NavModalProps {
 const NavModal = ({ onClose }: NavModalProps) => {
   const navigate = useNavigate();
   //   const { isLogged } = useUserStore();
-  const { user, setUser } = UserStore();
+  const { isLogged, profile: user } = userStore();
   //   const logoutMutation = useLogoutMutation();
 
   //   const handleLogout = async () => {
@@ -28,7 +29,7 @@ const NavModal = ({ onClose }: NavModalProps) => {
       <S.Container>
         <S.Nav>
           로고영역
-          {user?.nickname && <NavUserProfile />}
+          {isLogged && <NavUserProfile />}
           <S.LinkList>
             {NAV_LINKS.map((link) => (
               <S.LinkItem to={link.href} key={link.id} onClick={() => onClose()}>
@@ -38,7 +39,7 @@ const NavModal = ({ onClose }: NavModalProps) => {
           </S.LinkList>
         </S.Nav>
         <S.Bottom>
-          {user?.nickname ? (
+          {isLogged ? (
             <>
               <Button full variants="outline" onClick={() => {}}>
                 로그아웃

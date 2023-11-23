@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { MobileContainer } from 'src/styles/styleBox';
 import Icon from 'src/components/icon/Icon';
 import { useParams } from 'react-router-dom';
-import { getPostDetail } from 'src/api/community/community';
+import { getCommunityPostDetail } from 'src/api/community/community';
 import { useQuery } from '@tanstack/react-query';
 import { Post } from 'src/types/community/types';
 import { styleFont } from 'src/styles/styleFont';
@@ -20,7 +20,7 @@ const CommunityDetailPage = () => {
 
   const { data, isLoading, isError } = useQuery<Post>({
     queryKey: ['post', postId],
-    queryFn: () => getPostDetail({ postId })
+    queryFn: () => getCommunityPostDetail({ postId })
   });
 
   if (isLoading) return <div>로딩중</div>;

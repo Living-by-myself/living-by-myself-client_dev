@@ -11,13 +11,8 @@ interface CommunityPostCardProps {
 }
 
 const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
-  const navigate = useNavigate();
   return (
-    <S.Container
-      onClick={() => {
-        navigate(`/community/${post.id}`);
-      }}
-    >
+    <S.Container>
       <S.ContentsBox>
         <S.TitleBodyBox $isImage={post.fileUrls !== null ? true : false}>
           <S.CategoryContainer>{post.category} 인기글</S.CategoryContainer>
@@ -81,8 +76,6 @@ const S = {
     ${styleFont.h4}
     color: ${COLORS.GRAY[900]};
     margin-bottom: 5px;
-
-    /* background-color: royalblue; */
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -108,13 +101,13 @@ const S = {
     align-items: center;
     margin-right: auto;
   `,
+  Time: styled.p``,
+  View: styled.p``,
   CommentLikeBox: styled.div`
     display: flex;
     align-items: center;
     margin-left: 0;
   `,
-  Time: styled.p``,
-  View: styled.p``,
   Comment: styled.p`
     margin: 1px 10px 0 3px;
   `,

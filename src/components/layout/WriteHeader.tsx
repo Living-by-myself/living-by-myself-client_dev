@@ -11,7 +11,7 @@ const WriteHeader = () => {
   const { title, description, category } = CommunityWriteStore();
   const { files } = CommunityWriteImageStore();
   const location = useLocation();
-  const { addPostHandler, updatePostHandler } = useCommunityMutate();
+  const { addCommunityPostHandler, updateCommunityPostHandler } = useCommunityMutate();
 
   const navigate = useNavigate();
   return (
@@ -43,11 +43,11 @@ const WriteHeader = () => {
             }
 
             if (location.pathname === '/community/write') {
-              addPostHandler(formData);
+              addCommunityPostHandler(formData);
               navigate('/community');
             } else {
               const id = location.pathname.split('/')[2];
-              updatePostHandler(id, formData);
+              updateCommunityPostHandler(id, formData);
               navigate(`/community/${id}`);
             }
           }}

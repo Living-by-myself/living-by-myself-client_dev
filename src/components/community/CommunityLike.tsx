@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { addCommunityPostLike, deleteCommunityPostLike } from 'src/api/community/community';
 
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -15,26 +16,10 @@ const token = localStorage.getItem('atk');
 
 const CommunityLike = ({ likeCnt, id, existsLike }: Props) => {
   const [like, setLike] = useState({ likeCnt, existsLike });
+
   // 좋아요 누르는 로직
   // 상위 디테일 페이지에서 props로 게시글 아이디 가져오기
   // 현재 로그인한 유저의 아이디와 props의 게시글 아이디를 기반으로 좋아요 낙관적 업데이트 적용
-  const Like = async () => {
-    console.log(id);
-    try {
-      const response = await axios.post(
-        `https://tracelover.shop/home/community/${id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: token
-          }
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <S.Container>
@@ -42,9 +27,10 @@ const CommunityLike = ({ likeCnt, id, existsLike }: Props) => {
         $isLike={like.existsLike}
         onClick={async () => {
           if (like.existsLike) {
+            deleteCommunityPostLike(id as unknown as string);
             setLike({ likeCnt: like.likeCnt - 1, existsLike: !like.existsLike });
           } else {
-            await Like();
+            addCommunityPostLike(id as unknown as string);
             setLike({ likeCnt: like.likeCnt + 1, existsLike: !like.existsLike });
           }
         }}

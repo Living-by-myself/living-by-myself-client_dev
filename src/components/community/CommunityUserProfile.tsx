@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useCommunityMutate from 'src/api/community/communityMutate';
-import { getUserBasicProfile } from 'src/api/community/user';
-import { UserStore } from 'src/store/userStore';
+import { getUserBasicProfile } from 'src/api/user/user';
+import userStore from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
@@ -38,8 +38,8 @@ interface User {
 
 const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserProfileProps) => {
   const [user, setUser] = useState<UserProps>(info);
-  const { user: loginUser } = UserStore();
-  const { deletePostHandler } = useCommunityMutate();
+  const { profile: loginUser } = userStore();
+  const { deleteCommunityPostHandler } = useCommunityMutate();
   const navigate = useNavigate();
   const param = useParams() as { id: string };
   const queryClient = useQueryClient();
@@ -56,7 +56,7 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
   };
 
   const handleDelete = () => {
-    deletePostHandler(param.id as unknown as string);
+    deleteCommunityPostHandler(param.id as unknown as string);
     navigate('/community');
   };
 

@@ -28,7 +28,6 @@ import MyPageGroupBuyPage from 'src/pages/mypage/MyPageGroupBuyPage';
 import UserUpdateInfoPage from 'src/pages/user/UserUpdateInfoPage';
 import PasswordUpdatePage from 'src/pages/user/PasswordUpdatePage';
 import PointChargePage from 'src/pages/user/PointChargePage';
-import ModalView from 'src/components/modal/ModalView';
 
 const Router = () => {
   return (
@@ -46,8 +45,9 @@ const Router = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/password-find" element={<PasswordFindPage />} />
-          <Route path="/password-reset" element={<PasswordResetPage />} />
         </Route>
+        {/* 이건 주스탠드에 있는 토큰값이 없으면 접근안됨 */}
+        <Route path="/password-reset" element={<PasswordResetPage />} />
 
         {/* 아무나 접속할 수 있는 페이지 */}
         <Route path="/group-buy" element={<GroupBuyPage />} />
@@ -56,6 +56,7 @@ const Router = () => {
 
         {/* 마이페이지 등... 로그인 후 사용 가능한 페이지들... */}
         <Route element={<OnlyLoggedRoute />}>
+          {/* 토큰값이 없으면 접근 안되는거임... */}
           <Route path="/group-buy/:id" element={<GroupBuyDetailPage />} />
           <Route path="/group-buy/:id/edit" element={<GroupBuyEditPage />} />
           <Route path="/group-buy/:id/order" element={<GroupBuyPayPage />} />

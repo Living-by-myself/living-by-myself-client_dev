@@ -1,7 +1,9 @@
 import React from 'react';
+import GroupBuyPay from 'src/components/groupBuy/GroupBuyPay';
+import { MobileContainer } from 'src/styles/styleBox';
 
 const GroupBuyPayPage = () => {
-  return <div>GroupBuyPayPage</div>;
+  return <MobileContainer><GroupBuyPay/></MobileContainer>;
 };
 
 export default GroupBuyPayPage;
