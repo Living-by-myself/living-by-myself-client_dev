@@ -22,7 +22,7 @@ interface ChatRoom {
 
 const ChatPage = () => {
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
-  const userId = 2; // 임의로 지정한 상대 id -> 클릭한 user의 id를 받도록 변경해야함
+  const userId = 35; // 임의로 지정한 상대 id -> 클릭한 user의 id를 받도록 변경해야함
   const navigate = useNavigate();
 
   // 채팅방 조회
