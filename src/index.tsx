@@ -18,12 +18,14 @@ const queryClient = new QueryClient({
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <>
     <ThemeProvider theme={theme} />
     <GlobalStyle />
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       <App />
     </QueryClientProvider>
-  </React.StrictMode>
+  </>
+  // </React.StrictMode>
 );
