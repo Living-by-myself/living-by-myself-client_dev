@@ -33,11 +33,14 @@ axiosInstance.interceptors.response.use(
     console.log(error, '인터셉터 에러');
     // 에러나면 무적권 체크하셈 혹시 토큰 만료됐는지
     // const navigate = useNavigate();
-    if (error) {
+    if (error.messeage !== 'Request failed with status code 400') {
       const response = await getAccessTokenWhenExpiration();
       if (response) {
         error.config.headers['Authorization'] = response;
+        console.log(error.config, '에러컨피그');
+
         const originalResponse = await axiosInstance.request(error.config);
+        console.log(originalResponse, '오리지널 리스폰스');
         return originalResponse;
       } else {
         localStorage.clear();
