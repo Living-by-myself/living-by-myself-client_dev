@@ -12,12 +12,13 @@ interface SlideImgProps {
 }
 
 const SwiperImage = (silde: any) => {
+
   const imageData = () => {
     if (silde.slide) {
       return extractImageUrls(silde.slide);
     }
   };
-  // console.log(silde);
+
   return (
     <S.SwiperWrap>
       <S.CustomSwiper
@@ -27,9 +28,9 @@ const SwiperImage = (silde: any) => {
         pagination={{ clickable: true }} // 페이지네이션 활성화
         modules={[Pagination, Navigation]}
       >
-        {imageData()?.map((img) => {
+        {imageData()?.map((img,index) => {
           return (
-              <S.SwiperSlide>
+              <S.SwiperSlide key={index}>
                 <img src={img} alt="Image" />
               </S.SwiperSlide>
           );

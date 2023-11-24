@@ -20,8 +20,8 @@ const schema = z
     phoneNumber: z.string().refine(validatePhoneNumber, { message: '올바른 전화번호를 입력해주세요.' }),
     phoneAuthNumber: z
       .string()
-      .min(6, { message: '인증번호 4자리를 입력해주세요.' })
-      .max(6, { message: '인증번호 4자리를 입력해주세요.' })
+      .min(4, { message: '인증번호 4자리를 입력해주세요.' })
+      .max(4, { message: '인증번호 4자리를 입력해주세요.' })
   })
   .refine((passwordConfirm) => passwordConfirm.password === passwordConfirm.passwordCheck, {
     message: '비밀번호가 일치하지 않습니다.',
@@ -49,6 +49,7 @@ const SignUp = () => {
         passwordCheck,
         phoneNumber
       });
+      alert('회원가입 완료')
     } catch (error) {
       console.log(error);
     }
