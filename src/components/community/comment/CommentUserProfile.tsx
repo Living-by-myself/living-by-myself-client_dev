@@ -8,6 +8,7 @@ import { Comments } from './CommentList';
 import useCommentMutate from 'src/api/comment/commentMutate';
 import { useParams } from 'react-router-dom';
 import userStore from 'src/store/userStore';
+import { getRelativeTimeString } from 'src/utilities/getDate';
 
 interface Props {
   comment: Comments;
@@ -33,7 +34,7 @@ const CommentUserProfile = ({ comment, setIsEdit }: Props) => {
       <S.InfoContainer>
         <S.NickName>{comment?.user.nickname}</S.NickName>
         <S.LocationTimeBox>
-          <S.Time>{comment.getCreatedAtAsString}</S.Time>
+          <S.Time>{getRelativeTimeString(comment.getCreatedAtAsString)}</S.Time>
         </S.LocationTimeBox>
       </S.InfoContainer>
       {user!.nickname === comment?.user.nickname && (

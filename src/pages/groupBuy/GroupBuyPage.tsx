@@ -8,121 +8,6 @@ import { MobileContainer } from 'src/styles/styleBox';
 import { GroupBuyPreviewType } from 'src/types/groupBuy/types';
 import styled from 'styled-components';
 
-const DUMMY_DATA: GroupBuyPreviewType[] = [
-  {
-    id: 1,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 2,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 3,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 4,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 5,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 6,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 7,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  },
-  {
-    id: 8,
-    title: '폴라로이드 카메라 필름 4명 공동구매합니다',
-    maxUser: 4,
-    currentUserCount: 1,
-    fileUrls: 'https://placehold.co/100',
-    perUserPrice: 900000,
-    enumShare: 'BUY',
-    address: '서울시 강남구',
-    createdAt: '2023-11-16T19:47:16.488675',
-    modifiedAt: '2023-11-16T19:47:16.488675',
-    viewCnt: 0,
-    beobJeongDong: '12345'
-  }
-];
-
 interface GroupBuyPageDataProps {
   groupBuyingResponseDtoList: GroupBuyPreviewType[];
   len: number;
@@ -133,7 +18,7 @@ const GroupBuyPage = () => {
   const [share, setShare] = useState();
   const [status, setStatus] = useState();
   const [address, setAddress] = useState();
-  // const [search, setSearch] = useState();
+
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(12);
   const [sort, setSort] = useState('asc');

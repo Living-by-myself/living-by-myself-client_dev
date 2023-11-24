@@ -39,9 +39,7 @@ const CommentList = () => {
     <S.Container>
       <S.HeaderArea>
         <S.Label>댓글</S.Label>
-        <S.CommentCnt>1개</S.CommentCnt>
-        <S.Filter>등록일</S.Filter>
-        <S.FilterBtn>최신순</S.FilterBtn>
+        <S.CommentCnt>{data.length}개</S.CommentCnt>
       </S.HeaderArea>
 
       {/* 댓글 카드 MAP함수 적용 */}
