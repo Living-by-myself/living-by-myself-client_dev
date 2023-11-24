@@ -18,6 +18,28 @@ export const loginWithEmailPassword = async ({ username, password }: LoginUserTy
   }
 };
 
+export const getAccessTokenWhenExpiration = async () => {
+  try {
+    const refreshToken = localStorage.getItem('rtk');
+    console.log(refreshToken);
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization:
+        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3ZXIwNjA5OUBuYXZlci5jb20iLCJhdXRoIjoiTUVNQkVSIiwiZXhwIjoxNzAxMzk1MTcwfQ.UwjI1TpmXGqqumXTERWmAqOlo44mT_xnnmEjctRUmZ4'
+    };
+
+    const { data } = await axios.get('https://tracelover.shop/home/users/reissue', {
+      withCredentials: true,
+      headers
+    });
+    localStorage.setItem('atk', data.atk);
+    console.log(data, '토큰 재발급 성공');
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getUserProfile = async () => {
   try {
     const response = await axiosInstance.get('/home/profile', {
@@ -33,7 +55,7 @@ export const getUserProfile = async () => {
 export const getOtherUserProfile = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/other/${userId}`, {});
-    console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.log(error);
@@ -42,7 +64,7 @@ export const getOtherUserProfile = async (userId: string) => {
 
 export const updateUserProfileImage = async (formData: FormData) => {
   try {
-    const response = await axiosInstance.put('/home/profile/image', formData, {
+    const response = await axiosInstance.patch('/home/profile/image', formData, {
       withCredentials: true,
       headers: {
         'Content-Type': 'multipart/form-data'
