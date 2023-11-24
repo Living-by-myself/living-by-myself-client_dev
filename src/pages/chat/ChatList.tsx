@@ -43,22 +43,26 @@ const ChatList = () => {
 
   return (
     <>
-      {chatList.map((chat) => {
-        return (
-          // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
-          <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id)}>
-            <S.ChatInfoBox>
-              {/* 원래는 chat.title로 하고싶은데 그냥 아이디 값으로 대체해 놓음.. */}
-              <S.ChatRoomName>{chat.id}</S.ChatRoomName>
-              {chat.users.length > 2 && <S.ChatUserCount>{chat.users.length}</S.ChatUserCount>}
-              {/* <S.ChattingRoomLastMessageTime>{chat.getCreatedAtAsString.slice(-8, -3)}</S.ChattingRoomLastMessageTime> */}
-              <S.ChatRoomLastMessageTime>02:31</S.ChatRoomLastMessageTime>
-            </S.ChatInfoBox>
-            {/* <S.ChattingRoomLastMessage>{chat.content}</S.ChattingRoomLastMessage> */}
-            <S.ChatRoomLastMessage>안녕하세요</S.ChatRoomLastMessage>
-          </S.ChatContainer>
-        );
-      })}
+      {chatList?.length !== 0 ? (
+        chatList.map((chat) => {
+          return (
+            // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
+            <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id)}>
+              <S.ChatInfoBox>
+                {/* 원래는 chat.title로 하고싶은데 그냥 아이디 값으로 대체해 놓음.. */}
+                <S.ChatRoomName>{chat.id}</S.ChatRoomName>
+                {chat.users.length > 2 && <S.ChatUserCount>{chat.users.length}</S.ChatUserCount>}
+                {/* <S.ChattingRoomLastMessageTime>{chat.getCreatedAtAsString.slice(-8, -3)}</S.ChattingRoomLastMessageTime> */}
+                <S.ChatRoomLastMessageTime>02:31</S.ChatRoomLastMessageTime>
+              </S.ChatInfoBox>
+              {/* <S.ChattingRoomLastMessage>{chat.content}</S.ChattingRoomLastMessage> */}
+              <S.ChatRoomLastMessage>안녕하세요</S.ChatRoomLastMessage>
+            </S.ChatContainer>
+          );
+        })
+      ) : (
+        <div>채팅 내역이 없습니다.</div>
+      )}
     </>
   );
 };

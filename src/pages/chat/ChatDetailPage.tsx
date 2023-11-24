@@ -90,7 +90,7 @@ const ChatDetailPage = () => {
       debug: (str) => {
         console.log(str);
       },
-      reconnectDelay: 5000, //자동 재연결을 위한 시간 설정
+      reconnectDelay: 50000, //자동 재연결을 위한 시간 설정
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000 // 연결이 유지되고 있는지 확인
     });
