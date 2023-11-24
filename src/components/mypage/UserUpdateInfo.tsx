@@ -4,9 +4,7 @@ import styled from 'styled-components';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import DaumPostcode from 'react-daum-postcode';
-import axios from 'axios';
 import axiosInstance from 'src/api/AxiosInstance';
-import Postcode from './Postcode';
 import userStore from 'src/store/userStore';
 
 interface UserUpdateType {
