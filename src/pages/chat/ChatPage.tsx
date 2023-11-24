@@ -59,7 +59,7 @@ const ChatPage = () => {
     });
     console.log('oneOnOneRoom', oneOnOneRoom);
 
-    if (oneOnOneRoom?.id! !== null) {
+    if (oneOnOneRoom?.id! !== undefined) {
       navigate(`/chat/${oneOnOneRoom?.id!}`);
     } else {
       try {
@@ -100,5 +100,6 @@ const S = {
   Label: styled.p`
     ${styleFont.h3};
     color: ${COLORS.GRAY[900]};
+    margin-left: 13px;
   `
 };

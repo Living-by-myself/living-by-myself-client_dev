@@ -4,34 +4,6 @@ import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
-//import { useRoomIdStore } from 'src/store/chatStore';
-
-// const Dummy = [
-//   {
-//     id: 1,
-//     title: '유저1',
-//     content: '안녕하세요 유저1입니다.',
-//     getCreatedAtAsString: '2023-11-08 14:56:26'
-//   },
-//   {
-//     id: 2,
-//     title: '유저2',
-//     content: '안녕하세요 유저2입니다.',
-//     getCreatedAtAsString: '2023-11-08 14:57:26'
-//   },
-//   {
-//     id: 3,
-//     title: '마우스 공구 모여라',
-//     content: '참여하고 싶습니다.',
-//     getCreatedAtAsString: '2023-11-08 14:53:26'
-//   },
-//   {
-//     id: 4,
-//     title: '키보드 공구 모여라',
-//     content: '취소할까요?',
-//     getCreatedAtAsString: '2023-11-08 14:52:26'
-//   }
-// ];
 
 interface ChatUser {
   id: number;
@@ -98,7 +70,7 @@ const S = {
     display: flex;
     flex-direction: column;
     gap: 9px;
-    padding: 13px 0;
+    padding: 13px;
     border-bottom: 1px solid ${COLORS.GRAY[500]};
     cursor: pointer;
   `,
