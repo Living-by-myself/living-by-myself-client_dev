@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import { extractImageUrls } from 'src/utilities/image';
-import 'swiper/css'
+import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
@@ -27,11 +27,11 @@ const SwiperImage = (silde: any) => {
         pagination={{ clickable: true }} // 페이지네이션 활성화
         modules={[Pagination, Navigation]}
       >
-        {imageData()?.map((img) => {
+        {imageData()?.map((img, index) => {
           return (
-              <S.SwiperSlide>
-                <img src={img} alt="Image" />
-              </S.SwiperSlide>
+            <S.SwiperSlide key={index}>
+              <img src={img} alt="Image" />
+            </S.SwiperSlide>
           );
         })}
       </S.CustomSwiper>
@@ -55,13 +55,10 @@ const S = {
     width: 100%;
     height: 100%;
     background-image: cover;
-    img{
-      
+    img {
       width: 100%;
-      height:100%;
+      height: 100%;
       object-fit: cover;
-        
-
     }
   `
 };
