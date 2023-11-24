@@ -5,6 +5,7 @@ import { styleFont } from 'src/styles/styleFont';
 import { Post } from 'src/types/community/types';
 import styled from 'styled-components';
 import { addResizeToUrl } from 'src/utilities/image';
+import { getRelativeTimeString } from 'src/utilities/getDate';
 
 interface CommunityPostCardProps {
   post: Post;
@@ -34,14 +35,20 @@ const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
 
       <S.PostInfoContainer>
         <S.TimeViewBox>
-          <S.Time>{post.getCreatedAtAsString}</S.Time>
-          <S.View> · {post.viewCnt}</S.View>
+          <S.View>조회수 {post.viewCnt}회 |</S.View>
+
+          <S.Time>{getRelativeTimeString(post.getCreatedAtAsString)}</S.Time>
         </S.TimeViewBox>
         <S.CommentLikeBox>
           <Icon name="message-circle" size={'12'} />
           <S.Comment>{post.commentCnt}</S.Comment>
         </S.CommentLikeBox>
-        <Icon name="heart" size={'12'} />
+        {post.existsLike ? (
+          <Icon name="heart" style={{ color: COLORS.RED[400] }} size={'12'} />
+        ) : (
+          <Icon name="heart" size={'12'} />
+        )}
+
         <S.Like>{post.likeCnt}</S.Like>
       </S.PostInfoContainer>
     </S.Container>
@@ -100,6 +107,7 @@ const S = {
     display: flex;
     align-items: center;
     margin-right: auto;
+    gap: 3px;
   `,
   Time: styled.p``,
   View: styled.p``,

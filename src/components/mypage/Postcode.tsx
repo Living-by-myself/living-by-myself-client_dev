@@ -20,9 +20,6 @@ const Postcode = () => {
     setRoadAddress(data.roadAddress);
   };
 
-  //   const onChangedetailAddress = (e:React.ChangeEvent<HTMLInputElement>) => {
-  //     setDetailAddress(e.target.value)
-  //   }
   return (
     <>
       <S.FormColumn>

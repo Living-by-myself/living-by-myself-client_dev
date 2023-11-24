@@ -48,6 +48,7 @@ const Router = () => {
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/password-find" element={<PasswordFindPage />} />
         </Route>
+
         {/* 이건 주스탠드에 있는 토큰값이 없으면 접근안됨 */}
         <Route path="/password-reset" element={<PasswordResetPage />} />
 
