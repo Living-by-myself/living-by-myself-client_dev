@@ -8,7 +8,7 @@ import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import { set } from 'react-hook-form';
 import { useStore } from 'zustand';
-import { CommunityWriteImageStore } from 'src/store/communityStore';
+import { communityWriteImageStore } from 'src/store/communityStore';
 import { useLocation } from 'react-router-dom';
 
 interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -19,7 +19,7 @@ interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const InputImages = () => {
-  const { files, setFiles, removeFile } = CommunityWriteImageStore();
+  const { files, setFiles, removeFile } = communityWriteImageStore();
   const fileInput = useRef<HTMLInputElement>(null);
   const location = useLocation();
 
