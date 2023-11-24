@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { COLORS } from 'src/styles/styleConstants';
 import styled from 'styled-components';
 import Icon from '../icon/Icon';
@@ -8,88 +8,105 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
-import axiosInstance from 'src/api/AxiosInstance';
+import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { useQuery } from '@tanstack/react-query';
+import { GoHeart } from 'react-icons/go';
+import { CiHeart } from 'react-icons/ci';
+import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
+import { getRelativeTimeString } from 'src/utilities/getDate';
 
 const GroupBuyDetail = () => {
-  const location = useLocation();
-  const id = location.state.id;
-  console.log(id);
   const navigate = useNavigate();
+  const location = useLocation();
+  const id = location.state?.id;
 
-  const getGroupBuyDetailData = async (id: any) => {
-    const response = await axiosInstance.get(`/home/group-buying/${id}`);
-    return response.data;
-  };
+  const [bookmark, setBookmark] = useState(false);
+
+
 
   const { data } = useQuery({
     queryKey: ['GroupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
   console.log(data);
+  console.log(data.itemLink);
 
-  return (<>
-    <S.Container>  
-    <SwiperImage slide={data?.fileUrls}/>
-      <S.InfoInner>
-        <S.UserInfoWrap>
-          <S.UserInfoInner>
-            <S.UserInfo>
-              <p>
-                <img></img>
-              </p>
-              <div>
-                <h1>유저이름</h1>
-                <h2>신월1동</h2>
-              </div>
-            </S.UserInfo>
-            <S.UserLevel>Lv. 10</S.UserLevel>
-          </S.UserInfoInner>
-        </S.UserInfoWrap>
-        <S.BuyInfoWrap>
-          <h1>폴라로이드 카메라 필름 4명 공동구매합니다.</h1>
-          <S.SaleInfo>
-            <h2>판매종료</h2>
-            <p>{data?.perUserPrice}</p>
-            {/* <p>9000000원</p> */}
-          </S.SaleInfo>
-          <S.AddressTime>
-            신월1동<span>· 10분전</span>
-          </S.AddressTime>
-          <h2>
-            폴라로이드 카메라 필름 4명 공동구매합니다. 폴라로이드 카메라 필름 4명 공동구매합니다. 폴라로이드 카메라 필름
-            4명 공동구매합니다
-          </h2>
-        </S.BuyInfoWrap>
-        <S.PreviewParticipants>
-          <p>
-            제품 링크:
-            <span>
-              <a>바로가기</a>
-            </span>
-          </p>
-          <p>
-            참여중인 인원
-            <Icon name="users" color={COLORS.GRAY[500]} size={20} />
-            {/* {currentUserCount}/{maxUser}명 */}
-            1/4명
-          </p>
-        </S.PreviewParticipants>
-        <S.BuyMapWrap>
-          <h1>장소</h1>
-          <div>
-            <Map center={{ lat: 33.5563, lng: 126.79581 }} style={{ width: '300px', height: '200px' }} level={3}>
-              <MapMarker position={{ lat: 33.5563, lng: 126.79581 }} />
-            </Map>
-          </div>
-        </S.BuyMapWrap>
-      </S.InfoInner>
-      <S.FnWrap>
-        <S.HeartIcon>♡</S.HeartIcon>
-        <S.ChatButton>채팅하기</S.ChatButton>
-        <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`)}>공동구매하기</S.GroupBuyButton>
-      </S.FnWrap>
-    </S.Container>
+
+  const bookmarkGoupBuyButton = async () => {
+    setBookmark((e) => !e);
+    // if(bookmark === false){
+    //   const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+    //   console.log("등록",res);
+    // }else{
+    //   const res = await axiosBaseInstance.delete(`/home/group-buying/${id}/pick-like`)
+    //   console.log("삭제",res);
+    // }
+
+    
+    
+  };
+
+  return (
+    <>
+      <S.Container>
+        <SwiperImage slide={data?.fileUrls} />
+        <S.InfoInner>
+          <S.UserInfoWrap>
+            <S.UserInfoInner>
+              <S.UserInfo>
+                <p>
+                  <img></img>
+                </p>
+                <div>
+                  <h1>{data?.users[0].nickname}</h1>
+                  <h2>{data?.users[0].address}</h2>
+                </div>
+              </S.UserInfo>
+              <S.UserLevel>Lv. {data?.users[0].level}</S.UserLevel>
+            </S.UserInfoInner>
+          </S.UserInfoWrap>
+          <S.BuyInfoWrap>
+            <h1>{data?.title}</h1>
+            <S.SaleInfo>
+              <h2>판매종료</h2>
+              <p>{data?.perUserPrice}원</p>
+            </S.SaleInfo>
+            <S.AddressTime>
+              {data?.address}
+              <span>· {getRelativeTimeString(data?.createdAt)}</span>
+            </S.AddressTime>
+            <h2>{data?.description}</h2>
+          </S.BuyInfoWrap>
+          <S.PreviewParticipants>
+            <p>
+              제품 링크:
+              <span>
+                <a target='_blank' href={data?.itemLink}>바로가기</a>
+              </span>
+            </p>
+            <p>
+              참여중인 인원
+              <Icon name="users" color={COLORS.GRAY[500]} size={20} />
+              {data?.currentUserCount}/{data?.maxUser}명
+            </p>
+          </S.PreviewParticipants>
+          <S.BuyMapWrap>
+            <h1>장소</h1>
+            <div>
+              <Map center={{ lat: 33.5563, lng: 126.79581 }} style={{ width: '100%', height: '200px' }} level={3}>
+                <MapMarker position={{ lat: 33.5563, lng: 126.79581 }} />
+              </Map>
+            </div>
+          </S.BuyMapWrap>
+        </S.InfoInner>
+        <S.FnWrap>
+          <S.HeartIcon onClick={bookmarkGoupBuyButton}>
+            {bookmark ?<CiHeart size={30} />: <CiHeart size={30} color='#000'/>}
+          </S.HeartIcon>
+          <S.ChatButton>채팅하기</S.ChatButton>
+          <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`,{state:{id}})}>공동구매하기</S.GroupBuyButton>
+        </S.FnWrap>
+      </S.Container>
     </>
   );
 };
@@ -203,16 +220,14 @@ const S = {
     }
   `,
   BuyMapWrap: styled.div`
+    width: 100%;
     h1 {
       ${styleFont.body2}
       font-weight: 600;
       padding-bottom: 8px;
     }
     div {
-      width: 100%;
-      height: 210px;
       border-radius: 16px;
-      /* background-color: #00005e; */
     }
   `,
   FnWrap: styled.div`
@@ -224,10 +239,11 @@ const S = {
     position: sticky;
     left: 0;
     bottom: 0;
+    z-index: 99;
     padding: 10px 10px;
   `,
   HeartIcon: styled.button`
-    font-size: 26px;
+    color: ${COLORS.GRAY[400]};
   `,
   GroupBuyButton: styled.button`
     display: inline-flex;
@@ -250,7 +266,7 @@ const S = {
   `,
   ChatButton: styled.button`
     border: solid 1px ${COLORS.GREEN[300]};
-    padding: 0.8rem 1.2rem;
+    padding: 0.8rem 1.6rem;
     color: ${COLORS.GREEN[300]};
     border-radius: 6px;
     font-weight: 600;

@@ -36,3 +36,9 @@ export const addGroupBuyPost = async (formData: FormData) => {
     console.log(error);
   }
 };
+
+export const getGroupBuyDetailData = async (id: any) => {
+
+  const response = await axiosInstance.get(`/home/group-buying/${id}`);
+  return response.data;
+};

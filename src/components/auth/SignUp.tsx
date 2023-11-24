@@ -49,6 +49,7 @@ const SignUp = () => {
         passwordCheck,
         phoneNumber
       });
+      alert('회원가입 완료')
     } catch (error) {
       console.log(error);
     }
