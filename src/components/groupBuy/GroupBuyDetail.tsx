@@ -28,9 +28,9 @@ const GroupBuyDetail = () => {
   });
   console.log(data);
 
-  return (
-    <S.Container>
-      <SwiperImage />
+  return (<>
+    <S.Container>  
+    <SwiperImage slide={data?.fileUrls}/>
       <S.InfoInner>
         <S.UserInfoWrap>
           <S.UserInfoInner>
@@ -50,7 +50,8 @@ const GroupBuyDetail = () => {
           <h1>폴라로이드 카메라 필름 4명 공동구매합니다.</h1>
           <S.SaleInfo>
             <h2>판매종료</h2>
-            <p>90,000원</p>
+            <p>{data?.perUserPrice}</p>
+            {/* <p>9000000원</p> */}
           </S.SaleInfo>
           <S.AddressTime>
             신월1동<span>· 10분전</span>
@@ -89,6 +90,7 @@ const GroupBuyDetail = () => {
         <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`)}>공동구매하기</S.GroupBuyButton>
       </S.FnWrap>
     </S.Container>
+    </>
   );
 };
 

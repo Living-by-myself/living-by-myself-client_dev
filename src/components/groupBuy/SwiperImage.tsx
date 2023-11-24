@@ -1,22 +1,39 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
+import SwiperCore, { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
+import { extractImageUrls } from 'src/utilities/image';
+import 'swiper/css'
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
-const SwiperImage = () => {
+interface SlideImgProps {
+  fileUrls: string;
+}
+
+const SwiperImage = (silde: any) => {
+  const imageData = () => {
+    if (silde.slide) {
+      return extractImageUrls(silde.slide);
+    }
+  };
+  // console.log(silde);
   return (
     <S.SwiperWrap>
       <S.CustomSwiper
-        pagination={{
-          type: 'fraction'
-        }}
-        navigation={true}
+        spaceBetween={30} // 슬라이드 간 간격
+        slidesPerView={1} // 보여질 슬라이드 수
+        navigation // 네비게이션 활성화
+        pagination={{ clickable: true }} // 페이지네이션 활성화
         modules={[Pagination, Navigation]}
       >
-        <S.SwiperSlide><img></img></S.SwiperSlide>
-        <S.SwiperSlide><img></img></S.SwiperSlide>
-        {/* <SwiperSlide>slide 3</SwiperSlide>
-          <SwiperSlide>slide 4</SwiperSlide> */}
+        {imageData()?.map((img) => {
+          return (
+              <S.SwiperSlide>
+                <img src={img} alt="Image" />
+              </S.SwiperSlide>
+          );
+        })}
       </S.CustomSwiper>
     </S.SwiperWrap>
   );
@@ -33,18 +50,18 @@ const S = {
     width: 100%;
     height: 100%;
   `,
+
   SwiperSlide: styled(SwiperSlide)`
-  width: 100%;
-  height: 100%;
-    text-align: center;
-    font-size: 18px;
-    background: #fff;
+    width: 100%;
+    height: 100%;
+    background-image: cover;
     img{
-        display: block;
-        width:100%;
-        height: 100%;
-        object-fit: cover;
-        background-color: red;
+      
+      width: 100%;
+      height:100%;
+      object-fit: cover;
+        
+
     }
   `
 };
