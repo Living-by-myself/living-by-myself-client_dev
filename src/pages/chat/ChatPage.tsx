@@ -22,13 +22,17 @@ interface ChatRoom {
 
 const ChatPage = () => {
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
-  const userId = 35; // 임의로 지정한 상대 id -> 클릭한 user의 id를 받도록 변경해야함
+  const userId = 46; // 임의로 지정한 상대 id -> 클릭한 user의 id를 받도록 변경해야함
   const navigate = useNavigate();
 
   // 채팅방 조회
   const getChatList = async () => {
     try {
-      const response = await axiosInstance.get(`/home/chats/rooms`);
+      const response = await axiosInstance.get(`/home/chats/rooms`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       setChatList(response.data);
       console.log('채팅방 전체 목록 조회 성공!', response.data);
       return response;

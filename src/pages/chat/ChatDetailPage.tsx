@@ -57,14 +57,14 @@ const ChatDetailPage = () => {
           // destination: '/topic/room/' + roomId.id, // 채팅방 주소,
           destination: '/app/' + roomId.id, // 채팅방 주소,
           body: JSON.stringify({
-            // 토큰이랑 메시지 내용만 보내기
+            // userId랑 메시지 내용만 보내기
             userId: userId,
             message: message
           }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
         });
         setMessage('');
 
-        await getChatMessage();
+        // await getChatMessage();
       }
     } else {
       setHasInputError(true);
@@ -90,7 +90,7 @@ const ChatDetailPage = () => {
       debug: (str) => {
         console.log(str);
       },
-      reconnectDelay: 50000, //자동 재연결을 위한 시간 설정
+      // reconnectDelay: 50000, //자동 재연결을 위한 시간 설정
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000 // 연결이 유지되고 있는지 확인
     });
@@ -110,11 +110,13 @@ const ChatDetailPage = () => {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
           console.log('채팅리스트에 추가한다!');
           let msg = JSON.parse(message.body);
-          setChatList((prevChats) => {
-            // [...chats, msg]}
-            const isMessageExists = prevChats.some((chat) => chat.chatId === msg.id);
-            return isMessageExists ? prevChats : [...prevChats, msg];
-          });
+          // setChatList((prevChats) => {
+          //   // [...chats, msg]}
+          //   const isMessageExists = prevChats.some((chat) => chat.chatId === msg.id);
+          //   return isMessageExists ? prevChats : [...prevChats, msg];
+          // });
+          const list = [...chatList, msg];
+          setChatList(list);
         }
       });
     };
@@ -135,7 +137,7 @@ const ChatDetailPage = () => {
   // 컴포넌트 마운트 시 WebSocket 연결 및 메시지 내용 불러오기
   useEffect(() => {
     connectWebSocket();
-    getChatMessage();
+    // getChatMessage();
     console.log('userId : ', userId);
 
     return () => disConnect();
