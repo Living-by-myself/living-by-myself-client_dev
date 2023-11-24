@@ -22,7 +22,7 @@ const UserUpdateInfo = () => {
   const [isToggle, setIsToggle] = useState(false);
 
   const completeHandler = (data: any) => {
-    console.log(data)
+    console.log(data);
     setAddress(data.roadAddress);
   };
 
