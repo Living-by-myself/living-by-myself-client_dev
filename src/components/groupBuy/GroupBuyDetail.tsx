@@ -6,6 +6,7 @@ import { styleFont } from 'src/styles/styleFont';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance from 'src/api/AxiosInstance';
 import { useQuery } from '@tanstack/react-query';
@@ -16,23 +17,20 @@ const GroupBuyDetail = () => {
   console.log(id);
   const navigate = useNavigate();
 
-
-
-  const getGroupBuyDetailData = async(id:any) => {
-    const response = await axiosInstance.get(`/home/group-buying/${id}`)
-    return response.data
+  const getGroupBuyDetailData = async (id: any) => {
+    const response = await axiosInstance.get(`/home/group-buying/${id}`);
+    return response.data;
   };
 
-  const {data} = useQuery({
+  const { data } = useQuery({
     queryKey: ['GroupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
-  })
-  console.log(data)
-
+  });
+  console.log(data);
 
   return (
     <S.Container>
-        <SwiperImage/>
+      <SwiperImage />
       <S.InfoInner>
         <S.UserInfoWrap>
           <S.UserInfoInner>
@@ -78,7 +76,11 @@ const GroupBuyDetail = () => {
         </S.PreviewParticipants>
         <S.BuyMapWrap>
           <h1>장소</h1>
-          <div></div>
+          <div>
+            <Map center={{ lat: 33.5563, lng: 126.79581 }} style={{ width: '300px', height: '200px' }} level={3}>
+              <MapMarker position={{ lat: 33.5563, lng: 126.79581 }} />
+            </Map>
+          </div>
         </S.BuyMapWrap>
       </S.InfoInner>
       <S.FnWrap>
@@ -208,7 +210,7 @@ const S = {
       width: 100%;
       height: 210px;
       border-radius: 16px;
-      background-color: #00005e;
+      /* background-color: #00005e; */
     }
   `,
   FnWrap: styled.div`
