@@ -128,9 +128,10 @@ const ChatDetailPage = () => {
       if (webSocketClient) {
         // 특정 채팅방으로 메시지 전송
         webSocketClient.publish({
-          destination: ``, // 채팅방 주소,
+          destination: '/topic/room/' + roomId.id, // 채팅방 주소,
           body: JSON.stringify({ content: message }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
         });
+        setMessage('');
       }
     } else {
       setHasInputError(true);
@@ -266,7 +267,7 @@ const ChatDetailPage = () => {
                   <S.MessageContent $isMine={chat.userId === userId}>
                     <S.Message>{chat.content}</S.Message>
                   </S.MessageContent>
-                  <S.Time>{chat.getCreatedAtAsString.slice(-8, -3)}</S.Time>
+                  {/* <S.Time>{chat.getCreatedAtAsString.slice(-8, -3)}</S.Time> */}
                 </S.MessageBox>
               </S.MessageWrapper>
             );
@@ -277,6 +278,7 @@ const ChatDetailPage = () => {
             // {...register('content')}
             placeholder="메세지를 작성하시오."
             id="chatMessage"
+            value={message}
             onChange={(e) => {
               setMessage(e.target.value);
               setHasInputError(false);
