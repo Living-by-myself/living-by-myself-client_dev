@@ -28,6 +28,8 @@ import MyPageGroupBuyPage from 'src/pages/mypage/MyPageGroupBuyPage';
 import UserUpdateInfoPage from 'src/pages/user/UserUpdateInfoPage';
 import PasswordUpdatePage from 'src/pages/user/PasswordUpdatePage';
 import PointChargePage from 'src/pages/user/PointChargePage';
+import GoogleOAuth from 'src/pages/oAuth/GoogleOAuth';
+import KakaoOAuth from 'src/pages/oAuth/KakaoOAuth';
 
 const Router = () => {
   return (
@@ -50,6 +52,9 @@ const Router = () => {
         <Route path="/password-reset" element={<PasswordResetPage />} />
 
         {/* 아무나 접속할 수 있는 페이지 */}
+        <Route path="/oauth/kakao" element={<KakaoOAuth />} />
+        <Route path="/oauth/google" element={<GoogleOAuth />} />
+        <Route path="/group-buy" element={<GroupBuyPage />} />
         <Route path="/group-buy" element={<GroupBuyPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/search" element={<SearchPage />} />

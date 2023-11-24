@@ -8,10 +8,10 @@ const Postcode = () => {
   const [modal, setModal] = useState(false);
 
   const [roadAddress, setRoadAddress] = useState('');
-  const [detailAddress,setDetailAddress] = useState('')
+  const [detailAddress, setDetailAddress] = useState('');
 
-  const {register}= useForm()
-  
+  const { register } = useForm();
+
   const modalHandler = () => {
     setModal(!modal);
   };
@@ -20,16 +20,18 @@ const Postcode = () => {
     setRoadAddress(data.roadAddress);
   };
 
-//   const onChangedetailAddress = (e:React.ChangeEvent<HTMLInputElement>) => {
-//     setDetailAddress(e.target.value)
-//   }
+  //   const onChangedetailAddress = (e:React.ChangeEvent<HTMLInputElement>) => {
+  //     setDetailAddress(e.target.value)
+  //   }
   return (
     <>
       <S.FormColumn>
-        <input readOnly placeholder='주소' {...register('address')}></input>
-        <S.Button onClick={modalHandler} type='button'>우편번호 찾기</S.Button>
-        </S.FormColumn>
-        <input placeholder='상세주소' {...register('Detailaddress')}></input>
+        <input readOnly placeholder="주소" {...register('address')}></input>
+        <S.Button onClick={modalHandler} type="button">
+          우편번호 찾기
+        </S.Button>
+      </S.FormColumn>
+      {/* <input placeholder='상세주소' {...register('Detailaddress')}></input> */}
       <DaumPostcode onComplete={completeHandler} />
     </>
   );
@@ -52,7 +54,7 @@ const S = {
       padding: 0.8rem 1.2rem;
     }
   `,
-    FormColumn: styled.div`
+  FormColumn: styled.div`
     display: flex;
     gap: 9px;
   `,
