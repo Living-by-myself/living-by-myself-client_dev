@@ -13,3 +13,17 @@ export const getGroupBuyList = async () => {
     console.log(error);
   }
 };
+
+export const addGroupBuyPost = async (formData: FormData) => {
+  try {
+    const res = await axiosInstance.post('home/group-buying', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
