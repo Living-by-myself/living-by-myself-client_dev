@@ -2,14 +2,14 @@ import axios from 'axios';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useCommunityMutate from 'src/api/community/communityMutate';
-import { CommunityWriteImageStore, CommunityWriteStore } from 'src/store/communityStore';
+import { communityWriteImageStore, communityWriteStore } from 'src/store/communityStore';
 import styled from 'styled-components';
 
 const token = localStorage.getItem('atk');
 
 const WriteHeader = () => {
-  const { title, description, category } = CommunityWriteStore();
-  const { files } = CommunityWriteImageStore();
+  const { title, description, category } = communityWriteStore();
+  const { files } = communityWriteImageStore();
   const location = useLocation();
   const { addCommunityPostHandler, updateCommunityPostHandler } = useCommunityMutate();
 

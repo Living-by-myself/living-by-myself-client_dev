@@ -4,7 +4,7 @@ import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { CommunityWriteFormData } from './CommunityWriteCategoty';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
-import { CommunityWriteStore } from 'src/store/communityStore';
+import { communityWriteStore } from 'src/store/communityStore';
 import { useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { Post } from 'src/types/community/types';
@@ -16,7 +16,7 @@ interface CommunityWriteTextProps {
 }
 
 const CommunityWriteText = () => {
-  const { title, description, setTitle, setDescription } = CommunityWriteStore();
+  const { title, description, setTitle, setDescription } = communityWriteStore();
   const location = useLocation();
   const queryClient = useQueryClient();
 

@@ -1,6 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { getAccessTokenWhenExpiration } from './user/user';
-
+import { Navigate, useNavigate } from 'react-router-dom';
 const token = localStorage.getItem('atk');
 
 export const axiosBaseInstance = axios.create({
@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     console.log(error, '인터셉터 에러');
     // 에러나면 무적권 체크하셈 혹시 토큰 만료됐는지
-
+    // const navigate = useNavigate();
     if (error) {
       const response = await getAccessTokenWhenExpiration();
       if (response) {
@@ -40,9 +40,9 @@ axiosInstance.interceptors.response.use(
         const originalResponse = await axiosInstance.request(error.config);
         return originalResponse;
       } else {
-        // localStorage.clear();
+        localStorage.clear();
         alert('로그인이 만료되어 재로그인이 필요합니다.');
-        // window.location.href = '/login';
+        Navigate({ to: '/' });
       }
     }
     return Promise.reject(error);
