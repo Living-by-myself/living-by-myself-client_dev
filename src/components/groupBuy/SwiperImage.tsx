@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Pagination, Navigation } from 'swiper/modules';
 import styled from 'styled-components';
 import { extractImageUrls } from 'src/utilities/image';
-import 'swiper/css'
+import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
@@ -56,13 +56,10 @@ const S = {
     width: 100%;
     height: 100%;
     background-image: cover;
-    img{
-      
+    img {
       width: 100%;
-      height:100%;
+      height: 100%;
       object-fit: cover;
-        
-
     }
   `
 };

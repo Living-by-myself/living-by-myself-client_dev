@@ -12,8 +12,16 @@ export const getRelativeTimeString = (inputTime: string): string => {
   } else if (timeDifferenceInMinutes < 1440) {
     const hours = Math.floor(timeDifferenceInMinutes / 60);
     return `${hours}시간 전`;
-  } else {
+  } else if (timeDifferenceInMinutes < 10080) {
+    // 7 days * 24 hours * 60 minutes
     const days = Math.floor(timeDifferenceInMinutes / 1440);
     return `${days}일 전`;
+  } else if (timeDifferenceInMinutes < 43200) {
+    // 30 days * 24 hours * 60 minutes
+    const weeks = Math.floor(timeDifferenceInMinutes / 10080);
+    return `${weeks}주 전`;
+  } else {
+    const months = Math.floor(timeDifferenceInMinutes / 43200);
+    return `${months}달 전`;
   }
 };

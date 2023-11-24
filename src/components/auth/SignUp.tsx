@@ -58,16 +58,15 @@ const SignUp = () => {
   const phoneAuthNumberButton = async () => {
     const phoneNumber = getValues('phoneNumber');
 
-      try {
-        await axios.post('https://tracelover.shop/home/auth/message', {
-          phoneNumber
-        });
-        alert("인증번호 전송")
-      } catch (error:any) {
-        console.log(error)
-        alert(error.response.data.msg)
-      }
-    
+    try {
+      await axios.post('https://tracelover.shop/home/auth/message', {
+        phoneNumber
+      });
+      alert('인증번호 전송');
+    } catch (error: any) {
+      console.log(error);
+      alert(error.response.data.msg);
+    }
   };
 
   return (

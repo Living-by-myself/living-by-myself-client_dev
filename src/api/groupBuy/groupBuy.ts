@@ -1,13 +1,22 @@
 import axios from 'axios';
 import axiosInstance from '../AxiosInstance';
+import { get } from 'http';
 
-export const getGroupBuyList = async () => {
+interface getGroupBuyListProps {
+  page: number;
+  size: number;
+  sort: string;
+}
+
+export const getGroupBuyList = async ({ page, size, sort }: getGroupBuyListProps) => {
+  console.log(page, size, sort);
   try {
-    const res = await axiosInstance.get('group-buying/search?page=0&size=6&sort=asc', {
+    const res = await axiosInstance.get(`home/group-buying/search?page=${page}&size=${size}&sort=${sort}`, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
+    console.log(res.data);
     return res.data;
   } catch (error) {
     console.log(error);

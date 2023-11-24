@@ -9,7 +9,7 @@ import { GroupBuyPreviewType } from 'src/types/groupBuy/types';
 import Icon from '../icon/Icon';
 import styled from 'styled-components';
 import { COLORS } from 'src/styles/styleConstants';
-import { getImageUrls } from 'src/utilities/image';
+import { addResizeToUrl, getImageUrls } from 'src/utilities/image';
 import { styleFont } from 'src/styles/styleFont';
 import StatusBadge from './StatusBadge';
 import { getRelativeTimeString } from 'src/utilities/getDate';
@@ -25,7 +25,7 @@ const GroupBuyPostCard = ({ data }: GroupBuyPreviewProps) => {
 
   return (
     <S.Container>
-      <S.PreviewImage src={firstImage} width={100} height={100} />
+      <S.PreviewImage src={addResizeToUrl(firstImage)} width={100} height={100} />
       <S.PreviewInfo>
         <S.Title>{title}</S.Title>
         <S.AddressTimeBox>

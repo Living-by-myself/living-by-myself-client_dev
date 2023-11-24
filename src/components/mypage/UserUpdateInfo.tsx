@@ -4,35 +4,41 @@ import styled from 'styled-components';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import DaumPostcode from 'react-daum-postcode';
-import axios from 'axios';
 import axiosInstance from 'src/api/AxiosInstance';
-import Postcode from './Postcode';
+import userStore from 'src/store/userStore';
 
 interface UserUpdateType {
   username: string;
   nickname: string;
   address: string;
-  detailAddress: string;
+  userAddress: string;
 }
 
 const UserUpdateInfo = () => {
-  const { register, handleSubmit } = useForm<UserUpdateType>();
+  const { register, handleSubmit, watch, setValue } = useForm<UserUpdateType>();
 
-  const [address, setAddress] = useState('');
+  // const [address, setAddress] = useState('');
   const [isToggle, setIsToggle] = useState(false);
+  const { profile, setProfile } = userStore();
 
   const completeHandler = (data: any) => {
-    console.log(data)
-    setAddress(data.roadAddress);
+    const userAddress = `${data.sigungu} ${data.bname}, ${data.bcode}`;
+    setValue('address', data.roadAddress);
+    setValue('userAddress', userAddress);
+    // setAddress(data.roadAddress);
   };
 
   const onSubmit: SubmitHandler<UserUpdateType> = async (data) => {
-    const { nickname, detailAddress } = data;
+    const { nickname, userAddress } = data;
+    console.log(userAddress);
     try {
       await axiosInstance.put('/home/profile', {
-        address: `${address}, ${detailAddress}`,
+        address: userAddress,
         nickname
       });
+      profile!.address = userAddress as string;
+      profile!.nickname = nickname as string;
+      setProfile(profile!);
     } catch (error) {
       console.log(error);
     }
@@ -58,14 +64,14 @@ const UserUpdateInfo = () => {
             {/* <input placeholder="주소" {...register('address')}></input>
             <Postcode/> */}
             <S.FormColumn>
-              <input value={address} readOnly placeholder="주소"></input>
+              <input value={watch('address')} readOnly placeholder="주소"></input>
               <S.Button type="button" onClick={() => setIsToggle((e) => !e)}>
-                우편번호 찾기
+                주소찾기
               </S.Button>
             </S.FormColumn>
             {isToggle && <DaumPostcode onComplete={completeHandler} />}
 
-            <input placeholder="상세주소" {...register('detailAddress')}></input>
+            {/* <input placeholder="상세주소" {...register('detailAddress')}></input> */}
           </S.FormRow>
           <S.Button type="submit">수정 완료</S.Button>
         </S.Form>

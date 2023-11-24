@@ -29,6 +29,8 @@ const GroupBuyDetail = () => {
     queryFn: () => getGroupBuyDetailData(id)
   });
   console.log(data);
+  console.log(data.itemLink);
+
 
   const bookmarkGoupBuyButton = async () => {
     setBookmark((e) => !e);
@@ -67,7 +69,7 @@ const GroupBuyDetail = () => {
             <h1>{data?.title}</h1>
             <S.SaleInfo>
               <h2>판매종료</h2>
-              <p>{data?.perUserPrice}</p>
+              <p>{data?.perUserPrice}원</p>
             </S.SaleInfo>
             <S.AddressTime>
               {data?.address}

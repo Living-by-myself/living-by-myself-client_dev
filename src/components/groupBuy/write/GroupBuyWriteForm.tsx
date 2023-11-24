@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { error } from 'console';
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState } from 'react';
+import { set, useForm } from 'react-hook-form';
 import Button from 'src/components/button/Button';
 import { GroupBuyWriteFormProps } from 'src/store/groupStore';
+import DaumPostcode, { DaumPostcodeEmbed } from 'react-daum-postcode';
 import styled from 'styled-components';
 import { z } from 'zod';
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import GroupBuyInputImage from './GroupBuyInputImage';
 import { addGroupBuyPost } from 'src/api/groupBuy/groupBuy';
 
@@ -49,6 +51,10 @@ const schema = z.object({
 });
 
 const GroupBuyWriteForm = () => {
+  const [isToggle, setIsToggle] = useState(false);
+  const [isMapToggle, setIsMapToggle] = useState(false);
+  const [address, setAddress] = useState<{ lat: number; lng: number }>({ lat: 33.5563, lng: 126.79581 });
+
   const {
     register,
     handleSubmit,
@@ -66,6 +72,21 @@ const GroupBuyWriteForm = () => {
     },
     resolver: zodResolver(schema)
   });
+
+  const setAddressHandler = (data: any) => {
+    const geocoder = new kakao.maps.services.Geocoder();
+
+    geocoder.addressSearch(data.address, function (result: any, status: any) {
+      if (status === kakao.maps.services.Status.OK) {
+        setValue('lat', result[0].x);
+        setValue('lng', result[0].y);
+        setValue('address', data.address);
+        setValue('beobJeongDong', data.bcode);
+        setAddress({ lat: result[0].y, lng: result[0].x });
+        setIsMapToggle(true);
+      }
+    });
+  };
 
   const onSubmit = handleSubmit(
     async (data: GroupBuyWriteFormProps) => {
@@ -118,6 +139,7 @@ const GroupBuyWriteForm = () => {
         <S.InputWrapper>
           <S.CategoryButtonBux>
             <Button
+              type="button"
               variants={watch('enumCategory') === 'FOOD' ? 'contain' : 'outline'}
               onClick={() => {
                 setValue('enumCategory', 'FOOD');
@@ -126,6 +148,7 @@ const GroupBuyWriteForm = () => {
               음식
             </Button>
             <Button
+              type="button"
               variants={watch('enumCategory') === 'LIFE' ? 'contain' : 'outline'}
               onClick={() => {
                 setValue('enumCategory', 'LIFE');
@@ -134,6 +157,7 @@ const GroupBuyWriteForm = () => {
               생필품
             </Button>
             <Button
+              type="button"
               variants={watch('enumCategory') === 'OTHER' ? 'contain' : 'outline'}
               onClick={() => {
                 setValue('enumCategory', 'OTHER');
@@ -156,6 +180,7 @@ const GroupBuyWriteForm = () => {
         <S.InputWrapper>
           <S.EnumShareButtonBox>
             <S.EnumShareButton
+              type="button"
               onClick={() => {
                 setValue('enumShare', 'BUY');
               }}
@@ -163,6 +188,7 @@ const GroupBuyWriteForm = () => {
               판매하기
             </S.EnumShareButton>
             <S.EnumShareButton
+              type="button"
               onClick={() => {
                 setValue('enumShare', 'SHARE');
               }}
@@ -221,8 +247,27 @@ const GroupBuyWriteForm = () => {
           <S.Input type="text" placeholder="거래장소 선택" {...register('beobJeongDong')}></S.Input>
           {/* {errors.address && <p>{errors.address.message}</p>} */}
         </S.InputWrapper>
-        <button>거래희망장소</button>
       </S.GroupBuyForm>
+      <S.InputWrapper>
+        <Button type="button" onClick={() => setIsToggle(true)}>
+          수령주소 설정
+        </Button>
+        {isToggle && (
+          <>
+            <Button type="button" onClick={() => setIsToggle(false)}>
+              닫기
+            </Button>
+            <DaumPostcodeEmbed onComplete={setAddressHandler} />
+          </>
+        )}
+        {isMapToggle && (
+          <div>
+            <Map center={address} style={{ width: '300px', height: '200px' }} level={3}>
+              <MapMarker position={address} />
+            </Map>
+          </div>
+        )}
+      </S.InputWrapper>
     </S.Container>
   );
 };

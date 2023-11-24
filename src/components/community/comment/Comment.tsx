@@ -18,10 +18,6 @@ const Comment = ({ comment }: Props) => {
   const [isEdit, setIsEdit] = useState(false);
   return (
     <S.Container>
-      {/* 댓글 유저 정보 컴포넌트 */}
-      {/* <CommunityUserProfile /> */}
-      {/* <S.NickName>{comment.nickName}</S.NickName> */}
-
       {isEdit ? (
         <CommentInput
           description={comment.description}

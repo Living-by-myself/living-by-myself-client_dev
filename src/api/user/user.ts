@@ -21,11 +21,12 @@ export const loginWithEmailPassword = async ({ username, password }: LoginUserTy
 export const getAccessTokenWhenExpiration = async () => {
   try {
     const refreshToken = localStorage.getItem('rtk');
-    console.log(refreshToken);
+    console.log('만료됨 액세스 토큰', localStorage.getItem('atk'));
+    console.log(localStorage.getItem('atk') === refreshToken);
+    console.log('리프레시 토큰', refreshToken);
     const headers = {
       'Content-Type': 'application/json',
-      Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3ZXIwNjA5OUBuYXZlci5jb20iLCJhdXRoIjoiTUVNQkVSIiwiZXhwIjoxNzAxMzk1MTcwfQ.UwjI1TpmXGqqumXTERWmAqOlo44mT_xnnmEjctRUmZ4'
+      Authorization: refreshToken
     };
 
     const { data } = await axios.get('https://tracelover.shop/home/users/reissue', {
