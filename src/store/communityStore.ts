@@ -19,7 +19,7 @@ interface CommunityWriteImageStore {
   removeFile: (file: File) => void;
 }
 
-export const CommunityWriteStore = create<CommunityWriteStore>()(
+export const communityWriteStore = create<CommunityWriteStore>()(
   devtools((set) => ({
     title: '',
     description: '',
@@ -32,7 +32,7 @@ export const CommunityWriteStore = create<CommunityWriteStore>()(
   }))
 );
 
-export const CommunityWriteImageStore = create<CommunityWriteImageStore>()(
+export const communityWriteImageStore = create<CommunityWriteImageStore>()(
   devtools((set, get) => ({
     files: [],
     setFiles: (files: File[]) => set({ files }),
