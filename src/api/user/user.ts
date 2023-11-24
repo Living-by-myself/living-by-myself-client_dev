@@ -55,7 +55,7 @@ export const getUserProfile = async () => {
 export const getOtherUserProfile = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/other/${userId}`, {});
-    console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.log(error);
@@ -64,7 +64,7 @@ export const getOtherUserProfile = async (userId: string) => {
 
 export const updateUserProfileImage = async (formData: FormData) => {
   try {
-    const response = await axiosInstance.put('/home/profile/image', formData, {
+    const response = await axiosInstance.patch('/home/profile/image', formData, {
       withCredentials: true,
       headers: {
         'Content-Type': 'multipart/form-data'

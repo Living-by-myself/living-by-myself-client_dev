@@ -8,7 +8,9 @@ import { useRef } from 'react';
 
 const MyPageUserBasicInfo = () => {
   const ref = useRef<HTMLInputElement>(null);
-  const { profile: user, setProfile } = userStore();
+  const { profile: user, setProfile, isLogged } = userStore();
+
+  if (isLogged === false) return <>로딩중</>;
 
   const onInputProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
