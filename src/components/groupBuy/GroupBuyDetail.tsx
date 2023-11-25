@@ -114,11 +114,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data?.users[0].nickname}</h1>
-                  <h2>{data?.users[0].address}</h2>
+                  <h1>{data?.users[data?.users.length-1].nickname}</h1>
+                  <h2>{data?.users[data?.users.length-1].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data?.users[0].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data?.users[data?.users.length-1].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
@@ -148,7 +148,7 @@ const GroupBuyDetail = () => {
               {data?.currentUserCount}/{data?.maxUser}명
             </p>
             <S.JoinUserWrap>
-              {data?.users?.slice(1).map((joinUser: JoinUserType) => {
+              {data?.users?.slice(0,-1).map((joinUser: JoinUserType) => {
                 return (
                   <li>
                     <h1>
@@ -188,7 +188,7 @@ const GroupBuyDetail = () => {
             {bookmark ? <RiBookmarkFill size={30} /> : <RiBookmarkLine size={30} />}
           </S.bookmarkButton> */}
           <S.ChatButton>채팅하기</S.ChatButton>
-          {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
+          {data?.users[data?.users.length-1] && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>

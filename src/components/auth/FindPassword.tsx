@@ -36,22 +36,24 @@ const FindPassword = () => {
         phoneNumber,
         code: phoneAuthNumber
       });
+      console.log(res)
       setToken(res.headers['authorization']);
       navigate('/password-reset');
     } catch (error: any) {
-      alert(error.response.data.msg);
+      alert("인증번호를 확인해주세요.");
     }
   };
 
   const findPasswordButton = async () => {
     const phoneNumber = getValues('phoneNumber');
     try {
-      await axiosBaseInstance.post('/home/auth/message?authentication=find', {
+      const res = await axiosBaseInstance.post('/home/auth/message?authentication=find', {
         phoneNumber
       });
       alert('인증번호 발송');
-    } catch (error: any) {
-      alert(error.response.data.msg);
+      console.log(res)
+    } catch (error) {
+      alert("휴대폰 번호가 일치하지 않습니다.")
     }
   };
   return (
@@ -63,13 +65,12 @@ const FindPassword = () => {
             <label>이메일</label>
             <input placeholder="이메일" {...register('username')} />
           </S.FormRow>
-
           <S.FormRow>
             <label>전화번호</label>
             <input placeholder="휴대폰 번호(-없이 숫자만 입력)" {...register('phoneNumber')} />
-            <S.Button type="button" onClick={findPasswordButton}>
+            <S.AuthButton type="button" onClick={findPasswordButton}>
               인증번호 받기
-            </S.Button>
+            </S.AuthButton>
             <input placeholder="인증번호 입력" {...register('phoneAuthNumber')} />
           </S.FormRow>
           <S.Button type="submit">비밀번호 찾기</S.Button>
@@ -80,6 +81,23 @@ const FindPassword = () => {
 };
 
 export default FindPassword;
+
+const CommonButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 0.8rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  &:hover {
+    cursor: pointer;
+  }
+  &:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+`;
 
 const S = {
   Container: styled.div`
@@ -100,7 +118,7 @@ const S = {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.6rem;
+    gap: 2.6rem;
   `,
   FormRow: styled.div`
     width: 100%;
@@ -116,21 +134,14 @@ const S = {
       padding: 0.8rem 1.2rem;
     }
   `,
-  Button: styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    padding: 0.8rem 1.2rem;
+  Button: styled(CommonButton)`
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
+  `,
+  AuthButton: styled(CommonButton)`
+    background-color: ${COLORS.GRAY[0]};
+    color: ${COLORS.GREEN[300]};
+    border: solid 1px ${COLORS.GREEN[300]};
+    
   `
 };
