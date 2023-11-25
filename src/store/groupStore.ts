@@ -45,3 +45,13 @@ export const useGroupBuyQuery = create<GroupBuyQueryOption>()(
     setOption: (option: getGroupBuyListOption) => set(() => ({ option }))
   }))
 );
+
+export interface groupBuySizeStoreOption {
+  size: number;
+  setSize: (size: number) => void;
+}
+
+export const groupBuySizeStore = create((set) => ({
+  size: 1,
+  setSize: (size: number) => set(() => ({ size }))
+}));

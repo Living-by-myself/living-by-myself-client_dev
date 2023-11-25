@@ -1,16 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosPromise } from 'axios';
 import styled from 'styled-components';
 import { FlexBox, MobileContainer } from 'src/styles/styleBox';
 import RoundButton from 'src/components/button/RoundButton';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import CommunityPostCard from 'src/components/community/CommunityPostCard';
-import { Post } from 'src/types/community/types';
-import { useQuery } from '@tanstack/react-query';
+import {
+  CommunityCategory as CommunityCategorys,
+  CommunityCategoryValues,
+  CommunitySortValues,
+  Post
+} from 'src/types/community/types';
+import { InfiniteQueryObserverResult, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getCommunityPostList } from 'src/api/community/community';
-import SelectBox from 'src/components/selectBox/SelectBox';
+import InfiniteScroll from 'react-infinite-scroller';
 import { Link } from 'react-router-dom';
+import CommunityList from 'src/components/community/CommunityList';
+import CommunityListFilter from 'src/components/community/CommunityListFilter';
 
 export const COMMUNITYCATEGORY = [
   { type: 'ALL', name: '전체' },
@@ -24,33 +31,28 @@ export const COMMUNITYFILTER = [{ type: 'asc', name: '최신순' }];
 export type CommunityCategory = 'ALL' | 'FREE' | 'COOK' | 'INTERIOR' | 'CLEAN';
 export type CommunityFilter = 'asc' | 'desc';
 
+export type FetchNextPageOptions = {
+  pageParam: number;
+  option: {
+    category: CommunityCategoryValues;
+    sort: CommunitySortValues;
+    keyword: string;
+  };
+};
+
+export interface CommunityQueryData {
+  data: Post[];
+  page: number;
+  totalPages: number;
+}
 const CommunityPage = () => {
-  const [category, setCategory] = useState<CommunityCategory>('ALL');
-  const [filter, setFilter] = useState<CommunityFilter>('asc');
-  const { data, isLoading, isError } = useQuery<Post[]>({
-    queryKey: ['posts', category],
-    queryFn: () => getCommunityPostList({ category, filter })
-  });
-
-  if (isLoading) return <div>로딩중</div>;
-  if (isError) return <div>에러</div>;
-
   return (
     <MobileContainer>
       <S.FilterArea>
-        <SelectBox option={COMMUNITYCATEGORY} filter={category} setSelect={setCategory} />
-        <SelectBox option={COMMUNITYFILTER} filter={filter} setSelect={setFilter} />
+        <CommunityListFilter />
       </S.FilterArea>
       <S.CommunityList>
-        {data?.map((item) => {
-          return (
-            <li key={item.id}>
-              <Link to={`/community/${item.id}`}>
-                <CommunityPostCard post={item} />
-              </Link>
-            </li>
-          );
-        })}
+        <CommunityList />
       </S.CommunityList>
     </MobileContainer>
   );
@@ -65,14 +67,10 @@ export const S = {
     gap: 8px;
     padding: 12px 16px;
     border-bottom: 1px solid ${COLORS.GRAY[400]};
-    /* height: 50px; */
-    /* position: fixed; */
-    /* z-index: 100; */
     background-color: ${COLORS.GRAY[0]};
   `,
   CommunityList: styled.ul`
     width: 100%;
     padding: 0 16px;
-    /* margin-top: 50px; */
   `
 };
