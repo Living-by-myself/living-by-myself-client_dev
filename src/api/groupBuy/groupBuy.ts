@@ -1,17 +1,29 @@
 import axios from 'axios';
 import axiosInstance from '../AxiosInstance';
 import { get } from 'http';
+import { getGroupBuyListURL } from 'src/utilities/getUrl';
+import {
+  GroupBuyCategoriesValues,
+  GroupBuyCategoryShareValues,
+  GroupBuySortValues,
+  GroupBuyStatusValues
+} from 'src/types/groupBuy/types';
 
-interface getGroupBuyListProps {
+export interface getGroupBuyListOption {
   page: number;
-  size: number;
-  sort: string;
+  sort: GroupBuySortValues;
+  address: number;
+  category: GroupBuyCategoriesValues;
+  category_share: GroupBuyCategoryShareValues;
+  category_status: GroupBuyStatusValues;
+  keyword?: string;
 }
 
-export const getGroupBuyList = async ({ page, size, sort }: getGroupBuyListProps) => {
-  console.log(page, size, sort);
+export const getGroupBuyList = async (option: getGroupBuyListOption) => {
+  const url = getGroupBuyListURL(option);
+
   try {
-    const res = await axiosInstance.get(`home/group-buying/search?page=${page}&size=${size}&sort=${sort}`, {
+    const res = await axiosInstance.get(url, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -38,7 +50,6 @@ export const addGroupBuyPost = async (formData: FormData) => {
 };
 
 export const getGroupBuyDetailData = async (id: any) => {
-
   const response = await axiosInstance.get(`/home/group-buying/${id}`);
   return response.data;
 };
