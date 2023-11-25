@@ -78,8 +78,12 @@ const GroupBuyWriteForm = () => {
 
     geocoder.addressSearch(data.address, function (result: any, status: any) {
       if (status === kakao.maps.services.Status.OK) {
-        setValue('lat', result[0].x);
-        setValue('lng', result[0].y);
+        const lat = Number(result[0].x);
+        console.log(typeof lat);
+        const lng = Number(result[0].y);
+        console.log(typeof lng);
+        setValue('lat', lat);
+        setValue('lng', lng);
         setValue('address', data.address);
         setValue('beobJeongDong', data.bcode);
         setAddress({ lat: result[0].y, lng: result[0].x });
@@ -90,6 +94,7 @@ const GroupBuyWriteForm = () => {
 
   const onSubmit = handleSubmit(
     async (data: GroupBuyWriteFormProps) => {
+      console.log(data);
       const form = new FormData();
       const requestDto = {
         title: data.title,
@@ -126,6 +131,7 @@ const GroupBuyWriteForm = () => {
   return (
     <S.Container>
       <S.GroupBuyForm onSubmit={onSubmit}>
+        <button type="submit">제출</button>
         <div>
           <GroupBuyInputImage
             currentImageNum={watch('images')?.length || 0}

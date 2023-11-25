@@ -1,3 +1,5 @@
+import { getGroupBuyListOption } from 'src/api/groupBuy/groupBuy';
+import { GroupBuyCategoriesValues, GroupBuyCategoryShareValues } from 'src/types/groupBuy/types';
 import zustand, { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -7,8 +9,8 @@ export interface GroupBuyWriteFormProps {
   itemLink: string;
   maxUser: number;
   perUserPrice: number;
-  enumShare: GroupBuyShare;
-  enumCategory: GroupBuyCategory;
+  enumShare: GroupBuyCategoryShareValues;
+  enumCategory: GroupBuyCategoriesValues;
   address: string;
   lat: number;
   lng: number;
@@ -24,71 +26,22 @@ export type GroupBuyFilter = 'asc' | 'desc';
 export type GroupBuyShare = 'SHARE' | 'BUY';
 export type GroupBuyStatus = 'ONGOING' | 'DEADLINE';
 
-interface GroupBuyWriteStore {
-  title: string;
-  description: string;
-  enumCategory: GroupBuyCategory;
-  enumShare: GroupBuyShare;
-  itemLink: string;
-  maxUser: number;
-  perUserPrice: number;
-  address: string;
-  lat: number;
-  lng: number;
-  // beobJeongDong: string;
-  setTitle: (title: string) => void;
-  setDescription: (description: string) => void;
-  setCategory: (category: GroupBuyCategory) => void;
-  setShare: (share: GroupBuyShare) => void;
-  setItemLink: (itemLink: string) => void;
-  setMaxUser: (maxUser: number) => void;
-  setPerUserPrice: (perUserPrice: number) => void;
-  setAddress: (address: string) => void;
-  setLat: (lat: number) => void;
-  setLng: (lng: number) => void;
-  // setBeobJeongDong: (beobJeongDong: string) => void;
+export interface GroupBuyQueryOption {
+  option: getGroupBuyListOption;
+  setOption: (option: getGroupBuyListOption) => void;
 }
 
-interface GroupBuyWriteImageStore {
-  files: File[];
-  setFiles: (files: File[]) => void;
-  removeFile: (file: File) => void;
-}
-
-export const groupBuyWriteStore = create<GroupBuyWriteStore>()(
+export const useGroupBuyQuery = create<GroupBuyQueryOption>()(
   devtools((set) => ({
-    title: '',
-    description: '',
-    enumCategory: 'LIFE',
-    enumShare: 'SHARE',
-    itemLink: '',
-    maxUser: 0,
-    perUserPrice: 0,
-    address: '',
-    lat: 0,
-    lng: 0,
-    // beobJeongDong: '',
-    setTitle: (title: string) => set({ title }),
-    setDescription: (description: string) => set({ description }),
-    setCategory: (enumCategory: GroupBuyCategory) => set({ enumCategory }),
-    setShare: (enumShare: GroupBuyShare) => set({ enumShare }),
-    setItemLink: (itemLink: string) => set({ itemLink }),
-    setMaxUser: (maxUser: number) => set({ maxUser }),
-    setPerUserPrice: (perUserPrice: number) => set({ perUserPrice }),
-    setAddress: (address: string) => set({ address }),
-    setLat: (lat: number) => set({ lat }),
-    setLng: (lng: number) => set({ lng })
-  }))
-);
-
-export const groupBuyWriteImageStore = create<GroupBuyWriteImageStore>()(
-  devtools((set, get) => ({
-    files: [],
-    setFiles: (files: File[]) => set({ files }),
-    removeFile: (file: File) => {
-      const { files } = get();
-      const newFiles = files!.filter((f) => f !== file);
-      set({ files: newFiles });
-    }
+    option: {
+      page: 1,
+      category: 'LIFE',
+      category_share: 'ALL',
+      category_status: 'DEADLINE',
+      address: 0,
+      keyword: '',
+      sort: 'desc'
+    },
+    setOption: (option: getGroupBuyListOption) => set(() => ({ option }))
   }))
 );
