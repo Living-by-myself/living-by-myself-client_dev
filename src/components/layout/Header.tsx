@@ -55,7 +55,9 @@ const Header = () => {
           </Button>
         </S.MobileMenuButton>
 
-        <S.LogoContainer onClick={() => navigate('/')}>혼자살때</S.LogoContainer>
+        <S.LogoContainer onClick={() => navigate('/')}>
+          <img src={logo} alt="logo" />
+        </S.LogoContainer>
 
         <S.RightMenu>
           <SearchBar />
