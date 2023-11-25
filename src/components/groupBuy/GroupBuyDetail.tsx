@@ -39,7 +39,7 @@ const GroupBuyDetail = () => {
 
   const mutation = useMutation(getGroupBuyDetailData,{
     onSuccess: () => {
-      queryClient.invalidateQueries(["groupBuy",id])
+      queryClient.invalidateQueries(["groupBuy",data.id])
     }
   })
 
@@ -47,6 +47,8 @@ const GroupBuyDetail = () => {
     return user?.id.toString() === localStorage.getItem("id")
   })
   console.log(findBuyUser)
+
+  console.log("마지막 요소",data?.users[data?.users.length-1])
 
   const bookmarkGoupBuyButton = async () => {
     setBookmark((e) => !e);
@@ -92,11 +94,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data?.users[0].nickname}</h1>
-                  <h2>{data?.users[0].address}</h2>
+                  <h1>{data?.users[data?.users.length-1].nickname}</h1>
+                  <h2>{data?.users[data?.users.length-1].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data?.users[0].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data?.users[data?.users.length-1].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
@@ -126,7 +128,7 @@ const GroupBuyDetail = () => {
               {data?.currentUserCount}/{data?.maxUser}명
             </p>
             <S.JoinUserWrap>
-              {data?.users?.slice(1).map((joinUser: JoinUserType) => {
+              {data?.users?.slice(0,-1).map((joinUser: JoinUserType) => {
                 return (
                   <li>
                     <h1>
@@ -152,7 +154,7 @@ const GroupBuyDetail = () => {
             {bookmark ? <CiHeart size={30} /> : <CiHeart size={30} color="#000" />}
           </S.HeartIcon>
           <S.ChatButton>채팅하기</S.ChatButton>
-          {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
+          {data?.users[data?.users.length-1] && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
           ) : findBuyUser ? (<S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>): (
             <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
