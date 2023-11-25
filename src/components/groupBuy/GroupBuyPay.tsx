@@ -5,7 +5,7 @@ import { COLORS } from 'src/styles/styleConstants';
 import axiosInstance from 'src/api/AxiosInstance';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserProfile } from 'src/api/user/user';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
@@ -17,15 +17,24 @@ const GroupBuyPay = () => {
   const location = useLocation();
   const id = location.state?.id;
 
+  const queryClient = useQueryClient();
+
   const { data: user } = useQuery({
     queryKey: ['cash'],
     queryFn: () => getUserProfile()
   });
+
   console.log(user)
   const { data: pay } = useQuery({
-    queryKey: ['GroupBuy', id],
+    queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   }); 
+
+  const mutation = useMutation(getGroupBuyDetailData,{
+    onSuccess: () => {
+      queryClient.invalidateQueries(["groupBuy",id])
+    }
+  })
 
   const reaminingPoints = user?.cash -(pay?.perUserPrice/pay?.maxUser);
 
@@ -34,6 +43,7 @@ const GroupBuyPay = () => {
       const res = await axiosInstance.post(`/home/group-buying/${id}/application`);
       console.log(res);
       alert("공동구매 신청 완료")
+      mutation.mutate(id)
       navigate(`/group-buy/${id}`)
     } catch (error: any) {
       alert(error.response.data.msg);
