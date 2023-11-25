@@ -1,85 +1,107 @@
 import React, { useEffect, useState } from 'react';
 import { COLORS } from 'src/styles/styleConstants';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GoHeart } from 'react-icons/go';
-import { CiHeart } from 'react-icons/ci';
+// import { RiBookmarkLine, RiBookmarkFill } from 'react-icons/ri';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
+import { async } from 'q';
+import GroupBuyBookmark from './GroupBuyBookmark';
 
 interface JoinUserType {
-  id:number;
+  id: number;
   nickname: string;
   fileUrls: string;
 }
 
+// interface BookmarkProps {
+//   bookmarkCnt: number;
+//   existsBookmark: boolean;
+// }
+
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const id = location.state?.id;
-
+  // const location = useLocation();
+  // const id = location.state?.id;
+  const ParamsId = useParams();
+  const id = ParamsId.id;
   const queryClient = useQueryClient();
-
-
-  const [bookmark, setBookmark] = useState(false);
-
   const { data } = useQuery({
     queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
   console.log(data);
-
-  const mutation = useMutation(getGroupBuyDetailData,{
+  const mutation = useMutation(getGroupBuyDetailData, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["groupBuy",id])
+      queryClient.invalidateQueries(['groupBuy', id]);
     }
-  })
+  });
 
-  const findBuyUser = data?.users?.find((user:JoinUserType)=>{
-    return user?.id.toString() === localStorage.getItem("id")
-  })
-  console.log(findBuyUser)
+  const findBuyUser = data?.users?.find((user: JoinUserType) => {
+    return user?.id.toString() === localStorage.getItem('id');
+  });
+  console.log(findBuyUser);
 
-  const bookmarkGoupBuyButton = async () => {
-    setBookmark((e) => !e);
-  
-    const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
-    mutation.mutate(id)
-    console.log('등록', res);
-    // }else{
-    //   const res = await axiosBaseInstance.delete(`/home/group-buying/${id}/pick-like`)
-    //   console.log("삭제",res);
-    // }
-  };
+  // const bookmarkGoupBuyButton = async () => {
+  //   setBookmark((e) => !e);
+
+  //   const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+  //   mutation.mutate(id);
+  //   console.log('등록', res);
+  //   // }else{
+  //   //   const res = await axiosBaseInstance.delete(`/home/group-buying/${id}/pick-like`)
+  //   //   console.log("삭제",res);
+  //   // }
+  // };
+
+  // // 북마크 취소
+  // const deleteGroupBuyPostBookmark = async (id: number) => {
+  //   try {
+  //     const response = await axiosInstance.delete(`/home/group-buying/${id}/pick-like`);
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // // 북마크 등록
+  // const addGroupBuyPostBookmark = async (id: number) => {
+  //   try {
+  //     const response = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const closeGroupBuyButton = async () => {
     try {
       const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
-      mutation.mutate(id)
+      mutation.mutate(id);
       console.log('마감', res);
-      alert("공동구매 마감 완료")
+      alert('공동구매 마감 완료');
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   const cancelGroupBuyButton = async () => {
-    try{
+    try {
       const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
-      mutation.mutate(id)
-      console.log("공구 취소",res)
-    }catch(error){
-      console.log(error)
+      mutation.mutate(id);
+      console.log('공구 취소', res);
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
   return (
     <>
       <S.Container>
@@ -115,7 +137,7 @@ const GroupBuyDetail = () => {
             <p>
               제품 링크:
               <span>
-                <a target="_blank" href={data?.itemLink}>
+                <a target="_blank" href={data?.itemLink} rel="noreferrer">
                   바로가기
                 </a>
               </span>
@@ -148,13 +170,29 @@ const GroupBuyDetail = () => {
           </S.BuyMapWrap>
         </S.InfoInner>
         <S.FnWrap>
-          <S.HeartIcon onClick={bookmarkGoupBuyButton}>
-            {bookmark ? <CiHeart size={30} /> : <CiHeart size={30} color="#000" />}
-          </S.HeartIcon>
+          <GroupBuyBookmark likeCnt={data?.likeCnt!} />
+          {/* <S.bookmarkButton
+            $isBookmark={bookmark.existsBookmark}
+            onClick={async () => {
+              if (bookmark.existsBookmark) {
+                deleteGroupBuyPostBookmark(Number(id!));
+                setBookmark({ bookmarkCnt: bookmark.bookmarkCnt - 1, existsBookmark: !bookmark.existsBookmark });
+                console.log('delete bookmarkCnt : ', bookmarkCnt);
+              } else {
+                addGroupBuyPostBookmark(Number(id!));
+                setBookmark({ bookmarkCnt: bookmark.bookmarkCnt + 1, existsBookmark: !bookmark.existsBookmark });
+                console.log('add bookmarkCnt : ', bookmarkCnt);
+              }
+            }}
+          >
+            {bookmark ? <RiBookmarkFill size={30} /> : <RiBookmarkLine size={30} />}
+          </S.bookmarkButton> */}
           <S.ChatButton>채팅하기</S.ChatButton>
           {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
-          ) : findBuyUser ? (<S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>): (
+          ) : findBuyUser ? (
+            <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
+          ) : (
             <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
               공동구매하기
             </S.GroupBuyButton>
@@ -166,6 +204,10 @@ const GroupBuyDetail = () => {
 };
 
 export default GroupBuyDetail;
+
+// interface ButtonProps {
+//   $isBookmark: boolean;
+// }
 
 const S = {
   Container: styled.div`
@@ -309,9 +351,19 @@ const S = {
     z-index: 99;
     padding: 10px 10px;
   `,
-  HeartIcon: styled.button`
-    color: ${COLORS.GRAY[400]};
-  `,
+  // bookmarkButton: styled.button<ButtonProps>`
+  //   ${(props) =>
+  //     props.$isBookmark
+  //       ? css`
+  //           /* background-color: ${COLORS.GREEN[400]}; */
+  //           color: ${COLORS.GREEN[400]};
+  //           border: none;
+  //         `
+  //       : css`
+  //           /* border: 1px solid ${COLORS.GREEN[400]}; */
+  //           color: ${COLORS.GREEN[400]};
+  //         `}
+  // `,
   GroupBuyButton: styled.button`
     display: inline-flex;
     align-items: center;
