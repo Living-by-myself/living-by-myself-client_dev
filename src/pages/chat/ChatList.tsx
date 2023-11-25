@@ -4,6 +4,7 @@ import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
+import { useRoomTitleStore } from 'src/store/chatStore';
 
 interface ChatUser {
   id: number;
@@ -13,6 +14,7 @@ interface ChatUser {
 
 interface ChatRoom {
   id: number;
+  title: string;
   users: ChatUser[];
   lastChatMsg: string;
   lastChatTime: string;
@@ -21,7 +23,10 @@ interface ChatRoom {
 const ChatList = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
-  const ChatRoomClick = (id: number) => {
+  const { setCurrentRoomTitle } = useRoomTitleStore();
+
+  const ChatRoomClick = (id: number, title: string) => {
+    setCurrentRoomTitle(title);
     navigate(`/chat/${id}`);
   };
 
@@ -51,7 +56,7 @@ const ChatList = () => {
         chatList.map((chat) => {
           return (
             // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
-            <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id)}>
+            <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id, chat.title)}>
               <S.ChatInfoBox>
                 {/* 원래는 chat.title로 하고싶은데 그냥 아이디 값으로 대체해 놓음.. */}
                 <S.ChatRoomName>{chat.id}</S.ChatRoomName>
