@@ -1,11 +1,4 @@
-// import Badge from '@/components/common/badge';
-// import Icon from '@/components/common/icon';
-// import Title from '@/components/common/title';
-// import Typography from '@/components/common/typography';
-// import theme from '@/styles/theme';
-// import { getRelativeTimeString } from '@/utils/date';
 import { GroupBuyPreviewType } from 'src/types/groupBuy/types';
-// import { getImageUrls } from '@/utils/string';
 import Icon from '../icon/Icon';
 import styled from 'styled-components';
 import { COLORS } from 'src/styles/styleConstants';

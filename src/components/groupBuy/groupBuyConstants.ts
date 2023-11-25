@@ -17,6 +17,10 @@ export const GROUP_BUY_CATEGORY_SHARE = {
   SHARE: {
     name: '나눔',
     value: 'SHARE'
+  },
+  ALL: {
+    name: '전체',
+    value: 'ALL'
   }
 } as const;
 
