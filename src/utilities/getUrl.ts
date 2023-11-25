@@ -1,9 +1,10 @@
 import { getGroupBuyListOption } from 'src/api/groupBuy/groupBuy';
+import { CommunityCategoryValues, CommunitySortValues } from 'src/types/community/types';
 
 export const getGroupBuyListURL = (option: getGroupBuyListOption): string => {
   const base_url = 'home/group-buying';
 
-  let url = `${base_url}/search?page=${option.page}`;
+  let url = `${base_url}/search?page=${option.page}&size=6`;
 
   if (option.category && option.category !== 'ALL') {
     url += `&category=${option.category}`;
@@ -26,6 +27,33 @@ export const getGroupBuyListURL = (option: getGroupBuyListOption): string => {
   }
 
   url += `&sort=${option.sort}`;
+
+  return url;
+};
+
+export interface getCommunityPostListOption {
+  category?: CommunityCategoryValues;
+  keyword?: string;
+  sort: CommunitySortValues;
+}
+
+export interface getCommunityPostListAPIOption {
+  page: number;
+  option: getCommunityPostListOption;
+}
+
+export const getCommunityPostListURL = ({ page, option }: getCommunityPostListAPIOption): string => {
+  const base_url = 'https://tracelover.shop/home/communities';
+
+  let url = `${base_url}/search?page=${page}&size=10&sort=${option.sort}`;
+
+  if (option.category !== 'ALL') {
+    url += `&category=${option.category}`;
+  }
+
+  if (option.keyword!.length > 2) {
+    url += `&keyword=${option.keyword}`;
+  }
 
   return url;
 };

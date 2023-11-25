@@ -3,8 +3,11 @@ import styled from 'styled-components';
 import GroupBuyListFilter from './GroupBuyListFilter';
 import { useGroupBuyQuery } from 'src/store/groupStore';
 import GroupBuyList from './GroupBuyList';
+import { Button } from 'src/components/button/styles';
 
 const GroupBuyPage = () => {
+  const { option: queryOption, setOption } = useGroupBuyQuery();
+
   return (
     <MobileContainer>
       <S.FilterContainer>

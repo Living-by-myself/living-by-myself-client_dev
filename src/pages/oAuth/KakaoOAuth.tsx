@@ -6,12 +6,10 @@ const KakaoOAuth = () => {
   const location = useLocation();
 
   const kakaoLoginHandler = async () => {
-    const res = await axios.get(`https://tracelover.shop/home/oauth/kakao`, {
+    console.log(`https://tracelover.shop/home/oauth/kakao${location.search}`);
+    const res = await axios.get(`https://tracelover.shop/home/oauth/kakao${location.search}`, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
-      },
-      params: {
-        code: location.search //인가 코드
       }
     });
     console.log(res.data);
