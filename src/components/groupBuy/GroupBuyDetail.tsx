@@ -15,6 +15,11 @@ import { CiHeart } from 'react-icons/ci';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 
+interface JoinUserType {
+  nickname: string;
+  fileUrls: string;
+}
+
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,30 +27,33 @@ const GroupBuyDetail = () => {
 
   const [bookmark, setBookmark] = useState(false);
 
-
-
   const { data } = useQuery({
     queryKey: ['GroupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
   console.log(data);
-  console.log(data.itemLink);
-
 
   const bookmarkGoupBuyButton = async () => {
     setBookmark((e) => !e);
-    // if(bookmark === false){
-    //   const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
-    //   console.log("등록",res);
+  
+    const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+    console.log('등록', res);
     // }else{
     //   const res = await axiosBaseInstance.delete(`/home/group-buying/${id}/pick-like`)
     //   console.log("삭제",res);
     // }
-
-    
-    
   };
 
+  const closeGroupBuyButton = async () => {
+    try {
+      const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
+      console.log('마감', res);
+      alert("공동구매 마감 완료")
+    } catch (error) {
+      console.log(error)
+    }
+
+  };
   return (
     <>
       <S.Container>
@@ -69,7 +77,7 @@ const GroupBuyDetail = () => {
             <h1>{data?.title}</h1>
             <S.SaleInfo>
               <h2>판매종료</h2>
-              <p>{data?.perUserPrice}원</p>
+              <p>{(data?.perUserPrice / data?.maxUser).toLocaleString()}원</p>
             </S.SaleInfo>
             <S.AddressTime>
               {data?.address}
@@ -81,7 +89,9 @@ const GroupBuyDetail = () => {
             <p>
               제품 링크:
               <span>
-                <a target='_blank' href={data?.itemLink}>바로가기</a>
+                <a target="_blank" href={data?.itemLink}>
+                  바로가기
+                </a>
               </span>
             </p>
             <p>
@@ -89,6 +99,18 @@ const GroupBuyDetail = () => {
               <Icon name="users" color={COLORS.GRAY[500]} size={20} />
               {data?.currentUserCount}/{data?.maxUser}명
             </p>
+            <S.JoinUserWrap>
+              {data?.users?.slice(1).map((joinUser: JoinUserType) => {
+                return (
+                  <li>
+                    <h1>
+                      <img src={joinUser.fileUrls}></img>
+                    </h1>
+                    <h2>{joinUser.nickname}</h2>
+                  </li>
+                );
+              })}
+            </S.JoinUserWrap>
           </S.PreviewParticipants>
           <S.BuyMapWrap>
             <h1>장소</h1>
@@ -101,10 +123,16 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <S.HeartIcon onClick={bookmarkGoupBuyButton}>
-            {bookmark ?<CiHeart size={30} />: <CiHeart size={30} color='#000'/>}
+            {bookmark ? <CiHeart size={30} /> : <CiHeart size={30} color="#000" />}
           </S.HeartIcon>
           <S.ChatButton>채팅하기</S.ChatButton>
-          <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`,{state:{id}})}>공동구매하기</S.GroupBuyButton>
+          {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
+            <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
+          ) : (
+            <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
+              공동구매하기
+            </S.GroupBuyButton>
+          )}
         </S.FnWrap>
       </S.Container>
     </>
@@ -146,7 +174,6 @@ const S = {
     display: flex;
     align-items: center;
     gap: 8px;
-
     p {
       width: 44px;
       height: 44px;
@@ -217,6 +244,20 @@ const S = {
       display: flex;
       align-items: center;
       gap: 4px;
+    }
+  `,
+  JoinUserWrap: styled.div`
+    display: flex;
+    width: 100%;
+    li {
+      width: 25%;
+    }
+    h1 {
+      width: 100%;
+      img {
+        display: block;
+        width: 100%;
+      }
     }
   `,
   BuyMapWrap: styled.div`

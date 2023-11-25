@@ -32,32 +32,32 @@ axiosInstance.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error)
 );
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    console.log(error, '인터셉터 에러');
-    // 에러나면 무적권 체크하셈 혹시 토큰 만료됐는지
-    // const navigate = useNavigate();
-    if (!axiosRetry.isRetryableError(error)) {
-      // 재시도가 불가능한 경우에만 토큰 갱신 및 새로고침을 수행
-      const response = await getAccessTokenWhenExpiration();
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     console.log(error, '인터셉터 에러');
+//     // 에러나면 무적권 체크하셈 혹시 토큰 만료됐는지
+//     // const navigate = useNavigate();
+//     if (!axiosRetry.isRetryableError(error)) {
+//       // 재시도가 불가능한 경우에만 토큰 갱신 및 새로고침을 수행
+//       const response = await getAccessTokenWhenExpiration();
 
-      if (response) {
-        error.config.headers['Authorization'] = response;
-        console.log(error.config, '에러컨피그');
+//       if (response) {
+//         error.config.headers['Authorization'] = response;
+//         console.log(error.config, '에러컨피그');
 
-        const originalResponse = await axiosInstance.request(error.config);
-        console.log(originalResponse, '오리지널 리스폰스');
-        return originalResponse;
-      } else {
-        localStorage.clear();
-        userStore.getState().logout();
-        alert('로그인이 만료되어 재로그인이 필요합니다.');
-        Navigate({ to: '/login' });
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+//         const originalResponse = await axiosInstance.request(error.config);
+//         console.log(originalResponse, '오리지널 리스폰스');
+//         return originalResponse;
+//       } else {
+//         localStorage.clear();
+//         userStore.getState().logout();
+//         alert('로그인이 만료되어 재로그인이 필요합니다.');
+//         Navigate({ to: '/login' });
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default axiosInstance;
