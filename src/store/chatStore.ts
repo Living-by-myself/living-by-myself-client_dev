@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-interface roomIdStore {
-  currentRoomId: number;
-  setCurrentRoomId: (roomId: number) => void;
+interface roomTitleStore {
+  currentRoomTitle: string;
+  setCurrentRoomTitle: (roomTitle: string) => void;
 }
 
-export const useRoomIdStore = create<roomIdStore>()((set) => ({
-  currentRoomId: 0,
-  setCurrentRoomId: (roomId) => set(() => ({ currentRoomId: roomId }))
+export const useRoomTitleStore = create<roomTitleStore>()((set) => ({
+  currentRoomTitle: '',
+  setCurrentRoomTitle: (roomTitle) => set(() => ({ currentRoomTitle: roomTitle }))
 }));

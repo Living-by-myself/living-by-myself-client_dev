@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import * as StompJs from '@stomp/stompjs';
 import { useParams } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
+import { useRoomTitleStore } from 'src/store/chatStore';
+import { async } from 'q';
 
 interface ChatMessage {
   chatId: number;
@@ -23,6 +25,8 @@ const ChatDetailPage = () => {
   const token = localStorage.getItem('atk');
   const userId = Number(localStorage.getItem('id'));
   const roomId = useParams();
+  const { currentRoomTitle } = useRoomTitleStore();
+  const [roomTitle, setRoomTitle] = useState('Title');
   const [chatList, setChatList] = useState<ChatMessage[]>([]); // 채팅방 메시지 배열
 
   // WebSocket 클라이언트를 상태로 관리 → 최초 연결 후 메시지 전송 시 다시 연결하면 코드 중복
@@ -60,6 +64,18 @@ const ChatDetailPage = () => {
             // userId랑 메시지 내용만 보내기
             userId: userId,
             message: message
+          }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
+        });
+        webSocketClient.publish({
+          destination: '/topic/room/' + roomId.id, // 채팅방 주소,
+          body: JSON.stringify({
+            chatId: Math.random(),
+            localTime: new Date(),
+            msg: message,
+            responseDto: {
+              id: userId,
+              nickname: userId
+            }
           }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
         });
         setMessage('');
@@ -110,13 +126,7 @@ const ChatDetailPage = () => {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
           console.log('채팅리스트에 추가한다!');
           let msg = JSON.parse(message.body);
-          // setChatList((prevChats) => {
-          //   // [...chats, msg]}
-          //   const isMessageExists = prevChats.some((chat) => chat.chatId === msg.id);
-          //   return isMessageExists ? prevChats : [...prevChats, msg];
-          // });
-          const list = [...chatList, msg];
-          setChatList(list);
+          setChatList((prevChats) => [...prevChats, msg]);
         }
       });
     };
@@ -139,15 +149,36 @@ const ChatDetailPage = () => {
     connectWebSocket();
     // getChatMessage();
     console.log('userId : ', userId);
+    setRoomTitle(currentRoomTitle);
+    setChatRoomTitle();
 
     return () => disConnect();
   }, []);
+
+  const setChatRoomTitle = async () => {
+    if (currentRoomTitle.length === 0) {
+      try {
+        const response = await axiosInstance.get(`/home/chats/rooms`, {
+          headers: {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('ChatDetailPage에서 조회한 response.data', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return currentRoomTitle;
+    }
+  };
 
   return (
     <MobileContainer>
       <S.Container>
         <S.ChatHeader>
-          <S.Title>title</S.Title>
+          {currentRoomTitle.length !== 0 ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{roomTitle}</S.Title>}
+          <S.Title>{roomTitle}</S.Title>
           <button>더보기</button>
         </S.ChatHeader>
         {/*채팅 관련 하나의 컴포넌트로 내부에서 또다시 map을 돌려야함 한 줄에 유저가 나냐 아니냐로 구분해서 */}
@@ -160,7 +191,7 @@ const ChatDetailPage = () => {
                   <S.MessageContent $isMine={chat.responseDto.id === userId}>
                     <S.Message>{chat.msg}</S.Message>
                   </S.MessageContent>
-                  <S.Time>{chat.localTime.slice(-8, -3)}</S.Time>
+                  <S.Time>{chat.localTime.slice(11, 16)}</S.Time>
                 </S.MessageBox>
               </S.MessageWrapper>
             );
