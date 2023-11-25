@@ -9,13 +9,14 @@ import { Pagination, Navigation } from 'swiper/modules';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { GoHeart } from 'react-icons/go';
 import { CiHeart } from 'react-icons/ci';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 
 interface JoinUserType {
+  id:number;
   nickname: string;
   fileUrls: string;
 }
@@ -25,18 +26,33 @@ const GroupBuyDetail = () => {
   const location = useLocation();
   const id = location.state?.id;
 
+  const queryClient = useQueryClient();
+
+
   const [bookmark, setBookmark] = useState(false);
 
   const { data } = useQuery({
-    queryKey: ['GroupBuy', id],
+    queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
   console.log(data);
+
+  const mutation = useMutation(getGroupBuyDetailData,{
+    onSuccess: () => {
+      queryClient.invalidateQueries(["groupBuy",id])
+    }
+  })
+
+  const findBuyUser = data?.users?.find((user:JoinUserType)=>{
+    return user?.id.toString() === localStorage.getItem("id")
+  })
+  console.log(findBuyUser)
 
   const bookmarkGoupBuyButton = async () => {
     setBookmark((e) => !e);
   
     const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+    mutation.mutate(id)
     console.log('등록', res);
     // }else{
     //   const res = await axiosBaseInstance.delete(`/home/group-buying/${id}/pick-like`)
@@ -47,13 +63,23 @@ const GroupBuyDetail = () => {
   const closeGroupBuyButton = async () => {
     try {
       const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
+      mutation.mutate(id)
       console.log('마감', res);
       alert("공동구매 마감 완료")
     } catch (error) {
       console.log(error)
     }
-
   };
+
+  const cancelGroupBuyButton = async () => {
+    try{
+      const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
+      mutation.mutate(id)
+      console.log("공구 취소",res)
+    }catch(error){
+      console.log(error)
+    }
+  }
   return (
     <>
       <S.Container>
@@ -128,7 +154,7 @@ const GroupBuyDetail = () => {
           <S.ChatButton>채팅하기</S.ChatButton>
           {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
-          ) : (
+          ) : findBuyUser ? (<S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>): (
             <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
               공동구매하기
             </S.GroupBuyButton>
