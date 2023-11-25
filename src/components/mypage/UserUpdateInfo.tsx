@@ -37,6 +37,8 @@ const UserUpdateInfo = () => {
   const { profile, setProfile } = userStore();
 
   const completeHandler = (data: any) => {
+    console.log(data)
+    getValues("address")
     const userAddress = `${data.sigungu} ${data.bname}, ${data.bcode}`;
     setValue('address', data.roadAddress);
     setValue('userAddress', userAddress);

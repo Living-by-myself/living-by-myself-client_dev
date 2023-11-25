@@ -24,17 +24,15 @@ const ChatPage = () => {
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
   const userId = 46; // 임의로 지정한 상대 id -> 클릭한 user의 id를 받도록 변경해야함
   const navigate = useNavigate();
+  const token = localStorage.getItem('atk');
 
   // 채팅방 조회
   const getChatList = async () => {
     try {
-      const response = await axiosInstance.get(`/home/chats/rooms`, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      console.log(token);
+      const response = await axiosInstance.get('/home/chats/rooms');
       setChatList(response.data);
-      console.log('채팅방 전체 목록 조회 성공!', response.data);
+      // console.log('채팅방 전체 목록 조회 성공!', response.data);
       return response;
     } catch (error) {
       console.log(error);
@@ -97,7 +95,7 @@ export default ChatPage;
 
 const S = {
   Container: styled.div`
-    padding-top: 9px;
+    padding-top: 10px;
     width: 100%;
     height: 100%;
   `,
