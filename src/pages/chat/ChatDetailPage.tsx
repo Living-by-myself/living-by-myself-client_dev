@@ -64,7 +64,7 @@ const ChatDetailPage = () => {
         });
         setMessage('');
 
-        // await getChatMessage();
+        await getChatMessage();
       }
     } else {
       setHasInputError(true);
@@ -137,7 +137,7 @@ const ChatDetailPage = () => {
   // 컴포넌트 마운트 시 WebSocket 연결 및 메시지 내용 불러오기
   useEffect(() => {
     connectWebSocket();
-    // getChatMessage();
+    getChatMessage();
     console.log('userId : ', userId);
 
     return () => disConnect();

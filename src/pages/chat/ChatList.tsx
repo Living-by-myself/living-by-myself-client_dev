@@ -14,22 +14,26 @@ interface ChatUser {
 interface ChatRoom {
   id: number;
   users: ChatUser[];
-  lastChatMessage: string;
+  lastChatMsg: string;
   lastChatTime: string;
 }
 
 const ChatList = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
-  //const { currentRoomId, setCurrentRoomId } = useRoomIdStore();
-
   const ChatRoomClick = (id: number) => {
     navigate(`/chat/${id}`);
   };
 
   const getChatList = async () => {
     try {
-      const response = await axiosInstance.get(`/home/chats/rooms`);
+      const response = await axiosInstance.get(`/home/chats/rooms`, {
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('ChatList에서 조회한 response.data', response.data);
       setChatList(response.data);
       return response;
     } catch (error) {
@@ -43,7 +47,7 @@ const ChatList = () => {
 
   return (
     <>
-      {chatList?.length !== 0 ? (
+      {Array.isArray(chatList) && chatList?.length !== 0 ? (
         chatList.map((chat) => {
           return (
             // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
@@ -53,9 +57,9 @@ const ChatList = () => {
                 <S.ChatRoomName>{chat.id}</S.ChatRoomName>
                 {chat.users.length > 2 && <S.ChatUserCount>{chat.users.length}</S.ChatUserCount>}
                 {/* <S.ChattingRoomLastMessageTime>{chat.getCreatedAtAsString.slice(-8, -3)}</S.ChattingRoomLastMessageTime> */}
-                <S.ChatRoomLastMessageTime>02:31</S.ChatRoomLastMessageTime>
+                {/* <S.ChatRoomLastMessageTime>{chat.lastChatTime.slice(-8, -3)}</S.ChatRoomLastMessageTime> */}
               </S.ChatInfoBox>
-              {/* <S.ChattingRoomLastMessage>{chat.content}</S.ChattingRoomLastMessage> */}
+              {/* <S.ChatRoomLastMessage>{chat.lastChatMsg}</S.ChatRoomLastMessage> */}
               <S.ChatRoomLastMessage>안녕하세요</S.ChatRoomLastMessage>
             </S.ChatContainer>
           );
