@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { styleFont } from 'src/styles/styleFont';
 import { COLORS } from 'src/styles/styleConstants';
 import axiosInstance from 'src/api/AxiosInstance';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserProfile } from 'src/api/user/user';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
@@ -13,27 +13,40 @@ import Icon from '../icon/Icon';
 import { extractImageUrls } from 'src/utilities/image';
 
 const GroupBuyPay = () => {
+  const navigate = useNavigate()
   const location = useLocation();
   const id = location.state?.id;
+
+  const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
     queryKey: ['cash'],
     queryFn: () => getUserProfile()
   });
+
   console.log(user)
   const { data: pay } = useQuery({
-    queryKey: ['GroupBuy', id],
+    queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   }); 
 
-  const reaminingPoints = user?.cash - pay?.perUserPrice;
+  const mutation = useMutation(getGroupBuyDetailData,{
+    onSuccess: () => {
+      queryClient.invalidateQueries(["groupBuy",id])
+    }
+  })
+
+  const reaminingPoints = user?.cash -(pay?.perUserPrice/pay?.maxUser);
 
   const goupBuyPayButton = async () => {
     try {
       const res = await axiosInstance.post(`/home/group-buying/${id}/application`);
       console.log(res);
+      alert("공동구매 신청 완료")
+      mutation.mutate(id)
+      navigate(`/group-buy/${id}`)
     } catch (error: any) {
-      console.log(error);
+      alert(error.response.data.msg);
     }
   };
 
@@ -64,7 +77,7 @@ const GroupBuyPay = () => {
           </S.PointRow>
           <S.PointRow>
             <h2>결제 포인트</h2>
-            <p className="pointColor">{pay?.perUserPrice.toLocaleString()}원</p>
+            <p className="pointColor">{(pay?.perUserPrice/pay?.maxUser).toLocaleString()}원</p>
           </S.PointRow>
         </S.PointBefore>
         <S.PointAfter>
@@ -75,7 +88,7 @@ const GroupBuyPay = () => {
           <button>충전하러 가기</button>
         </S.PointAfter>
       </S.ContainerInner>
-      <S.PayButton onClick={goupBuyPayButton}>{pay?.perUserPrice.toLocaleString()}원 결제하기</S.PayButton>
+      <S.PayButton onClick={goupBuyPayButton}>{(pay?.perUserPrice/pay?.maxUser).toLocaleString()}원 결제하기</S.PayButton>
     </S.Container>
   );
 };
