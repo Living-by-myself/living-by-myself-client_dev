@@ -92,3 +92,19 @@ export const getKakaoLoginToken = async (code: string) => {
     console.log(error);
   }
 };
+
+export interface repostUserType {
+  userId: string;
+  description: string;
+}
+
+export const reportOtherUser = async (userId: string, description: string) => {
+  try {
+    const response = await axiosInstance.post(`/home/report/${userId}`, {
+      description
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
