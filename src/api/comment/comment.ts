@@ -18,9 +18,7 @@ export const getCommentList = async (option: getPostIdOption): Promise<any> => {
     });
 
     return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const postComment = async ({ postId, comment }: PostCommentOption) => {
@@ -32,19 +30,13 @@ export const postComment = async ({ postId, comment }: PostCommentOption) => {
       },
       {}
     );
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const deleteComment = async (commentId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/community/comments/${commentId}`, {});
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 interface UpdateCommentOption {
@@ -65,26 +57,17 @@ export const updateComment = async ({ commentId, comment }: UpdateCommentOption)
         }
       }
     );
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const addCommentLike = async (commentId: string) => {
   try {
     const response = await axiosInstance.post(`/home/community/comment/${commentId}/like`, {}, {});
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const deleteCommentLike = async (commentId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/community/comment/${commentId}/like`, {});
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };

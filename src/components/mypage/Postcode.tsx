@@ -16,7 +16,6 @@ const Postcode = () => {
     setModal(!modal);
   };
   const completeHandler = (data: any) => {
-    console.log(data);
     setRoadAddress(data.roadAddress);
   };
 

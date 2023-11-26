@@ -33,12 +33,10 @@ const ChatList = () => {
   const getChatList = async () => {
     try {
       const response = await axiosInstance.get(`/home/chats/rooms`);
-      console.log('ChatList에서 조회한 response.data', response.data);
+
       setChatList(response.data);
       return response;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

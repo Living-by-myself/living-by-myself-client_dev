@@ -62,7 +62,7 @@ const OtherUserProfile = ({ onClose, userId }: ModalProps) => {
             color="danger"
             onClick={async () => {
               const description = prompt('신고 사유를 입력해주세요.', '');
-              console.log(description);
+
               if (description?.length === 0) {
                 alert('신고 사유를 입력해주세요.');
                 return;

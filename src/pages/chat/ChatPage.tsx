@@ -29,25 +29,20 @@ const ChatPage = () => {
   // 채팅방 조회
   const getChatList = async () => {
     try {
-      console.log(token);
       const response = await axiosInstance.get('/home/chats/rooms');
       setChatList(response.data);
-      console.log('채팅방 전체 목록 조회 성공!', response.data);
+
       return response;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   // 채팅방 생성 - 상대 id를 가지고 있어야 함
   const createChat = async () => {
     try {
       const response = await axiosInstance.post('/room', [userId]);
-      console.log('채팅방 생성 성공!', response.data); // response로 newRoomId를 받는다?
+
       return response.data;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -59,7 +54,6 @@ const ChatPage = () => {
       const users = room.users;
       return users.length === 2 && users.some((user) => user.id === userId);
     });
-    console.log('oneOnOneRoom', oneOnOneRoom);
 
     if (oneOnOneRoom?.id! !== undefined) {
       navigate(`/chat/${oneOnOneRoom?.id!}`);
@@ -67,9 +61,7 @@ const ChatPage = () => {
       try {
         const newRoomId = await createChat(); // 상대 id 담길 듯?
         navigate(`/chat/${newRoomId}`);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   };
 

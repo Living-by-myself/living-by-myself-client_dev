@@ -33,10 +33,8 @@ const FindPhoneAuth = () => {
       await axios.post('https://tracelover.shop/home/auth/message?authentication=find', {
         phoneNumber
       });
-      alert('인증번호 발송')
-    } catch (error: any) {
-      console.log('폰에러', error.response.data.msg);
-    }
+      alert('인증번호 발송');
+    } catch (error: any) {}
   };
 
   return (
