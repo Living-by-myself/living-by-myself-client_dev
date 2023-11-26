@@ -9,6 +9,7 @@ import useCommentMutate from 'src/api/comment/commentMutate';
 import { useParams } from 'react-router-dom';
 import userStore from 'src/store/userStore';
 import { getRelativeTimeString } from 'src/utilities/getDate';
+import Icon from 'src/components/icon/Icon';
 
 interface Props {
   comment: Comments;
@@ -39,14 +40,16 @@ const CommentUserProfile = ({ comment, setIsEdit }: Props) => {
       </S.InfoContainer>
       {user!.nickname === comment?.user.nickname && (
         <S.ButtonArea>
-          <S.EditButton
+          <S.EditDeleteButton
             onClick={() => {
               setIsEdit(true);
             }}
           >
-            수정
-          </S.EditButton>
-          <S.DeleteButton onClick={handleDelete}>삭제</S.DeleteButton>
+            <Icon name="pencil" size={16} />
+          </S.EditDeleteButton>
+          <S.EditDeleteButton onClick={handleDelete}>
+            <Icon name="trash-2" size={16} />
+          </S.EditDeleteButton>
         </S.ButtonArea>
       )}
     </S.UserContainer>
@@ -64,8 +67,13 @@ const S = {
     display: flex;
     gap: 10px;
   `,
-  EditButton: styled.div``,
-  DeleteButton: styled.div``,
+  EditDeleteButton: styled.div`
+    cursor: pointer;
+    :hover {
+      color: ${COLORS.GREEN[400]};
+    }
+  `,
+
   ProfileImg: styled.img`
     width: 30px;
     height: 30px;

@@ -55,11 +55,6 @@ const BadgeGraphic = ({ type }: BadgeGraphicProps) => {
 export default BadgeGraphic;
 
 const S = {
-  Container: styled.div`
-    width: 100px;
-    height: 100px;
-    background-color: royalblue;
-  `,
   Badge: styled.div`
     display: flex;
     flex-direction: column;
@@ -68,7 +63,7 @@ const S = {
   BadgeGraphic: styled.div`
     width: 100px;
     height: 100px;
-    background-color: royalblue;
+    background-color: gray;
     border-radius: 82px;
     display: flex;
     justify-content: center;

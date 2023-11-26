@@ -10,6 +10,7 @@ import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
 import OtherUserProfileModal from '../user/OtherUserProfileModal';
 import useOverlay from 'src/hooks/useOverlay';
+import Icon from '../icon/Icon';
 
 const info = {
   level: 1,
@@ -71,8 +72,9 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
   if (isError) return <div>에러</div>;
 
   return (
-    <S.UserContainer onClick={openOtherUserProfileModal}>
+    <S.UserContainer>
       <S.ProfileImg
+        onClick={openOtherUserProfileModal}
         alt="profileImg"
         src={data?.profileImage == null ? 'http://via.placeholder.com/640x480' : data?.profileImage}
       />
@@ -85,8 +87,12 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
       </S.InfoContainer>
       {loginUser!.nickname === data.nickname && (
         <S.ButtonArea>
-          <S.EditButton onClick={navigateEditPage}>수정</S.EditButton>
-          <S.DeleteButton onClick={handleDelete}>삭제</S.DeleteButton>
+          <S.EditDeleteButton onClick={navigateEditPage}>
+            <Icon name="pencil" size={16} />
+          </S.EditDeleteButton>
+          <S.EditDeleteButton onClick={handleDelete}>
+            <Icon name="trash-2" size={16} />
+          </S.EditDeleteButton>
         </S.ButtonArea>
       )}
     </S.UserContainer>
@@ -104,8 +110,13 @@ const S = {
     display: flex;
     gap: 10px;
   `,
-  EditButton: styled.div``,
-  DeleteButton: styled.div``,
+  EditDeleteButton: styled.div`
+    cursor: pointer;
+    :hover {
+      color: ${COLORS.GREEN[400]};
+    }
+  `,
+
   ProfileImg: styled.img`
     width: 30px;
     height: 30px;

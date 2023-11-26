@@ -5,6 +5,7 @@ import { addCommunityPostLike, deleteCommunityPostLike } from 'src/api/community
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled, { css } from 'styled-components';
+import Icon from '../icon/Icon';
 
 interface Props {
   likeCnt: number;
@@ -35,7 +36,8 @@ const CommunityLike = ({ likeCnt, id, existsLike }: Props) => {
           }
         }}
       >
-        좋아요 {like.likeCnt}
+        <Icon name="heart" size={14} />
+        {like.likeCnt}
       </S.Button>
     </S.Container>
   );
@@ -49,22 +51,25 @@ interface ButtonProps {
 
 const S = {
   Container: styled.div`
-    width: 100%;
-    padding: 20px 0;
+    /* width: 100%; */
+    /* padding: 20px 0/; */
   `,
 
   Button: styled.button<ButtonProps>`
-    /* width: 100%; */
     padding: 8px 16px;
-    border-radius: 50px;
-    ${styleFont.body3};
-    /* height: 40px; */
+    border-radius: 10px;
+    ${styleFont.body2};
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 
     ${(props) =>
       props.$isLike
         ? css`
             background-color: ${COLORS.GREEN[400]};
+            border: 1px solid ${COLORS.GREEN[400]};
             color: ${COLORS.GRAY[0]};
           `
         : css`

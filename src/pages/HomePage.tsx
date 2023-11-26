@@ -141,7 +141,7 @@ const S = {
     display: flex;
     border-top: 1px solid ${COLORS.GRAY[300]};
     border-bottom: 1px solid ${COLORS.GRAY[300]};
-    padding: 6px 16px;
+    padding: 10px 16px;
     align-items: center;
     justify-content: space-between;
   `,

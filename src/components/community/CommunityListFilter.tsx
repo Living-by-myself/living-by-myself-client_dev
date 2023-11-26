@@ -83,7 +83,7 @@ const CommunityListFilter = () => {
 
 export default CommunityListFilter;
 
-interface CategotySelectProps {
+interface CategorySelectProps {
   $checked: boolean;
 }
 
@@ -105,22 +105,23 @@ const S = {
     display: flex;
     gap: 6px;
   `,
-  CategorySelect: styled.div<CategotySelectProps>`
+  CategorySelect: styled.div<CategorySelectProps>`
     ${styleFont.body3}
 
-    padding: 6px 12px;
     border-radius: 50px;
     border: none;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border: 1px solid ${COLORS.GRAY[400]};
+
     color: ${COLORS.GRAY[400]};
     ${(props) =>
       props.$checked &&
       css`
-        border: 1px solid ${COLORS.GREEN[400]};
+        padding: 6px 12px;
+        font-weight: 600;
+
         background-color: ${COLORS.GREEN[400]};
         color: ${COLORS.GRAY[0]};
       `}
