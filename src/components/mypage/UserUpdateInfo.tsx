@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { validateEmail, validateNickname } from '../auth/Validate';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-toastify';
 
 interface UserUpdateType {
   username: string;
@@ -32,32 +33,30 @@ const UserUpdateInfo = () => {
     resolver:zodResolver(schema), mode:"onSubmit"
   });
 
-  // const [address, setAddress] = useState('');
+  const [address, setAddress] = useState('');
   const [isToggle, setIsToggle] = useState(false);
   const { profile, setProfile } = userStore();
 
   const completeHandler = (data: any) => {
-    console.log(data)
-    getValues("address")
     const userAddress = `${data.sigungu} ${data.bname}, ${data.bcode}`;
     setValue('address', data.roadAddress);
     setValue('userAddress', userAddress);
-    // setAddress(data.roadAddress);
+    setAddress(data.roadAddress);
   };
 
   const onSubmit: SubmitHandler<UserUpdateType> = async (data) => {
-    const { nickname, userAddress } = data;
-    console.log(userAddress);
+    const { nickname, address } = data;
+
     try {
       await axiosInstance.put('/home/profile', {
-        address: userAddress,
+        address: address,
         nickname
       });
-      profile!.address = userAddress as string;
+      profile!.address = address as string;
       profile!.nickname = nickname as string;
       setProfile(profile!);
 
-      alert("회원정보 수정 완료")
+      toast("회원정보 수정 완료")
       navigate('/')
     } catch (error) {
       console.log(error);
@@ -84,7 +83,7 @@ const UserUpdateInfo = () => {
           <S.FormRow>
             <label>주소</label>
             <S.FormColumn>
-              <input value={watch('address')} readOnly placeholder="주소" {...register('address')}></input>
+              <input value={watch('userAddress')} readOnly placeholder="주소" {...register('address')}></input>
               <S.Button type="button" onClick={() => setIsToggle(true)}>
                 주소찾기
               </S.Button>

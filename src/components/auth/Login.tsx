@@ -25,7 +25,7 @@ const Login = () => {
   const onSubmit: SubmitHandler<LoginUserType> = async (data) => {
     // 패스워드랑 이메일로 로그인하고 토큰값을 세팅하고 유저 정보를 가져오는 함수
     const tokenData = loginWithEmailPassword(data);
-    setToken(await tokenData.then((res) => res.atk));
+    setToken(await tokenData.then((res) => res?.atk));
     const userData = getUserProfile();
     setProfile(await userData);
 

@@ -76,17 +76,16 @@ const SignUp = () => {
       await axiosBaseInstance.post('/home/auth/message', {
         phoneNumber
       });
-      toast('인증번호 전송');
+      toast('인증번호가 전송되었습니다.');
       setIsPhoneAuthCompleted(false);
     } catch (error) {
       if(phoneNumber === ""){
-        toast("휴대폰 번호를 입력해주세요")
+        toast("휴대폰 번호를 확인해주세요.")
       }else if(validatePhoneNumber(phoneNumber)){
         toast(`${phoneNumber}는 이미 있는 번호입니다.`)
       }else{
         toast("휴대폰 번호를 확인해주세요.")
       }
-      
     }
   };
 
