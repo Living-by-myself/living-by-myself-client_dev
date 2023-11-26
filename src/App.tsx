@@ -44,9 +44,8 @@ function App() {
             width: '30rem'
           }}
           toastStyle={{
-            backgroundColor: `${COLORS.GRAY[0]}`,
-            border:`solid 2px ${COLORS.GRAY[900]}`,
-            color: `${COLORS.GRAY[900]}`,
+            backgroundColor: `${COLORS.RED[400]}`,
+            color: `${COLORS.GRAY[0]}`,
             minWidth: '12rem',
             maxHeight: '200px',
             marginBottom: '0 10px',
