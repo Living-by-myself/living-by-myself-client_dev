@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { MobileContainer } from 'src/styles/styleBox';
 import Icon from 'src/components/icon/Icon';
 import { useParams } from 'react-router-dom';
-import { getPostDetail } from 'src/api/community/community';
+import { getCommunityPostDetail } from 'src/api/community/community';
 import { useQuery } from '@tanstack/react-query';
 import { Post } from 'src/types/community/types';
 import { styleFont } from 'src/styles/styleFont';
@@ -13,6 +13,7 @@ import { extractImageUrls } from 'src/utilities/image';
 import CommentList from 'src/components/community/comment/CommentList';
 import CommunityLike from 'src/components/community/CommunityLike';
 import CommentInput from 'src/components/community/comment/CommentInput';
+import { getCategoryName } from 'src/components/community/communityConstants';
 
 const CommunityDetailPage = () => {
   const param = useParams() as { id: string };
@@ -20,7 +21,7 @@ const CommunityDetailPage = () => {
 
   const { data, isLoading, isError } = useQuery<Post>({
     queryKey: ['post', postId],
-    queryFn: () => getPostDetail({ postId })
+    queryFn: () => getCommunityPostDetail({ postId })
   });
 
   if (isLoading) return <div>로딩중</div>;
@@ -35,7 +36,7 @@ const CommunityDetailPage = () => {
   return (
     <MobileContainer>
       <S.Container>
-        <S.CategoryContainer> 인기글</S.CategoryContainer>
+        <S.CategoryContainer> {getCategoryName(data.category)}</S.CategoryContainer>
 
         {/* 유저정보 컴포넌트 */}
         <CommunityUserProfile userId={data?.userId!} getCreatedAtAsString={data?.getCreatedAtAsString!} />
@@ -57,14 +58,16 @@ const CommunityDetailPage = () => {
             <> </>
           )}
 
-          <S.View>
-            <Icon name="eye" size={'12'} />
-            {data?.viewCnt}명이 봤어요
-          </S.View>
+          <S.ViewLikeContainer>
+            <S.View>
+              <Icon name="eye" size={'12'} />
+              {data?.viewCnt}명이 봤어요
+            </S.View>
+            <CommunityLike likeCnt={data?.likeCnt!} id={data?.id!} existsLike={data?.existsLike!} />
+          </S.ViewLikeContainer>
         </S.CommunityDetail>
 
         {/* 좋아요 버튼 컴포넌트 */}
-        <CommunityLike likeCnt={data?.likeCnt!} id={data?.id!} existsLike={data?.existsLike!} />
 
         {/* 댓글 입력 컴포넌트 */}
         <CommentInput />
@@ -86,8 +89,9 @@ export default CommunityDetailPage;
 
 const S = {
   Container: styled.div`
-    padding: 12px 0 0;
+    padding: 12px 16px 0;
     width: 100%;
+    position: relative;
   `,
   CategoryContainer: styled.div`
     ${styleFont.body4}
@@ -95,9 +99,9 @@ const S = {
     margin-bottom: 7px;
   `,
   Line: styled.div`
-    width: 100%;
+    /* width: 150%; */
 
-    height: 7px;
+    height: 1px;
     background-color: ${COLORS.GRAY[200]};
     margin: 15px 0;
   `,
@@ -106,11 +110,18 @@ const S = {
     padding: 20px 0 40px;
   `,
   Title: styled.p`
-    ${styleFont.body1}
+    ${styleFont.h3}
+
     margin-bottom: 9px;
   `,
   Body: styled.p`
     ${styleFont.body1}
+  `,
+  ViewLikeContainer: styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
   `,
   View: styled.div`
     ${styleFont.body4}

@@ -7,10 +7,11 @@ import SelectBox from 'src/components/selectBox/SelectBox';
 import { useEffect, useState } from 'react';
 
 import { useStore } from 'zustand';
-import { CommunityWriteStore } from 'src/store/communityStore';
+import { communityWriteStore } from 'src/store/communityStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { Post } from 'src/types/community/types';
+import { styleFont } from 'src/styles/styleFont';
 
 export interface CommunityWriteFormData {
   title: string;
@@ -22,7 +23,7 @@ export interface CommunityWriteFormData {
 const CommunityWriteCategory = () => {
   // const [category, setCategory] = useState<CommunityCategory>();
 
-  const { setCategory } = CommunityWriteStore();
+  const { setCategory } = communityWriteStore();
   const location = useLocation();
   const queryClient = useQueryClient();
 
@@ -36,6 +37,7 @@ const CommunityWriteCategory = () => {
   return (
     <S.Container>
       <SelectBox option={COMMUNITYCATEGORY.filter((item) => item.type !== 'ALL')} setSelect={setCategory} />
+      <S.Description>카테고리를 선택하세요.</S.Description>
     </S.Container>
   );
 };
@@ -50,5 +52,11 @@ const S = {
     display: flex;
 
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  `,
+  Description: styled.div`
+    ${styleFont.body3}
   `
 };

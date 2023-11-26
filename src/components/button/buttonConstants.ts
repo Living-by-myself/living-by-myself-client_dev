@@ -60,12 +60,12 @@ export const NAV_LINKS = [
     href: '/',
     icon: 'home'
   },
-  {
-    id: 2,
-    name: '공동구매',
-    href: '/group-buy',
-    icon: 'users-2'
-  },
+  // {
+  //   id: 2,
+  //   name: '공동구매',
+  //   href: '/group-buy',
+  //   icon: 'users-2'
+  // },
   {
     id: 3,
     name: '커뮤니티',

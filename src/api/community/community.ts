@@ -1,15 +1,14 @@
 import axios from 'axios';
-import { CommunityCategory, CommunityFilter } from 'src/pages/community/CommunityPage';
-import { Post } from 'src/types/community/types';
+
+import { CommunityCategoryValues, Post } from 'src/types/community/types';
 import axiosInstance from '../AxiosInstance';
 import { useQueryClient } from '@tanstack/react-query';
-
-export interface getPostListOption {
-  page?: number;
-  size?: number;
-  category: CommunityCategory;
-  filter: CommunityFilter;
-}
+import {
+  getCommunityPostListAPIOption,
+  getCommunityPostListOption,
+  getCommunityPostListURL
+} from 'src/utilities/getUrl';
+import { CommunityQueryData } from 'src/pages/community/CommunityPage';
 
 export interface getPostIdOption {
   postId: string | undefined;
@@ -17,33 +16,29 @@ export interface getPostIdOption {
 
 const token = localStorage.getItem('atk');
 
-const getPostListURL = (option: getPostListOption) => {
-  if (option.category === 'ALL') {
-    return 'https://tracelover.shop/home/communities';
-  } else {
-    return `https://tracelover.shop/home/communities/search?page=${option.page}&size=6&category=${option.category}&keyword=&sort=${option.filter}`;
-  }
-};
-
-export const getPostList = async (option: getPostListOption) => {
+export const getCommunityPostList = async ({ option, page }: getCommunityPostListAPIOption) => {
   try {
-    const url = getPostListURL(option);
+    const url = getCommunityPostListURL({ option, page });
 
-    const response = await axiosInstance.get(url, {
+    const response = await axios.get(url, {
       withCredentials: true
     });
+    // 가져온 게시글
+    const data = response.data.communityResponseDtoList as Post[];
 
-    if (option.category === 'ALL') {
-      return response.data;
-    } else {
-      return response.data.communityResponseDtoList;
-    }
+    // 전체 게시글 수
+    const allPostCount = response.data.len;
+
+    // 전체 페이징 수
+    const allPageCount = Math.ceil(allPostCount / 10);
+    const returnData = { data, totalPages: allPageCount, page };
+    return returnData;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
+export const getCommunityPostDetail = async (option: getPostIdOption): Promise<any> => {
   try {
     const response = await axiosInstance.get(`/home/communities/${option.postId}`, {
       withCredentials: true
@@ -54,7 +49,7 @@ export const getPostDetail = async (option: getPostIdOption): Promise<any> => {
   }
 };
 
-export const addPost = async (formData: FormData) => {
+export const addCommunityPost = async (formData: FormData) => {
   try {
     const response = await axiosInstance.post('/home/communities', formData, {
       headers: {
@@ -67,7 +62,7 @@ export const addPost = async (formData: FormData) => {
   }
 };
 
-export const deletePost = async (postId: string) => {
+export const deleteCommunityPost = async (postId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/communities/${postId}`, {});
     console.log(response);
@@ -81,7 +76,7 @@ interface UpdatePostOption {
   formData: FormData;
 }
 
-export const updatePost = async ({ postId, formData }: UpdatePostOption) => {
+export const updateCommunityPost = async ({ postId, formData }: UpdatePostOption) => {
   console.log(postId);
   try {
     const response = await axiosInstance.put(`/home/communities/${postId}`, formData, {
@@ -95,7 +90,7 @@ export const updatePost = async ({ postId, formData }: UpdatePostOption) => {
   }
 };
 
-export const addPostLike = async (postId: string) => {
+export const addCommunityPostLike = async (postId: string) => {
   try {
     const response = await axiosInstance.post(`/home/community/${postId}/like`, {}, {});
     console.log(response);
@@ -104,7 +99,7 @@ export const addPostLike = async (postId: string) => {
   }
 };
 
-export const deletePostLike = async (postId: string) => {
+export const deleteCommunityPostLike = async (postId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/community/${postId}/like`, {});
     console.log(response);

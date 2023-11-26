@@ -6,6 +6,10 @@ import axios from 'axios';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+interface NumberType {
+  phoneNumber: string;
+}
+
 const PHONENUMBER_REGEX = /^010\d{8}$/;
 
 const validatePhoneNumber = (phoneNumber: string) => {
@@ -13,46 +17,42 @@ const validatePhoneNumber = (phoneNumber: string) => {
   return phoneNumberRegex.test(phoneNumber);
 };
 
-const schema = z.object({
-  phoneNumber: z.string().nonempty({message:"올바른 전화번호 입력"}).refine(validatePhoneNumber, { message: '올바른 전화번호를 입력해주세요.' }),
-  phoneAuthNumber: z
-    .string()
-    .min(6, { message: '인증번호 6자리를 입력해주세요.' })
-    .max(6, { message: '인증번호 6자리를 입력해주세요.' })
-});
+const schema = z
+  .object({
+    phoneNumber: z.string().refine(validatePhoneNumber, { message: '올바른 전화번호를 입력해주세요.' }),
+    phoneAuthNumber: z
+      .string()
+      .min(4, { message: '인증번호 4자리를 입력해주세요.' })
+      .max(4, { message: '인증번호 4자리를 입력해주세요.' })
+  })
+  .refine((spaceNumber) => spaceNumber.phoneNumber === '', { message: '전화번호를 입력해주세요.' });
 
 const SignUpPhoneAuth = () => {
-    
   const {
     register,
     getValues,
     formState: { errors }
-  } = useForm({ resolver: zodResolver(schema) });
+  } = useForm<NumberType>({ resolver: zodResolver(schema) });
 
   const phoneAuthNumberButton = async () => {
     const phoneNumber = getValues('phoneNumber');
-    console.log('폰인증실행');
-
-    try {
-      await axios.post('https://tracelover.shop/home/auth/message', {
-        phoneNumber
-      });
-    } catch (error) {
-      alert(error);
-    }
+    await axios.post('https://tracelover.shop/home/auth/message', {
+      phoneNumber
+    });
+    alert('인증번호 전송');
   };
 
   return (
-    <S.FormRow>
-      <label>전화번호</label>
-      <S.FormColumn>
-        <input id="phoneNUmber" placeholder="전화번호" {...register('phoneNumber')} />
-        <S.Button onClick={phoneAuthNumberButton}>인증번호 받기</S.Button>
-      </S.FormColumn>
-      {/* <S.ErrorMessage>{errors.phoneNumber?.message}</S.ErrorMessage>
-      <input id="phoneAuthNumber" placeholder="인증번호 입력" {...register('phoneAuthNumber')} />
-      <S.ErrorMessage>{errors.phoneAuthNumber?.message}</S.ErrorMessage> */}
-    </S.FormRow>
+    // <S.FormRow>
+    //   <label>전화번호</label>
+    <S.FormColumn>
+      <input id="phoneNumber" placeholder="전화번호" {...register('phoneNumber')} />
+      <S.Button type="button" onClick={phoneAuthNumberButton}>
+        인증번호 받기
+      </S.Button>
+      <S.ErrorMessage>{errors.phoneNumber?.message}</S.ErrorMessage>
+    </S.FormColumn>
+    // </S.FormRow>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getUserProfile } from 'src/api/community/user';
+import { getUserProfile } from 'src/api/user/user';
 import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
@@ -24,14 +24,6 @@ const Header = () => {
     overlay.open(({ close }) => <NavModal onClose={close} />);
   };
 
-  // const getUser = async () => {
-  //   const response = await getUserProfile();
-  //   setUser(response);
-  // };
-
-  // useEffect(() => {
-  //   getUser();
-  // }, []);
   return (
     <S.Container>
       <S.Header>
@@ -55,7 +47,9 @@ const Header = () => {
           </Button>
         </S.MobileMenuButton>
 
-        <S.LogoContainer onClick={() => navigate('/')}>혼자살때</S.LogoContainer>
+        <S.LogoContainer onClick={() => navigate('/')}>
+          <img src={logo} alt="logo" />
+        </S.LogoContainer>
 
         <S.RightMenu>
           <SearchBar />

@@ -5,22 +5,21 @@ import { styleFont } from 'src/styles/styleFont';
 import { Post } from 'src/types/community/types';
 import styled from 'styled-components';
 import { addResizeToUrl } from 'src/utilities/image';
+import { getRelativeTimeString } from 'src/utilities/getDate';
+import { COMMUNITY_CATEGORY, getCategoryName } from './communityConstants';
 
 interface CommunityPostCardProps {
   post: Post;
 }
 
 const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
-  const navigate = useNavigate();
+  const category = post.category;
+
   return (
-    <S.Container
-      onClick={() => {
-        navigate(`/community/${post.id}`);
-      }}
-    >
+    <S.Container>
       <S.ContentsBox>
         <S.TitleBodyBox $isImage={post.fileUrls !== null ? true : false}>
-          <S.CategoryContainer>{post.category} 인기글</S.CategoryContainer>
+          <S.CategoryContainer>{getCategoryName(category)}</S.CategoryContainer>
 
           {/* 컨텐츠 박스의 크기가 조절 됨 */}
           <S.Title>{post.title}</S.Title>
@@ -39,14 +38,20 @@ const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
 
       <S.PostInfoContainer>
         <S.TimeViewBox>
-          <S.Time>{post.getCreatedAtAsString}</S.Time>
-          <S.View> · {post.viewCnt}</S.View>
+          <S.View>조회수 {post.viewCnt}회 |</S.View>
+
+          <S.Time>{getRelativeTimeString(post.getCreatedAtAsString)}</S.Time>
         </S.TimeViewBox>
         <S.CommentLikeBox>
           <Icon name="message-circle" size={'12'} />
           <S.Comment>{post.commentCnt}</S.Comment>
         </S.CommentLikeBox>
-        <Icon name="heart" size={'12'} />
+        {post.existsLike ? (
+          <Icon name="heart" style={{ color: COLORS.RED[400] }} size={'12'} />
+        ) : (
+          <Icon name="heart" size={'12'} />
+        )}
+
         <S.Like>{post.likeCnt}</S.Like>
       </S.PostInfoContainer>
     </S.Container>
@@ -62,7 +67,8 @@ interface imgProps {
 const S = {
   Container: styled.div`
     padding: 14px 0 16px;
-    width: 100%;
+    margin: 0 16px 0;
+
     border-bottom: 1px solid ${COLORS.GRAY[200]};
   `,
   CategoryContainer: styled.div`
@@ -81,8 +87,6 @@ const S = {
     ${styleFont.h4}
     color: ${COLORS.GRAY[900]};
     margin-bottom: 5px;
-
-    /* background-color: royalblue; */
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -107,14 +111,15 @@ const S = {
     display: flex;
     align-items: center;
     margin-right: auto;
+    gap: 3px;
   `,
+  Time: styled.p``,
+  View: styled.p``,
   CommentLikeBox: styled.div`
     display: flex;
     align-items: center;
     margin-left: 0;
   `,
-  Time: styled.p``,
-  View: styled.p``,
   Comment: styled.p`
     margin: 1px 10px 0 3px;
   `,

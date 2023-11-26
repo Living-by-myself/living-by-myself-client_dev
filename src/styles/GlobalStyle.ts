@@ -36,6 +36,14 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+}
+
+a{
+	text-decoration: none;
+	color: inherit;
 }
 
 article, aside, details, figcaption, figure, 

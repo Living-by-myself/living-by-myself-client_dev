@@ -22,6 +22,11 @@ const MyPageMenuList = () => {
           <MyPageMenuCard
             key={index}
             onClick={() => {
+              if (menu.url === '/mypage/group-buy') {
+                alert('서비스 준비 중입니다.');
+                return;
+              }
+
               if (menu.url === '/mypage/logout') {
                 localStorage.removeItem('atk');
                 localStorage.removeItem('rtk');

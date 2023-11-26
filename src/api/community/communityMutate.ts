@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addPost, deletePost, updatePost } from './community';
+import { addCommunityPost, deleteCommunityPost, updateCommunityPost } from './community';
 interface Props {
   postId: string;
 }
@@ -19,36 +19,36 @@ const useCommunityMutate = (postId?: string) => {
     }
   };
 
-  const addPostHandler = (formData: FormData) => {
-    addPostMutation.mutate(formData);
+  const addCommunityPostHandler = (formData: FormData) => {
+    addCommunityMutation.mutate(formData);
   };
 
-  const deletePostHandler = (id: string) => {
+  const deleteCommunityPostHandler = (id: string) => {
     if (window.confirm('게시글을 삭제하시겠습니까?')) {
-      deleteCommentMutation.mutate(id);
+      deleteCommunityMutation.mutate(id);
     } else {
       alert('취소되었습니다.');
     }
   };
 
-  const updatePostHandler = (postId: string, formData: FormData) => {
+  const updateCommunityPostHandler = (postId: string, formData: FormData) => {
     if (window.confirm('게시글을 수정 하시겠습니까?')) {
-      updateCommentMutation.mutate({ postId, formData });
+      updateCommunityMutation.mutate({ postId, formData });
     } else {
     }
   };
 
-  const addPostMutation = useMutation(addPost, success);
-  const deleteCommentMutation = useMutation(deletePost, success);
-  const updateCommentMutation = useMutation(updatePost, updateSuccess);
+  const addCommunityMutation = useMutation(addCommunityPost, success);
+  const deleteCommunityMutation = useMutation(deleteCommunityPost, success);
+  const updateCommunityMutation = useMutation(updateCommunityPost, updateSuccess);
 
   return {
-    addPostMutation,
-    deleteCommentMutation,
-    updateCommentMutation,
-    updatePostHandler,
-    deletePostHandler,
-    addPostHandler
+    addCommunityMutation,
+    deleteCommunityMutation,
+    updateCommunityMutation,
+    updateCommunityPostHandler,
+    deleteCommunityPostHandler,
+    addCommunityPostHandler
   };
 };
 export default useCommunityMutate;
