@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { profile } from 'console';
 import { useEffect, useState } from 'react';
 import { set } from 'react-hook-form';
 import { getMyBadge } from 'src/api/mypage/mypage';
@@ -43,7 +44,7 @@ const MyPageBadgePage = () => {
     <MobileContainer>
       <S.Container>
         <S.ProfileImageBox>
-          <S.ProfileImage src="https://via.placeholder.com/70" />
+          <S.ProfileImage src={user?.profileImage ? user.profileImage : 'https://via.placeholder.com/70'} />
         </S.ProfileImageBox>
         <S.UserName>{user?.nickname} 님의 활동배지</S.UserName>
         <S.UserInfo>총 00개의 배지를 모으셨어요!</S.UserInfo>
@@ -70,6 +71,7 @@ const S = {
   `,
 
   Container: styled.div`
+    padding: 0 16px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -108,6 +110,7 @@ const S = {
     margin: 8px 0;
     color: ${COLORS.GRAY[400]};
     ${styleFont.h4}
+    font-weight: 400;
   `,
   UserInfo: styled.p`
     color: ${COLORS.GRAY[400]};

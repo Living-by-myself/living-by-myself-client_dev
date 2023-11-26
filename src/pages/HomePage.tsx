@@ -36,7 +36,11 @@ const HomePage = () => {
         </S.Banner>
         <S.ContentsBox>
           <S.TabArea>
-            <S.MoreTab>
+            <S.MoreTab
+              onClick={() => {
+                navigate('/community');
+              }}
+            >
               <S.TitleArea>
                 <S.Title>혼자 살 때</S.Title>
                 <S.Category>커뮤니티</S.Category>
@@ -58,7 +62,11 @@ const HomePage = () => {
           </S.TabArea>
 
           <S.TabArea>
-            <S.MoreTab>
+            <S.MoreTab
+              onClick={() => {
+                navigate('/group-buy');
+              }}
+            >
               <S.TitleArea>
                 <S.Title>같이 살 때</S.Title>
                 <S.Category>공동구매</S.Category>
@@ -133,7 +141,7 @@ const S = {
     display: flex;
     border-top: 1px solid ${COLORS.GRAY[300]};
     border-bottom: 1px solid ${COLORS.GRAY[300]};
-    padding: 6px 16px;
+    padding: 10px 16px;
     align-items: center;
     justify-content: space-between;
   `,

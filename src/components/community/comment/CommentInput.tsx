@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import useCommentMutate from 'src/api/comment/commentMutate';
 import { set } from 'react-hook-form';
+import Icon from 'src/components/icon/Icon';
 
 interface CommentInputProps {
   commentId?: string;
@@ -55,12 +56,26 @@ const CommentInput = ({ commentId, description, setIsEdit }: CommentInputProps) 
               setIsEdit(false);
             }}
           >
-            취소
+            <Icon name="x" size={16} />
           </S.CommentBtn>
-          <S.CommentBtn>수정</S.CommentBtn>
+          <S.CommentBtn
+            onClick={() => {
+              onSubmit();
+              setText('');
+            }}
+          >
+            <Icon name="pencil" size={16} />
+          </S.CommentBtn>
         </>
       ) : (
-        <S.CommentBtn>등록</S.CommentBtn>
+        <S.CommentBtn
+          onClick={() => {
+            onSubmit();
+            setText('');
+          }}
+        >
+          <Icon name="send" size={16} />
+        </S.CommentBtn>
       )}
     </S.Container>
   );
@@ -90,13 +105,20 @@ const S = {
 
     ${styleFont.body3}
   `,
-  CommentBtn: styled.button`
+  CommentBtn: styled.div`
     width: 40px;
     /* height: 40px; */
-    min-width: 40px;
+    /* min-width: 40/px; */
     min-height: 40px;
-    border-radius: 50px;
+    border-radius: 10px;
     border: none;
     background-color: ${COLORS.GRAY[200]};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    :hover {
+      color: ${COLORS.GREEN[400]};
+    }
+    cursor: pointer;
   `
 };

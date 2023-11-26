@@ -31,3 +31,8 @@ export const COMMUNITY_SORT = {
     value: 'desc'
   }
 } as const;
+
+export const getCategoryName = (value: any) => {
+  const category = Object.values(COMMUNITY_CATEGORY).find((item) => item.value === value);
+  return category ? category.name : 'Unknown';
+};

@@ -6,17 +6,20 @@ import { Post } from 'src/types/community/types';
 import styled from 'styled-components';
 import { addResizeToUrl } from 'src/utilities/image';
 import { getRelativeTimeString } from 'src/utilities/getDate';
+import { COMMUNITY_CATEGORY, getCategoryName } from './communityConstants';
 
 interface CommunityPostCardProps {
   post: Post;
 }
 
 const CommunityPostCard = ({ post }: CommunityPostCardProps) => {
+  const category = post.category;
+
   return (
     <S.Container>
       <S.ContentsBox>
         <S.TitleBodyBox $isImage={post.fileUrls !== null ? true : false}>
-          <S.CategoryContainer>{post.category} 인기글</S.CategoryContainer>
+          <S.CategoryContainer>{getCategoryName(category)}</S.CategoryContainer>
 
           {/* 컨텐츠 박스의 크기가 조절 됨 */}
           <S.Title>{post.title}</S.Title>
@@ -63,9 +66,9 @@ interface imgProps {
 
 const S = {
   Container: styled.div`
-    width: 100vw;
-    padding: 14px 16px 16px;
-    width: 100%;
+    padding: 14px 0 16px;
+    margin: 0 16px 0;
+
     border-bottom: 1px solid ${COLORS.GRAY[200]};
   `,
   CategoryContainer: styled.div`

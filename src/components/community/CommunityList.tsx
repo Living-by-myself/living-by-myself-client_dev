@@ -5,6 +5,9 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Link } from 'react-router-dom';
 import { CommunityQueryData, FetchNextPageOptions } from 'src/pages/community/CommunityPage';
 import { communityAPIOptionStore } from 'src/store/communityStore';
+import styled from 'styled-components';
+import { styleFont } from 'src/styles/styleFont';
+import { COLORS } from 'src/styles/styleConstants';
 
 const CommunityList = () => {
   const { category, sort, keyword } = communityAPIOptionStore();
@@ -51,32 +54,22 @@ const CommunityList = () => {
           );
         })}
       </InfiniteScroll>
+      {!hasNextPage && <S.NoScroll>더 이상 게시글이 없습니다.</S.NoScroll>}
     </div>
   );
 };
 
 export default CommunityList;
 
-// );
-//         }}
-//         hasMore={hasNextPage}
-//         loader={
-//           <div className="loader" key={0}>
-//             Loading ...
-//           </div>
-//         }
-//       >
-//       {data.pages?.map((item) => {
-//         return item.data.map((post) => {
-//           return (
-//             <li key={post.id}>
-//               <Link to={`/community/${post.id}`}>
-//                 <CommunityPostCard post={post} />
-//               </Link>
-//             </li>
-//           );
-//         });
-//       })}
-//     </InfiniteScroll>
-//   </div>
-// );
+const S = {
+  NoScroll: styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ${styleFont.h3}
+    color: ${COLORS.GREEN[400]};
+    width: 100%;
+    height: 30px;
+    padding: 50px;
+  `
+};

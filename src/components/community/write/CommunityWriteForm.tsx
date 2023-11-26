@@ -18,9 +18,7 @@ const CommunityWriteForm = () => {
     <S.Container>
       <form onSubmit={() => {}}>
         {/* 작성버튼을 눌러야함 근데 그 작성버튼은 상위 컴포넌트에 있어야함 */}
-        <button type="submit" onClick={() => {}}>
-          작성
-        </button>
+
         {/* 카테고리 */}
         <CommunityWriteCategory />
 

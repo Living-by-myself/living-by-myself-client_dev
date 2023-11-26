@@ -31,7 +31,7 @@ const CommentLike = ({ likeCnt, existsLike, id }: Props) => {
       }}
     >
       <Icon name="heart" size={14} />
-      좋아요 {like.likeCnt}
+      {like.likeCnt}
     </S.Container>
   );
 };
