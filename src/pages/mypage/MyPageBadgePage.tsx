@@ -49,7 +49,6 @@ const MyPageBadgePage = () => {
         <S.UserName>{user?.nickname} 님의 활동배지</S.UserName>
         <S.UserInfo>총 00개의 배지를 모으셨어요!</S.UserInfo>
         <S.BadgeContainer>
-          {/* 난중에 컴포넌트 분리하고 map */}
           {data?.map((item, index) => {
             return <Badge key={index} type={item.type}></Badge>;
           })}
