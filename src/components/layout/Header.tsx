@@ -24,14 +24,6 @@ const Header = () => {
     overlay.open(({ close }) => <NavModal onClose={close} />);
   };
 
-  // const getUser = async () => {
-  //   const response = await getUserProfile();
-  //   setUser(response);
-  // };
-
-  // useEffect(() => {
-  //   getUser();
-  // }, []);
   return (
     <S.Container>
       <S.Header>

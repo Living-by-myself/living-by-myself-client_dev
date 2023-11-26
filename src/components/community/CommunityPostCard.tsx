@@ -63,7 +63,8 @@ interface imgProps {
 
 const S = {
   Container: styled.div`
-    padding: 14px 0 16px;
+    width: 100vw;
+    padding: 14px 16px 16px;
     width: 100%;
     border-bottom: 1px solid ${COLORS.GRAY[200]};
   `,
