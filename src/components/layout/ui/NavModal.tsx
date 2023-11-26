@@ -9,6 +9,7 @@ import Button from 'src/components/button/Button';
 import { COLORS } from 'src/styles/styleConstants';
 import NavUserProfile from './NavUserProfile';
 import userStore from 'src/store/userStore';
+import logo from 'src/components/icon/logo.svg';
 
 interface NavModalProps {
   onClose: () => void;
@@ -28,7 +29,7 @@ const NavModal = ({ onClose }: NavModalProps) => {
     <BaseModal onClose={onClose} side="left">
       <S.Container>
         <S.Nav>
-          로고영역
+          <img src={logo} alt="logo" />
           {isLogged && <NavUserProfile />}
           <S.LinkList>
             {NAV_LINKS.map((link) => (

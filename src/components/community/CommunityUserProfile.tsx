@@ -8,6 +8,8 @@ import userStore from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
+import OtherUserProfileModal from '../user/OtherUserProfileModal';
+import useOverlay from 'src/hooks/useOverlay';
 
 const info = {
   level: 1,
@@ -43,6 +45,7 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
   const navigate = useNavigate();
   const param = useParams() as { id: string };
   const queryClient = useQueryClient();
+  const overlay = useOverlay();
 
   const postData = queryClient.getQueryData(['post', param.id as unknown as string]);
 
@@ -60,11 +63,15 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
     navigate('/community');
   };
 
+  const openOtherUserProfileModal = () => {
+    overlay.open(({ close }) => <OtherUserProfileModal userId={userId} onClose={close} />);
+  };
+
   if (isLoading) return <div>로딩중</div>;
   if (isError) return <div>에러</div>;
 
   return (
-    <S.UserContainer>
+    <S.UserContainer onClick={openOtherUserProfileModal}>
       <S.ProfileImg
         alt="profileImg"
         src={data?.profileImage == null ? 'http://via.placeholder.com/640x480' : data?.profileImage}

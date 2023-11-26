@@ -35,9 +35,11 @@ export default RootLayout;
 
 const S = {
   ViewContainer: styled.div`
+    width: 100%;
     position: relative;
   `,
   OutletContainer: styled.div`
+    width: 100%;
     /* padding-top: 50px; */
   `
 };
