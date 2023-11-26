@@ -34,10 +34,11 @@ const Login = () => {
 
   //주소로 이동해서 해당 인가코드를 백엔드에 보내주면 response로 atk와rtk 데이터가 들어옴 안됨
   const kakaoLoginHandler = async () => {
-    const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
-    const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
+    alert('소셜로그인 기능은 준비중입니다.');
+    // const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
+    // const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
 
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`;
+    // window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`;
   };
 
   return (
@@ -67,7 +68,7 @@ const Login = () => {
                 <img src="/imgs/kakao.png" />
               </a>
             </button>
-            <button onClick={() => {}}>
+            <button onClick={kakaoLoginHandler}>
               {/* <Link to="https://accounts.google.com/o/oauth2/v2/auth?client_id=480627412963-2kv4rhdck7u0svv6urq7req1ro0jq8hv.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile"> */}
               <img src="/imgs/google.png" />
               {/* </Link> */}
