@@ -13,9 +13,6 @@ const KakaoOAuth = () => {
       }
     });
     console.log(res.data);
-    // localStorage.setItem('atk', res.data.atk);
-    // localStorage.setItem('rtk', res.data.rtk);
-    // navigate('/');
   };
 
   useEffect(() => {

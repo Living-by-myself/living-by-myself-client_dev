@@ -1,73 +1,147 @@
+import { useState } from 'react';
 import { communityAPIOptionStore } from 'src/store/communityStore';
+import { COLORS } from 'src/styles/styleConstants';
+import { styleFont } from 'src/styles/styleFont';
+import styled, { css } from 'styled-components';
 
 const CommunityListFilter = () => {
   const { category, sort, setCategory, setSort } = communityAPIOptionStore();
 
   return (
-    <div>
-      <div>
-        <input
+    <S.FilterBox>
+      <S.FormBox>
+        <S.CategorySelect
           id="ALL"
-          value="ALL"
-          name="category"
-          type="radio"
-          checked={category === 'ALL'}
-          onChange={() => setCategory('ALL')}
-        />
-        전체
-        <input
-          id="FREE"
-          value="FREE"
-          name="category"
-          type="radio"
-          checked={category === 'FREE'}
-          onChange={() => setCategory('FREE')}
-        />
-        자유
-        <input
-          id="COOK"
-          value="COOK"
-          name="category"
-          type="radio"
-          checked={category === 'COOK'}
-          onChange={() => setCategory('COOK')}
-        />
-        요리
-        <input
-          id="INTERIOR"
-          value="INTERIOR"
-          name="category"
-          type="radio"
-          checked={category === 'INTERIOR'}
-          onChange={() => setCategory('INTERIOR')}
-        />
-        인테리어
-        <input
-          id="CLEAN"
-          value="CLEAN"
-          name="category"
-          type="radio"
-          checked={category === 'CLEAN'}
-          onChange={() => setCategory('CLEAN')}
-        />
-        청소
-      </div>
+          // value="ALL"
+          // name="category"
+          // type="radio"
+          $checked={category === 'ALL'}
+          onClick={() => setCategory('ALL')}
+        >
+          전체
+        </S.CategorySelect>
 
-      <div>
-        <input id="asc" value="asc" name="sort" type="radio" checked={sort === 'asc'} onChange={() => setSort('asc')} />
-        최신순
-        <input
-          id="ALL"
-          value="ALL"
-          name="sort"
-          type="radio"
-          checked={sort === 'desc'}
-          onChange={() => setSort('desc')}
-        />
-        오래된순
-      </div>
-    </div>
+        <S.CategorySelect
+          id="FREE"
+          // value="FREE"
+          // name="category"
+          // type="radio"
+          $checked={category === 'FREE'}
+          onClick={() => setCategory('FREE')}
+        >
+          자유
+        </S.CategorySelect>
+
+        <S.CategorySelect
+          id="COOK"
+          // value="COOK"
+          // name="category"
+          // type="radio"
+          $checked={category === 'COOK'}
+          onClick={() => setCategory('COOK')}
+        >
+          요리
+        </S.CategorySelect>
+
+        <S.CategorySelect
+          id="INTERIOR"
+          // value="INTERIOR"
+          // name="category"
+          // type="radio"
+          $checked={category === 'INTERIOR'}
+          onClick={() => setCategory('INTERIOR')}
+        >
+          인테리어
+        </S.CategorySelect>
+
+        <S.CategorySelect
+          id="CLEAN"
+          // value="CLEAN"
+          // name="category"
+          // type="radio"
+          $checked={category === 'CLEAN'}
+          onClick={() => setCategory('CLEAN')}
+        >
+          청소
+        </S.CategorySelect>
+      </S.FormBox>
+
+      <S.SortButton
+        onClick={() => {
+          if (sort === 'asc') {
+            setSort('desc');
+          } else {
+            setSort('asc');
+          }
+        }}
+      >
+        {sort === 'asc' ? '오래된순' : '최신순'}
+      </S.SortButton>
+    </S.FilterBox>
   );
 };
 
 export default CommunityListFilter;
+
+interface CategorySelectProps {
+  $checked: boolean;
+}
+
+const S = {
+  FilterBox: styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    overflow-x: scroll;
+    /* min-width: 400px; */
+    width: 100%;
+  `,
+  SortButton: styled.div`
+    ${styleFont.body3}
+    color: ${COLORS.GREEN[400]};
+  `,
+  FormBox: styled.div`
+    display: flex;
+    gap: 6px;
+  `,
+  CategorySelect: styled.div<CategorySelectProps>`
+    ${styleFont.body3}
+
+    border-radius: 50px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    color: ${COLORS.GRAY[400]};
+    ${(props) =>
+      props.$checked &&
+      css`
+        padding: 6px 12px;
+        font-weight: 600;
+
+        background-color: ${COLORS.GREEN[400]};
+        color: ${COLORS.GRAY[0]};
+      `}
+  `
+};
+
+// const FormCheckLeft = styled.input.attrs({ type: 'radio' })`
+//   &:checked {
+//     display: inline-block;
+//     background: none;
+//     padding: 0px 10px;
+//     text-align: center;
+//     height: 35px;
+//     line-height: 33px;
+//     font-weight: 500;
+//     display: none;
+//   }
+//   /* &:checked + ${FormCheckText} {
+//     background: #e4794d;
+//     color: #fff;
+//   } */
+//   display: none;
+// `;

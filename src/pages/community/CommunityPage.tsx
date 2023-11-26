@@ -65,12 +65,14 @@ export const S = {
     width: 100%;
     display: flex;
     gap: 8px;
-    padding: 12px 16px;
+    padding: 0 16px;
     border-bottom: 1px solid ${COLORS.GRAY[400]};
     background-color: ${COLORS.GRAY[0]};
+    position: fixed;
   `,
   CommunityList: styled.ul`
     width: 100%;
     padding: 0 16px;
+    margin-top: 50px;
   `
 };
