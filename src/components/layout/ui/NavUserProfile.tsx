@@ -16,7 +16,9 @@ const NavUserProfile = () => {
       />
       <S.InfoContainer>
         <S.NickName>{user!.nickname}</S.NickName>
-        <S.Address>{user!.address}주소</S.Address>
+        <S.Address>
+          Lv.{user!.level} | {user!.address?.split(',')[0]}
+        </S.Address>
       </S.InfoContainer>
     </S.UserContainer>
   );
@@ -27,6 +29,10 @@ export default NavUserProfile;
 const S = {
   UserContainer: styled.div`
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
   `,
   ButtonArea: styled.div`
     margin-left: auto;
@@ -36,9 +42,9 @@ const S = {
   EditButton: styled.div``,
   DeleteButton: styled.div``,
   ProfileImg: styled.img`
-    width: 30px;
-    height: 30px;
-    border-radius: 30px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50px;
     border: none;
     background-color: red;
   `,
@@ -46,10 +52,11 @@ const S = {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin-left: 7px;
   `,
   NickName: styled.p`
-    ${styleFont.body3}
+    ${styleFont.h4}
     color: ${COLORS.GRAY[900]};
     margin-bottom: 3px;
   `,
@@ -62,7 +69,7 @@ const S = {
     display: flex;
     align-items: center;
     /* margin-top: auto; */
-    ${styleFont.body4}
+    ${styleFont.body2}
 
     color: ${COLORS.GRAY[400]};
   `,

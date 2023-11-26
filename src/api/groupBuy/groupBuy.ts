@@ -1,6 +1,4 @@
-import axios from 'axios';
 import axiosInstance from '../AxiosInstance';
-import { get } from 'http';
 import { getGroupBuyListURL } from 'src/utilities/getUrl';
 import {
   GroupBuyCategoriesValues,

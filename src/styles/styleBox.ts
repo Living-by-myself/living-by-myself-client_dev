@@ -9,6 +9,7 @@ export const MobileContainer = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
+  overflow: hidden;
 `;
 
 export const FlexBoxCenter = styled.div`

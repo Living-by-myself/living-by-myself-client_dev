@@ -19,18 +19,28 @@ interface UserUpdateType {
   userAddress: string;
 }
 
-const schema = z
-.object({
+const schema = z.object({
   username: z.string().refine(validateEmail, { message: '올바른 이메일을 입력해주세요.' }),
-  nickname : z.string().nonempty("올바른 닉네임을 입력해주세요").refine(validateNickname,{message:'올바른 닉네임을 입력해주세요.'}),
-  address:z.string().nonempty("주소를 선택해주세요.")
-})
+  nickname: z
+    .string()
+    .nonempty('올바른 닉네임을 입력해주세요')
+    .refine(validateNickname, { message: '올바른 닉네임을 입력해주세요.' }),
+  address: z.string().nonempty('주소를 선택해주세요.'),
+  userAddress: z.string()
+});
 
 const UserUpdateInfo = () => {
-
-  const navigate = useNavigate()
-  const { register, handleSubmit,formState:{errors},getValues, watch, setValue } = useForm<UserUpdateType>({
-    resolver:zodResolver(schema), mode:"onSubmit"
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    watch,
+    setValue
+  } = useForm<UserUpdateType>({
+    resolver: zodResolver(schema),
+    mode: 'onSubmit'
   });
 
   const [address, setAddress] = useState('');
@@ -38,6 +48,7 @@ const UserUpdateInfo = () => {
   const { profile, setProfile } = userStore();
 
   const completeHandler = (data: any) => {
+
     const userAddress = `${data.sigungu} ${data.bname}, ${data.bcode}`;
     setValue('address', data.roadAddress);
     setValue('userAddress', userAddress);
@@ -87,11 +98,9 @@ const UserUpdateInfo = () => {
               <S.Button type="button" onClick={() => setIsToggle(true)}>
                 주소찾기
               </S.Button>
-              
             </S.FormColumn>
             <S.ErrorMessage>{errors.address?.message}</S.ErrorMessage>
             {isToggle && <DaumPostcode onComplete={completeHandler} />}
-            
           </S.FormRow>
           <S.Button type="submit">수정 완료</S.Button>
         </S.Form>
