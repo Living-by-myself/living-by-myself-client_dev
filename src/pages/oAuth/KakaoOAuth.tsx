@@ -6,13 +6,11 @@ const KakaoOAuth = () => {
   const location = useLocation();
 
   const kakaoLoginHandler = async () => {
-    console.log(`https://tracelover.shop/home/oauth/kakao${location.search}`);
     const res = await axios.get(`https://tracelover.shop/home/oauth/kakao${location.search}`, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       }
     });
-    console.log(res.data);
   };
 
   useEffect(() => {
@@ -21,9 +19,7 @@ const KakaoOAuth = () => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(location.search);
-  }, []);
+  useEffect(() => {}, []);
   return <div>KakaoOAuth</div>;
 };
 

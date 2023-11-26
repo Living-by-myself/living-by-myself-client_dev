@@ -79,9 +79,9 @@ const GroupBuyWriteForm = () => {
     geocoder.addressSearch(data.address, function (result: any, status: any) {
       if (status === kakao.maps.services.Status.OK) {
         const lat = Number(result[0].x);
-        console.log(typeof lat);
+
         const lng = Number(result[0].y);
-        console.log(typeof lng);
+
         setValue('lat', lat);
         setValue('lng', lng);
         setValue('address', data.address);
@@ -94,7 +94,6 @@ const GroupBuyWriteForm = () => {
 
   const onSubmit = handleSubmit(
     async (data: GroupBuyWriteFormProps) => {
-      console.log(data);
       const form = new FormData();
       const requestDto = {
         title: data.title,
@@ -121,11 +120,10 @@ const GroupBuyWriteForm = () => {
         await addGroupBuyPost(form);
         alert('글 등록이 완료되었습니다.');
       } catch (e) {
-        console.log(e);
         alert('글 등록에 실패하였습니다.');
       }
     },
-    (onError) => console.log(onError)
+    (onError) => {}
   );
 
   return (

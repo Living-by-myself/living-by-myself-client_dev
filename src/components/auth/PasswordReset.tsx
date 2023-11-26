@@ -10,21 +10,14 @@ import { validatePassword } from './Validate';
 import { findPasswordToken } from 'src/store/userStore';
 import { PasswordResetType } from 'src/types/user/types';
 
-
 const schema = z
   .object({
-    newPassword: z
-      .string()
-      .min(8, { message: '8자리 이상의 비밀번호를 입력해주세요.' })
-      .refine(validatePassword, {
-        message: '영문, 숫자, 특수문자(!@#$%^&*()_+)를 포함한 8자 이상의 비밀번호를 입력해주세요.'
-      }),
-    newPasswordCheck: z
-      .string()
-      .min(8, { message: '8자리 이상의 비밀번호를 입력해주세요.' })
-      .refine(validatePassword, {
-        message: '영문, 숫자, 특수문자(!@#$%^&*()_+)를 포함한 8자 이상의 비밀번호를 입력해주세요.'
-      })
+    newPassword: z.string().min(8, { message: '8자리 이상의 비밀번호를 입력해주세요.' }).refine(validatePassword, {
+      message: '영문, 숫자, 특수문자(!@#$%^&*()_+)를 포함한 8자 이상의 비밀번호를 입력해주세요.'
+    }),
+    newPasswordCheck: z.string().min(8, { message: '8자리 이상의 비밀번호를 입력해주세요.' }).refine(validatePassword, {
+      message: '영문, 숫자, 특수문자(!@#$%^&*()_+)를 포함한 8자 이상의 비밀번호를 입력해주세요.'
+    })
   })
   .refine((passwordConfirm) => passwordConfirm.newPassword === passwordConfirm.newPasswordCheck, {
     message: '비밀번호가 일치하지 않습니다.',
@@ -41,7 +34,6 @@ const PasswordReset = () => {
   const { token, setToken } = findPasswordToken();
 
   const navigate = useNavigate();
-
 
   const onSubmit: SubmitHandler<PasswordResetType> = async (data) => {
     const { newPassword, newPasswordCheck } = data;
@@ -60,9 +52,7 @@ const PasswordReset = () => {
       );
       alert(res.data.msg);
       navigate('/login');
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (
