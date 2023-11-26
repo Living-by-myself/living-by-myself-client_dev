@@ -53,3 +53,23 @@ export const getGroupBuyDetailData = async (id: any) => {
   const response = await axiosInstance.get(`/home/group-buying/${id}`);
   return response.data;
 };
+
+// 북마크 등록
+export const addGroupBuyPostBookmark = async (id: number) => {
+  try {
+    const response = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// 북마크 취소
+export const deleteGroupBuyPostBookmark = async (id: number) => {
+  try {
+    const response = await axiosInstance.delete(`/home/group-buying/${id}/pick-like`);
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+};

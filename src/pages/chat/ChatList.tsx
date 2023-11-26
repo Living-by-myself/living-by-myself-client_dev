@@ -32,12 +32,7 @@ const ChatList = () => {
 
   const getChatList = async () => {
     try {
-      const response = await axiosInstance.get(`/home/chats/rooms`, {
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axiosInstance.get(`/home/chats/rooms`);
       console.log('ChatList에서 조회한 response.data', response.data);
       setChatList(response.data);
       return response;

@@ -10,7 +10,6 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-// import { RiBookmarkLine, RiBookmarkFill } from 'react-icons/ri';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 import { async } from 'q';
@@ -22,65 +21,28 @@ interface JoinUserType {
   fileUrls: string;
 }
 
-// interface BookmarkProps {
-//   bookmarkCnt: number;
-//   existsBookmark: boolean;
-// }
-
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const id = location.state?.id;
-  const ParamsId = useParams();
-  const id = ParamsId.id;
+  const paramsId = useParams() as unknown as { id: number };
+  const id = Number(paramsId.id);
   const queryClient = useQueryClient();
-  const { data } = useQuery({
-    queryKey: ['groupBuy', id],
-    queryFn: () => getGroupBuyDetailData(id)
-  });
-  console.log(data);
   const mutation = useMutation(getGroupBuyDetailData, {
     onSuccess: () => {
       queryClient.invalidateQueries(['groupBuy', id]);
     }
   });
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['groupBuy', id],
+    queryFn: () => getGroupBuyDetailData(id)
+  });
+  if (isLoading) return <div>로딩중</div>;
+  if (isError) return <div>에러</div>;
+  console.log(data);
 
   const findBuyUser = data?.users?.find((user: JoinUserType) => {
     return user?.id.toString() === localStorage.getItem('id');
   });
   console.log(findBuyUser);
-
-  // const bookmarkGoupBuyButton = async () => {
-  //   setBookmark((e) => !e);
-
-  //   const res = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
-  //   mutation.mutate(id);
-  //   console.log('등록', res);
-  //   // }else{
-  //   //   const res = await axiosBaseInstance.delete(`/home/group-buying/${id}/pick-like`)
-  //   //   console.log("삭제",res);
-  //   // }
-  // };
-
-  // // 북마크 취소
-  // const deleteGroupBuyPostBookmark = async (id: number) => {
-  //   try {
-  //     const response = await axiosInstance.delete(`/home/group-buying/${id}/pick-like`);
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // // 북마크 등록
-  // const addGroupBuyPostBookmark = async (id: number) => {
-  //   try {
-  //     const response = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const closeGroupBuyButton = async () => {
     try {
@@ -114,11 +76,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data?.users[data?.users.length-1].nickname}</h1>
-                  <h2>{data?.users[data?.users.length-1].address}</h2>
+                  <h1>{data?.users[data?.users.length - 1].nickname}</h1>
+                  <h2>{data?.users[data?.users.length - 1].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data?.users[data?.users.length-1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data?.users[data?.users.length - 1].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
@@ -148,7 +110,7 @@ const GroupBuyDetail = () => {
               {data?.currentUserCount}/{data?.maxUser}명
             </p>
             <S.JoinUserWrap>
-              {data?.users?.slice(0,-1).map((joinUser: JoinUserType) => {
+              {data?.users?.slice(0, -1).map((joinUser: JoinUserType) => {
                 return (
                   <li>
                     <h1>
@@ -170,25 +132,9 @@ const GroupBuyDetail = () => {
           </S.BuyMapWrap>
         </S.InfoInner>
         <S.FnWrap>
-          <GroupBuyBookmark likeCnt={data?.likeCnt!} />
-          {/* <S.bookmarkButton
-            $isBookmark={bookmark.existsBookmark}
-            onClick={async () => {
-              if (bookmark.existsBookmark) {
-                deleteGroupBuyPostBookmark(Number(id!));
-                setBookmark({ bookmarkCnt: bookmark.bookmarkCnt - 1, existsBookmark: !bookmark.existsBookmark });
-                console.log('delete bookmarkCnt : ', bookmarkCnt);
-              } else {
-                addGroupBuyPostBookmark(Number(id!));
-                setBookmark({ bookmarkCnt: bookmark.bookmarkCnt + 1, existsBookmark: !bookmark.existsBookmark });
-                console.log('add bookmarkCnt : ', bookmarkCnt);
-              }
-            }}
-          >
-            {bookmark ? <RiBookmarkFill size={30} /> : <RiBookmarkLine size={30} />}
-          </S.bookmarkButton> */}
+          <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <S.ChatButton>채팅하기</S.ChatButton>
-          {data?.users[data?.users.length-1] && data?.currentUserCount === data?.maxUser ? (
+          {data?.users[data?.users.length - 1] && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
@@ -204,10 +150,6 @@ const GroupBuyDetail = () => {
 };
 
 export default GroupBuyDetail;
-
-// interface ButtonProps {
-//   $isBookmark: boolean;
-// }
 
 const S = {
   Container: styled.div`
@@ -351,19 +293,6 @@ const S = {
     z-index: 99;
     padding: 10px 10px;
   `,
-  // bookmarkButton: styled.button<ButtonProps>`
-  //   ${(props) =>
-  //     props.$isBookmark
-  //       ? css`
-  //           /* background-color: ${COLORS.GREEN[400]}; */
-  //           color: ${COLORS.GREEN[400]};
-  //           border: none;
-  //         `
-  //       : css`
-  //           /* border: 1px solid ${COLORS.GREEN[400]}; */
-  //           color: ${COLORS.GREEN[400]};
-  //         `}
-  // `,
   GroupBuyButton: styled.button`
     display: inline-flex;
     align-items: center;
