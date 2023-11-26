@@ -23,7 +23,7 @@ const RootLayout = () => {
 
   return (
     <S.ViewContainer>
-      {HeaderChanger(location)}
+      <S.HeaderContainer>{HeaderChanger(location)}</S.HeaderContainer>
       <S.OutletContainer>
         <Outlet />
       </S.OutletContainer>
@@ -38,8 +38,14 @@ const S = {
     width: 100%;
     position: relative;
   `,
+  HeaderContainer: styled.div`
+    position: fixed;
+    top: 0;
+    z-index: 100;
+  `,
   OutletContainer: styled.div`
     width: 100%;
+    margin-top: 50px;
     /* padding-top: 50px; */
   `
 };
