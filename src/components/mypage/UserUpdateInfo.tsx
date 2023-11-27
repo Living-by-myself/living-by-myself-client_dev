@@ -48,7 +48,6 @@ const UserUpdateInfo = () => {
   const { profile, setProfile } = userStore();
 
   const completeHandler = (data: any) => {
-
     const userAddress = `${data.sigungu} ${data.bname}, ${data.bcode}`;
     setValue('address', data.roadAddress);
     setValue('userAddress', userAddress);
@@ -67,11 +66,9 @@ const UserUpdateInfo = () => {
       profile!.nickname = nickname as string;
       setProfile(profile!);
 
-      toast("회원정보 수정 완료")
-      navigate('/')
-    } catch (error) {
-      console.log(error);
-    }
+      toast('회원정보 수정 완료');
+      navigate('/');
+    } catch (error) {}
   };
 
   return (

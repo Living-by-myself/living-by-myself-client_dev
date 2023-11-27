@@ -1,65 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
 import axiosInstance from 'src/api/AxiosInstance';
 import { COLORS } from 'src/styles/styleConstants';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { RiBookmarkLine, RiBookmarkFill } from 'react-icons/ri';
+import { addGroupBuyPostBookmark, deleteGroupBuyPostBookmark } from 'src/api/groupBuy/groupBuy';
 
 interface BookmarkProps {
-  bookmarkCnt: number;
-  existsBookmark: boolean;
+  likeCount: number;
+  id?: number;
+  pickLike: boolean;
 }
 
-interface likeCntProps {
-  likeCnt: number;
-}
+const GroupBuyBookmark = ({ likeCount, id, pickLike }: BookmarkProps) => {
+  const [bookmark, setBookmark] = useState({ likeCount, pickLike });
 
-const GroupBuyBookmark = ({ likeCnt }: likeCntProps) => {
-  const ParamsId = useParams();
-  const id = ParamsId.id;
-  const [bookmarkCnt, setBookmarkCnt] = useState(likeCnt);
-  const existsBookmark = false;
-  const [bookmark, setBookmark] = useState<BookmarkProps>({ bookmarkCnt, existsBookmark });
+  useEffect(() => {
+    console.log('데이터야 잘 넘어왔니? ', likeCount, id, pickLike);
+  }, [likeCount, pickLike, id]);
 
-  // 북마크 취소
-  const deleteGroupBuyPostBookmark = async (id: number) => {
-    try {
-      const response = await axiosInstance.delete(`/home/group-buying/${id}/pick-like`);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // 북마크 등록
-  const addGroupBuyPostBookmark = async (id: number) => {
-    try {
-      const response = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    setBookmark({ likeCount, pickLike });
+  }, [pickLike]);
 
   return (
     <>
       <S.bookmarkButton
-        $isBookmark={bookmark.existsBookmark}
         onClick={async () => {
-          if (bookmark.existsBookmark) {
-            deleteGroupBuyPostBookmark(Number(id!));
-            setBookmarkCnt(bookmarkCnt - 1);
-            setBookmark({ bookmarkCnt: bookmark.bookmarkCnt, existsBookmark: false });
-            console.log('delete bookmarkCnt : ', bookmark.bookmarkCnt);
+          if (bookmark.pickLike) {
+            deleteGroupBuyPostBookmark(id as number);
+            setBookmark({ likeCount: bookmark.likeCount - 1, pickLike: !bookmark.pickLike });
+            console.log('delete bookmarkCnt : ', bookmark.likeCount);
           } else {
-            addGroupBuyPostBookmark(Number(id!));
-            setBookmarkCnt(bookmarkCnt + 1);
-            setBookmark({ bookmarkCnt: bookmark.bookmarkCnt, existsBookmark: true });
-            console.log('add bookmarkCnt : ', bookmark.bookmarkCnt);
+            addGroupBuyPostBookmark(id as number);
+            setBookmark({ likeCount: bookmark.likeCount + 1, pickLike: !bookmark.pickLike });
+            console.log('add bookmarkCnt : ', bookmark.likeCount);
           }
         }}
       >
-        {bookmark ? <RiBookmarkFill size={30} /> : <RiBookmarkLine size={30} />}
+        {bookmark.pickLike ? <RiBookmarkFill size={30} /> : <RiBookmarkLine size={30} />}
       </S.bookmarkButton>
     </>
   );
@@ -67,22 +45,8 @@ const GroupBuyBookmark = ({ likeCnt }: likeCntProps) => {
 
 export default GroupBuyBookmark;
 
-interface ButtonProps {
-  $isBookmark: boolean;
-}
-
 const S = {
-  bookmarkButton: styled.button<ButtonProps>`
-    ${(props) =>
-      props.$isBookmark
-        ? css`
-            /* background-color: ${COLORS.GREEN[400]}; */
-            color: ${COLORS.GREEN[400]};
-            border: none;
-          `
-        : css`
-            /* border: 1px solid ${COLORS.GREEN[400]}; */
-            color: ${COLORS.GREEN[400]};
-          `}
+  bookmarkButton: styled.button`
+    color: ${COLORS.GREEN[400]};
   `
 };

@@ -22,9 +22,7 @@ export const loginWithEmailPassword = async ({ username, password }: LoginUserTy
 export const getAccessTokenWhenExpiration = async () => {
   try {
     const refreshToken = localStorage.getItem('rtk');
-    console.log('만료됨 액세스 토큰', localStorage.getItem('atk'));
-    console.log(localStorage.getItem('atk') === refreshToken);
-    console.log('리프레시 토큰', refreshToken);
+
     const headers = {
       'Content-Type': 'application/json',
       Authorization: refreshToken
@@ -35,11 +33,9 @@ export const getAccessTokenWhenExpiration = async () => {
       headers
     });
     localStorage.setItem('atk', data.atk);
-    console.log(data, '토큰 재발급 성공');
+
     return data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const getUserProfile = async () => {
@@ -49,9 +45,7 @@ export const getUserProfile = async () => {
     });
 
     return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const getOtherUserProfile = async (userId: string) => {
@@ -59,9 +53,7 @@ export const getOtherUserProfile = async (userId: string) => {
     const response = await axiosInstance.get(`/home/profile/other/${userId}`, {});
 
     return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const updateUserProfileImage = async (formData: FormData) => {
@@ -73,9 +65,7 @@ export const updateUserProfileImage = async (formData: FormData) => {
       }
     });
     return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const getKakaoLoginToken = async (code: string) => {
@@ -85,11 +75,23 @@ export const getKakaoLoginToken = async (code: string) => {
         code: code
       }
     });
-    console.log(response.data);
+
     localStorage.setItem('atk', response.data.atk);
     localStorage.setItem('rtk', response.data.rtk);
     return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
+};
+
+export interface repostUserType {
+  userId: string;
+  description: string;
+}
+
+export const reportOtherUser = async (userId: string, description: string) => {
+  try {
+    const response = await axiosInstance.post(`/home/report/${userId}`, {
+      description
+    });
+    return response.data;
+  } catch (error) {}
 };

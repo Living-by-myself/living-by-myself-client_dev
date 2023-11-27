@@ -32,98 +32,12 @@ const Login = () => {
 
   //주소로 이동해서 해당 인가코드를 백엔드에 보내주면 response로 atk와rtk 데이터가 들어옴 안됨
   const kakaoLoginHandler = async () => {
-    const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
-    const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
+    alert('소셜로그인 기능은 준비중입니다.');
+    // const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
+    // const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
 
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`;
-
-    // window.addEventListener('popstate', function () {
-    //   // 리다이렉트 URL에서 인가 코드 받아오기
-    //   const code = window.location.href.split('?')[1].split('=')[1];
-    //   console.log('리다이렉트');
-    //   console.log(code);
-    //   // 인가 코드를 서버로 전송
-    //   getKakaoLoginToken(code as string);
-    // });
-
-    // 인가 코드를 서버로 전송하는 함수
-
-    // try {
-    //   // code:
-    //   axios.get('https://tracelover.shop/home/oauth/kakao?code=', {
-    //     params: {
-    //       code: window.location.href.split('?')[1].split('=')[1]
-    //     }
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    // window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${key}&redirect_uri=${uri}&response_type=code`;
   };
-
-  // const googleLoginHandler = async () => {
-  //   const key = process.env.REACT_APP_GOOGLE_ADMIN_KEY;
-  //   const uri = process.env.REACT_APP_GOOGLE_LOGIN_REDIRECT_URI;
-  //   const popup = window.open(
-  //     `https://accounts.google.com/o/oauth2/v2/auth?client_id=${key}.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile`,
-  //     '로그인 중...',
-  //     'width=800, height=600, left=200, top=100'
-  //   );
-  //   setPopup(popup);
-  // };
-
-  // useEffect(() => {
-  //   const currentUrl = window.location.href;
-  //   const searchParams = new URL(currentUrl).searchParams;
-  //   const code = searchParams.get('code');
-  //   if (code) {
-  //     window.opener.postMessage({ code }, window.location.origin);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!popup) return;
-
-  //   const googleOauthCodeListener = (event: MessageEvent) => {
-  //     if (event.origin !== 'https://tracelover.shop') return;
-  //     console.log(event);
-  //     // if (event.data.type !== 'GOOGLE_OAUTH_CODE') return;
-  //     const code = event.data.payload;
-  //     console.log(code);
-
-  //     // axiosBaseInstance
-  //     //   .get(`/home/oauth/google?code=${code}`)
-  //     //   .then((res) => {
-  //     //     console.log(res.data);
-  //     //     setToken(res.data.atk);
-  //     //     setProfile(res.data.user);
-  //     //     navigate('/');
-  //     //   })
-  //     //   .catch((err) => {
-  //     //     console.log(err);
-  //     //   });
-  //   };
-  //   window.addEventListener('message', googleOauthCodeListener, false);
-  //   return () => {
-  //     window.removeEventListener('message', googleOauthCodeListener);
-  //     popup.close();
-  //     setPopup(null);
-  //   };
-
-  //   // const timer = setInterval(() => {
-  //   //   if (!popup) {
-  //   //     timer && clearInterval(timer);
-  //   //     return;
-  //   //   }
-  //   //   const currentUrl = popup.location.href;
-  //   //   if (!currentUrl) {
-  //   //     return;
-  //   //   }
-  //   //   const body = new URL(currentUrl).toJSON();
-  //   //   if (body) {
-  //   //     console.log(body);
-  //   //   }
-  //   // }, 1000);
-  // }, [popup]);
 
   return (
     <S.Container>
@@ -152,7 +66,7 @@ const Login = () => {
                 <img src="/imgs/kakao.png" />
               </a>
             </button>
-            <button onClick={() => {}}>
+            <button onClick={kakaoLoginHandler}>
               {/* <Link to="https://accounts.google.com/o/oauth2/v2/auth?client_id=480627412963-2kv4rhdck7u0svv6urq7req1ro0jq8hv.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile"> */}
               <img src="/imgs/google.png" />
               {/* </Link> */}

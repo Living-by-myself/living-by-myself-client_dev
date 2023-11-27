@@ -56,7 +56,7 @@ const Router = () => {
         <Route path="/oauth/kakao" element={<KakaoOAuth />} />
         <Route path="/oauth/google" element={<GoogleOAuth />} />
         <Route path="/group-buy" element={<GroupBuyPage />} />
-        <Route path="/group-buy" element={<GroupBuyPage />} />
+
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/search" element={<SearchPage />} />
 

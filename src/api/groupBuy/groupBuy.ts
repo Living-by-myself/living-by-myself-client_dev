@@ -26,11 +26,9 @@ export const getGroupBuyList = async (option: getGroupBuyListOption) => {
         'Content-Type': 'application/json'
       }
     });
-    console.log(res.data);
+
     return res.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const addGroupBuyPost = async (formData: FormData) => {
@@ -40,14 +38,26 @@ export const addGroupBuyPost = async (formData: FormData) => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log(res.data);
+
     return res.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const getGroupBuyDetailData = async (id: any) => {
   const response = await axiosInstance.get(`/home/group-buying/${id}`);
   return response.data;
+};
+
+// 북마크 등록
+export const addGroupBuyPostBookmark = async (id: number) => {
+  try {
+    const response = await axiosInstance.post(`/home/group-buying/${id}/pick-like`);
+  } catch (error) {}
+};
+
+// 북마크 취소
+export const deleteGroupBuyPostBookmark = async (id: number) => {
+  try {
+    const response = await axiosInstance.delete(`/home/group-buying/${id}/pick-like`);
+  } catch (error) {}
 };
