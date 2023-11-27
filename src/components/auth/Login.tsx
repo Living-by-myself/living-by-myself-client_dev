@@ -28,8 +28,6 @@ const Login = () => {
     setToken(await tokenData.then((res) => res?.atk));
     const userData = getUserProfile();
     setProfile(await userData);
-
-    navigate('/');
   };
 
   //주소로 이동해서 해당 인가코드를 백엔드에 보내주면 response로 atk와rtk 데이터가 들어옴 안됨
