@@ -84,7 +84,7 @@ const GroupBuyPay = () => {
             <h2>결제 후 포인트</h2>
             <p>{reaminingPoints.toLocaleString()}원</p>
           </S.PointRow>
-          <button>충전하러 가기</button>
+          <button onClick={()=>navigate('/mypage/point-charge')}>충전하러 가기</button>
         </S.PointAfter>
       </S.ContainerInner>
       <S.PayButton onClick={goupBuyPayButton}>
