@@ -4,9 +4,9 @@ import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
 import * as StompJs from '@stomp/stompjs';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
-import { useInputErrorStore, useRoomTitleStore } from 'src/store/chatStore';
+import { useInputErrorStore, useMesssageStore, useRoomTitleStore } from 'src/store/chatStore';
 import { async } from 'q';
 import ChatMessageInput from './ChatMessageInput';
 
@@ -27,11 +27,12 @@ const ChatDetailPage = () => {
   const userId = Number(localStorage.getItem('id'));
   const roomId = useParams();
   const { currentRoomTitle } = useRoomTitleStore();
-  const { setCurrentInputError } = useInputErrorStore();
-  const [roomTitle, setRoomTitle] = useState('Title');
+  const [roomTitle] = useState('Title');
   const [chatList, setChatList] = useState<ChatMessage[]>([]); // 채팅방 메시지 배열
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
+  const [hasInputError, setHasInputError] = useState(false);
+  const navigate = useNavigate();
 
   // WebSocket 클라이언트를 상태로 관리 → 최초 연결 후 메시지 전송 시 다시 연결하면 코드 중복
   const [webSocketClient, setWebSocketClient] = useState<StompJs.Client | null>(null);
@@ -47,46 +48,43 @@ const ChatDetailPage = () => {
   };
 
   // 메세지 보내기 버튼 클릭 시
-  const sendMessageButtonClick = useCallback(
-    async (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (message.length > 0) {
-        setCurrentInputError(false);
 
-        // 메시지 보내기
-        // 이미 연결된 WebSocket이 있다면 메시지 전송
-        if (webSocketClient) {
-          // 특정 채팅방으로 메시지 전송
-          webSocketClient.publish({
-            destination: '/app/' + roomId.id, // 채팅방 주소,
-            body: JSON.stringify({
-              // userId랑 메시지 내용만 보내기
-              userId: userId,
-              message: message
-            }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
-          });
-          webSocketClient.publish({
-            destination: '/topic/room/' + roomId.id, // 채팅방 주소,
-            body: JSON.stringify({
-              chatId: Math.random(),
-              localTime: new Date(),
-              msg: message,
-              responseDto: {
-                id: userId,
-                nickname: userId
-              }
-            }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
-          });
-          setMessage('');
+  const sendMessageButtonClick = async () => {
+    if (message.length > 0) {
+      console.log('message', message);
+      setHasInputError(false);
 
-          // await getChatMessage();
-        }
-      } else {
-        setCurrentInputError(true);
+      // 메시지 보내기
+      // 이미 연결된 WebSocket이 있다면 메시지 전송
+      if (webSocketClient && webSocketClient.connected) {
+        // 특정 채팅방으로 메시지 전송
+        webSocketClient.publish({
+          destination: '/app/' + roomId.id, // 채팅방 주소,
+          body: JSON.stringify({
+            // userId랑 메시지 내용만 보내기 - 서버에서 정해줌
+            userId: userId,
+            message: message
+          })
+        });
+
+        webSocketClient.publish({
+          destination: '/topic/room/' + roomId.id, // 채팅방 주소,
+          body: JSON.stringify({
+            chatId: Math.random(),
+            localTime: new Date(),
+            msg: message,
+            responseDto: {
+              id: userId,
+              nickname: userId
+            }
+          })
+        });
+        setMessage(''); // 메시지 초기화
       }
-    },
-    [webSocketClient]
-  );
+    } else {
+      setHasInputError(true);
+    }
+  };
 
   // 연결 끊기
   const disConnect = () => {
@@ -120,7 +118,9 @@ const ChatDetailPage = () => {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
 
           let msg = JSON.parse(message.body);
-          setChatList((prevChats) => [...prevChats, msg]);
+          if (!chatList.some((chat) => chat.chatId === msg.chatId)) {
+            setChatList((prevChats) => [...prevChats, msg]);
+          }
         }
       });
     };
@@ -139,8 +139,6 @@ const ChatDetailPage = () => {
   useEffect(() => {
     connectWebSocket();
     getChatMessage();
-
-    setRoomTitle(currentRoomTitle);
     // setChatRoomTitle();
 
     return () => disConnect();
@@ -191,9 +189,9 @@ const ChatDetailPage = () => {
     <MobileContainer>
       <S.Container>
         <S.ChatHeader>
-          {currentRoomTitle.length !== 0 ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{roomTitle}</S.Title>}
+          {currentRoomTitle !== null ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{roomTitle}</S.Title>}
           <S.Title>{roomTitle}</S.Title>
-          <button>더보기</button>
+          <S.MoreButton onClick={() => navigate(`/chat/${roomId.id}/edit`)}>더보기</S.MoreButton>
         </S.ChatHeader>
         {/*채팅 관련 하나의 컴포넌트로 내부에서 또다시 map을 돌려야함 한 줄에 유저가 나냐 아니냐로 구분해서 */}
         <S.Inner>
@@ -218,7 +216,16 @@ const ChatDetailPage = () => {
           )}
         </S.Inner>
         <S.MessageInputBox>
-          <ChatMessageInput />
+          <S.MessageInput
+            placeholder="메세지를 작성하시오."
+            id="chatMessage"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              setHasInputError(false);
+            }}
+            hasError={hasInputError}
+          />
           <S.MessageInputButton type="submit" onClick={sendMessageButtonClick}>
             전송
           </S.MessageInputButton>
@@ -292,7 +299,7 @@ const S = {
   `,
   MessageContent: styled.div<IMessageBox>`
     padding: 10px;
-    background-color: ${({ $isMine }) => ($isMine ? COLORS.GRAY[400] : COLORS.GRAY[200])};
+    background-color: ${({ $isMine }) => ($isMine ? COLORS.GREEN[400] : COLORS.GRAY[200])};
     border-radius: 10px;
     max-width: 70%;
     word-wrap: break-word;
@@ -323,5 +330,20 @@ const S = {
     align-items: center;
     justify-content: center;
     z-index: 999;
+  `,
+  MessageInput: styled.input<{ hasError: boolean }>`
+    padding: 13px;
+    min-height: 40px;
+    min-width: 80%;
+    outline: none;
+    border: ${({ hasError }) => (hasError ? '1px solid red' : 'none')};
+    font-size: ${styleFont.body3};
+    background-color: ${COLORS.GRAY[200]};
+    border-radius: 50px;
+  `,
+  MoreButton: styled.button`
+    font-size: ${styleFont.body4};
+    color: ${COLORS.GRAY[400]};
+    margin-left: 10px;
   `
 };
