@@ -39,19 +39,16 @@ const ChatDetailPage = () => {
 
   // 해당 채팅방 메시지 조회
   const getChatMessage = async () => {
-    console.log('나 채팅방 메시지 조회한다!');
-    console.log(roomId);
     try {
       const response = await axiosInstance.get('/home/chats/room/' + roomId.id);
       setChatList(response.data);
-      console.log('채팅방 메시지 목록 조회 성공!', response.data);
+
       return response.data;
-    } catch (error) {
-      console.log('채팅방 메시지 목록 조회 실패!', error);
-    }
+    } catch (error) {}
   };
 
   // 메세지 보내기 버튼 클릭 시
+
   const sendMessageButtonClick = async () => {
     if (message.length > 0) {
       console.log('message', message);
@@ -94,7 +91,7 @@ const ChatDetailPage = () => {
     if (webSocketClient === null) {
       return;
     }
-    console.log('연결 해제!');
+
     webSocketClient.deactivate();
   };
 
@@ -105,9 +102,7 @@ const ChatDetailPage = () => {
       connectHeaders: {
         Authorization: token! // token 값을 사용하여 사용자 인증
       },
-      debug: (str) => {
-        console.log(str);
-      },
+      debug: (str) => {},
       reconnectDelay: 5000, //자동 재연결을 위한 시간 설정
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000 // 연결이 유지되고 있는지 확인
@@ -115,17 +110,13 @@ const ChatDetailPage = () => {
 
     // WebSocket 연결 성공 시 실행되는 콜백
     client.onConnect = () => {
-      console.log('연결 성공!');
-      console.log('roomId', roomId.id);
-
       // send,,subscribe,,publish ,,
       // 특정 채팅방에 topic으로 subscribe
       // 받아온 데이터를 subcribe하고, publish하여 데이터를 받아오도록 한다?
       client.subscribe('/topic/room/' + roomId.id, (message) => {
-        console.log('구독 성공!');
-        console.log('Received message:', message.body);
         if (message) {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
+
           let msg = JSON.parse(message.body);
           if (!chatList.some((chat) => chat.chatId === msg.chatId)) {
             setChatList((prevChats) => [...prevChats, msg]);
@@ -134,17 +125,13 @@ const ChatDetailPage = () => {
       });
     };
     // WebSocket 연결이 실패한 경우
-    client.onStompError = (frame) => {
-      console.log('Broker reported error: ' + frame.headers['message']);
-      console.log('Additional details: ' + frame.body);
-    };
+    client.onStompError = (frame) => {};
 
     setWebSocketClient(client);
     client.activate();
   };
 
   useEffect(() => {
-    console.log('추가한 채팅 리스트다! → ', chatList);
     // messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatList]);
 
@@ -152,7 +139,6 @@ const ChatDetailPage = () => {
   useEffect(() => {
     connectWebSocket();
     getChatMessage();
-    console.log('userId : ', userId);
     // setChatRoomTitle();
 
     return () => disConnect();
@@ -168,9 +154,9 @@ const ChatDetailPage = () => {
   //         //   'Content-Type': 'application/json'
   //         // }
   //       });
-  //       console.log('ChatDetailPage에서 조회한 response.data', response.data);
+  //
   //     } catch (error) {
-  //       console.log(error);
+  //
   //     }
   //   } else {
   //     return currentRoomTitle;

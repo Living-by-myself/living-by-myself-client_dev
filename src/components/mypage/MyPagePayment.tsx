@@ -1,12 +1,20 @@
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axiosInstance from 'src/api/AxiosInstance';
 import userStore from 'src/store/userStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
 
+
 export const getWonString = (price: number) => price.toLocaleString('ko-KR');
 
 const MyPagePayment = () => {
   const { profile: user } = userStore();
+
+  const navigate = useNavigate()
+
+ 
 
   return (
     <S.Container>
@@ -14,7 +22,7 @@ const MyPagePayment = () => {
         <S.Label>보유 포인트</S.Label>
         <S.Point>{user?.cash ? getWonString(user.cash) : 0}원</S.Point>
       </S.Inner>
-      <S.PointCharging>충전하기</S.PointCharging>
+      <S.PointCharging onClick={()=>navigate('/mypage/point-charge')}>충전하기</S.PointCharging>
     </S.Container>
   );
 };

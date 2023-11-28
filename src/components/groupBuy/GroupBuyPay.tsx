@@ -13,7 +13,7 @@ import Icon from '../icon/Icon';
 import { extractImageUrls } from 'src/utilities/image';
 
 const GroupBuyPay = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
   const id = location.state?.id;
 
@@ -24,27 +24,26 @@ const GroupBuyPay = () => {
     queryFn: () => getUserProfile()
   });
 
-  console.log(user)
   const { data: pay } = useQuery({
     queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
-  }); 
+  });
 
-  const mutation = useMutation(getGroupBuyDetailData,{
+  const mutation = useMutation(getGroupBuyDetailData, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["groupBuy",id])
+      queryClient.invalidateQueries(['groupBuy', id]);
     }
-  })
+  });
 
-  const reaminingPoints = user?.cash -(pay?.perUserPrice/pay?.maxUser);
+  const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
 
   const goupBuyPayButton = async () => {
     try {
       const res = await axiosInstance.post(`/home/group-buying/${id}/application`);
-      console.log(res);
-      alert("공동구매 신청 완료")
-      mutation.mutate(id)
-      navigate(`/group-buy/${id}`)
+
+      alert('공동구매 신청 완료');
+      mutation.mutate(id);
+      navigate(`/group-buy/${id}`);
     } catch (error: any) {
       alert(error.response.data.msg);
     }
@@ -55,7 +54,7 @@ const GroupBuyPay = () => {
       <S.ContainerInner>
         <h1>공동구매 신청하기</h1>
         <S.ItemContainer>
-        <S.PreviewImage src={extractImageUrls(pay?.fileUrls)[0]} width={100} height={100} />
+          <S.PreviewImage src={extractImageUrls(pay?.fileUrls)[0]} width={100} height={100} />
           <S.PreviewInfo>
             <S.Title>{pay?.title}</S.Title>
             <S.AddressTimeBox>
@@ -77,7 +76,7 @@ const GroupBuyPay = () => {
           </S.PointRow>
           <S.PointRow>
             <h2>결제 포인트</h2>
-            <p className="pointColor">{(pay?.perUserPrice/pay?.maxUser).toLocaleString()}원</p>
+            <p className="pointColor">{(pay?.perUserPrice / pay?.maxUser).toLocaleString()}원</p>
           </S.PointRow>
         </S.PointBefore>
         <S.PointAfter>
@@ -85,10 +84,12 @@ const GroupBuyPay = () => {
             <h2>결제 후 포인트</h2>
             <p>{reaminingPoints.toLocaleString()}원</p>
           </S.PointRow>
-          <button>충전하러 가기</button>
+          <button onClick={()=>navigate('/mypage/point-charge')}>충전하러 가기</button>
         </S.PointAfter>
       </S.ContainerInner>
-      <S.PayButton onClick={goupBuyPayButton}>{(pay?.perUserPrice/pay?.maxUser).toLocaleString()}원 결제하기</S.PayButton>
+      <S.PayButton onClick={goupBuyPayButton}>
+        {(pay?.perUserPrice / pay?.maxUser).toLocaleString()}원 결제하기
+      </S.PayButton>
     </S.Container>
   );
 };

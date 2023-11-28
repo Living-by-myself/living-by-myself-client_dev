@@ -45,7 +45,7 @@ const FindPassword = () => {
         phoneNumber,
         code: phoneAuthNumber
       });
-      console.log(res);
+
       setToken(res.headers['authorization']);
       navigate('/password-reset');
     } catch (error: any) {
@@ -58,14 +58,13 @@ const FindPassword = () => {
     try {
       if (phoneNumber === '') {
         toast('휴대폰 번호를 확인해주세요.');
-      }else if(validatePhoneNumber(phoneNumber)) {
-        toast('휴대폰 번호를 확인해주세요.')
+      } else if (validatePhoneNumber(phoneNumber)) {
+        toast('휴대폰 번호를 확인해주세요.');
       } else {
         const res = await axiosBaseInstance.post('/home/auth/message?authentication=find', {
           phoneNumber
         });
         toast('인증번호가 전송되었습니다');
-        console.log(res);
       }
     } catch (error) {
       toast('휴대폰 번호가 일치하지 않습니다.');

@@ -39,14 +39,12 @@ const ChatPage = () => {
   // 채팅방 조회
   const getRoomList = async () => {
     try {
-      console.log(token);
       const response = await axiosInstance.get('/home/chats/rooms');
       setRoomList(response.data);
       console.log('채팅방 전체 목록 조회 성공!', response.data);
+
       return response;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   // 채팅방 생성

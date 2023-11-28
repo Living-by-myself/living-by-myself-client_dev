@@ -33,9 +33,7 @@ export const getCommunityPostList = async ({ option, page }: getCommunityPostLis
     const allPageCount = Math.ceil(allPostCount / 10);
     const returnData = { data, totalPages: allPageCount, page };
     return returnData;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const getCommunityPostDetail = async (option: getPostIdOption): Promise<any> => {
@@ -44,9 +42,7 @@ export const getCommunityPostDetail = async (option: getPostIdOption): Promise<a
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const addCommunityPost = async (formData: FormData) => {
@@ -56,19 +52,13 @@ export const addCommunityPost = async (formData: FormData) => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const deleteCommunityPost = async (postId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/communities/${postId}`, {});
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 interface UpdatePostOption {
@@ -77,33 +67,23 @@ interface UpdatePostOption {
 }
 
 export const updateCommunityPost = async ({ postId, formData }: UpdatePostOption) => {
-  console.log(postId);
   try {
     const response = await axiosInstance.put(`/home/communities/${postId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const addCommunityPostLike = async (postId: string) => {
   try {
     const response = await axiosInstance.post(`/home/community/${postId}/like`, {}, {});
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const deleteCommunityPostLike = async (postId: string) => {
   try {
     const response = await axiosInstance.delete(`/home/community/${postId}/like`, {});
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };

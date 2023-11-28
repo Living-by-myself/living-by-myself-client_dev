@@ -37,32 +37,25 @@ const GroupBuyDetail = () => {
   });
   if (isLoading) return <div>로딩중</div>;
   if (isError) return <div>에러</div>;
-  console.log(data);
 
   const findBuyUser = data?.users?.find((user: JoinUserType) => {
     return user?.id.toString() === localStorage.getItem('id');
   });
-  console.log(findBuyUser);
 
   const closeGroupBuyButton = async () => {
     try {
       const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
       mutation.mutate(id);
-      console.log('마감', res);
+
       alert('공동구매 마감 완료');
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const cancelGroupBuyButton = async () => {
     try {
       const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
       mutation.mutate(id);
-      console.log('공구 취소', res);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   return (
     <>
@@ -76,11 +69,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data?.users[data?.users.length - 1].nickname}</h1>
-                  <h2>{data?.users[data?.users.length - 1].address}</h2>
+                  <h1>{data!.users[data?.users.length-1].nickname}</h1>
+                  <h2>{data!.users[data?.users.length-1].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data?.users[data?.users.length - 1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data!.users[data?.users.length-1].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>

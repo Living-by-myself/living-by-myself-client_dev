@@ -23,7 +23,8 @@ const SearchBar = (props: SearchBarProps) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleSearch();
+      alert('검색기능은 준비중입니다.');
+      // handleSearch();
     }
   };
 
