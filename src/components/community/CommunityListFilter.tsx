@@ -10,58 +10,23 @@ const CommunityListFilter = () => {
   return (
     <S.FilterBox>
       <S.FormBox>
-        <S.CategorySelect
-          id="ALL"
-          // value="ALL"
-          // name="category"
-          // type="radio"
-          $checked={category === 'ALL'}
-          onClick={() => setCategory('ALL')}
-        >
+        <S.CategorySelect id="ALL" $checked={category === 'ALL'} onClick={() => setCategory('ALL')}>
           전체
         </S.CategorySelect>
 
-        <S.CategorySelect
-          id="FREE"
-          // value="FREE"
-          // name="category"
-          // type="radio"
-          $checked={category === 'FREE'}
-          onClick={() => setCategory('FREE')}
-        >
+        <S.CategorySelect id="FREE" $checked={category === 'FREE'} onClick={() => setCategory('FREE')}>
           자유
         </S.CategorySelect>
 
-        <S.CategorySelect
-          id="COOK"
-          // value="COOK"
-          // name="category"
-          // type="radio"
-          $checked={category === 'COOK'}
-          onClick={() => setCategory('COOK')}
-        >
+        <S.CategorySelect id="COOK" $checked={category === 'COOK'} onClick={() => setCategory('COOK')}>
           요리
         </S.CategorySelect>
 
-        <S.CategorySelect
-          id="INTERIOR"
-          // value="INTERIOR"
-          // name="category"
-          // type="radio"
-          $checked={category === 'INTERIOR'}
-          onClick={() => setCategory('INTERIOR')}
-        >
+        <S.CategorySelect id="INTERIOR" $checked={category === 'INTERIOR'} onClick={() => setCategory('INTERIOR')}>
           인테리어
         </S.CategorySelect>
 
-        <S.CategorySelect
-          id="CLEAN"
-          // value="CLEAN"
-          // name="category"
-          // type="radio"
-          $checked={category === 'CLEAN'}
-          onClick={() => setCategory('CLEAN')}
-        >
+        <S.CategorySelect id="CLEAN" $checked={category === 'CLEAN'} onClick={() => setCategory('CLEAN')}>
           청소
         </S.CategorySelect>
       </S.FormBox>
