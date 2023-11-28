@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import axiosInstance from 'src/api/AxiosInstance'
 import userStore from 'src/store/userStore'
@@ -81,12 +81,14 @@ declare global {
   }
 }
 
+const payOption = ["1만","5만","10만","100만"]
 
 const PointCharge = () => {
+  const { profile: user } = userStore();
+  const [payValue,setPayValue] = useState<number>(0)
 
   const pointChargeButton = () => {
-
-    const { profile: user } = userStore();
+   
     /* 1. 가맹점 식별하기 */
     if(!window.IMP) {
      return;
@@ -101,7 +103,7 @@ const PointCharge = () => {
       pg: 'kakaopay',                           // PG사
       pay_method: 'card',                           // 결제수단
       merchant_uid: `mid_${new Date().getTime()}`,   // 주문번호
-      amount: 300000,                                 // 결제금액
+      amount: payValue,                                 // 결제금액
       name: '포인트 충전',                  // 주문명
       buyer_name: `${user!.nickname}`,                           // 구매자 이름
       buyer_tel: '01012341234',                     // 구매자 전화번호
@@ -135,23 +137,44 @@ const PointCharge = () => {
    // navigate('/mypage/point-charge')
  }
 
+ const payValueHandler = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value
+    setPayValue(priceFormat(value))
+ }
+
+ const priceFormat = (pay:any) => {
+
+    const numberPay = parseInt(pay,10)
+    if(!isNaN(numberPay)){
+       return numberPay
+    }
+    return 0;
+    
+ }
+
   return (
     <S.Container>
       <S.Title>포인트 충전</S.Title>
       <S.PointBefore>
+      <S.PointRow>
+            <h2>결제 포인트</h2>
+            <S.InputWrap>
+            <input  value={payValue} onChange={payValueHandler}></input><span>원</span>
+            {payOption.map((pay)=>{
+              return <p>{pay}</p>
+            })}
+            </S.InputWrap>
+          </S.PointRow>
           <S.PointRow>
             <h2>보유 포인트</h2>
-            <p>100000원</p>
+            <p>{user?.cash.toLocaleString()}원</p>
           </S.PointRow>
-          <S.PointRow>
-            <h2>결제 포인트</h2>
-            <p className="pointColor">10000원</p>
-          </S.PointRow>
+
         </S.PointBefore>
         <S.PointAfter>
           <S.PointRow>
             <h2>결제 후 포인트</h2>
-            <p>10000원</p>
+            <p>{(payValue)}원</p>
           </S.PointRow>
           <button onClick={pointChargeButton}>결제하기</button>
         </S.PointAfter>
@@ -183,16 +206,32 @@ PointAfter: styled.div`
     margin: 15px 0px;
   }
   button {
-    float: right;
-    text-decoration: underline;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    white-space: nowrap;
+    padding: 0.8rem 0px;
+    background-color: ${COLORS.GREEN[300]};
+    color: ${COLORS.GRAY[0]};
+    border-radius: 6px;
+    &:hover {
+      cursor: pointer;
+    }
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 `,
 PointRow: styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
   h2 {
     ${styleFont.body1}
   }
+
   p {
     ${styleFont.h1}
   }
@@ -200,4 +239,18 @@ PointRow: styled.div`
     color: ${COLORS.GREEN[300]};
   }
 `,
+InputWrap:styled.p`
+  display: flex;
+  gap: 5px;
+  justify-content: end;
+  align-items: center;
+  input{
+    width: 80%;
+    border-radius: 5px;
+    ${styleFont.h1};
+    border-color :${COLORS.GRAY[400]};
+    outline:none;
+    text-align: right;
+  }
+`
 }
