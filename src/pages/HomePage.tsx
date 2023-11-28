@@ -1,11 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getMainPageData } from 'src/api/home/mainPage';
-import { getKakaoLoginToken } from 'src/api/user/user';
 import CommunityPostCard from 'src/components/community/CommunityPostCard';
-import GroupBuyPostCard from 'src/components/groupBuy/GroupBuyPostCard';
 import Icon from 'src/components/icon/Icon';
 import { MobileContainer } from 'src/styles/styleBox';
 import { COLORS } from 'src/styles/styleConstants';
@@ -32,7 +28,7 @@ const HomePage = () => {
     <MobileContainer className="mobileContainer">
       <S.Container>
         <S.Banner>
-          <S.BannerImg src="https://i.ibb.co/Zfrz9Wd/Frame-61.jpg" alt="배너이미지" />
+          <S.BannerImg src={'https://i.postimg.cc/Kvcgtxcg/banner.jpg'} alt="배너이미지" />
         </S.Banner>
         <S.ContentsBox>
           <S.TabArea>
@@ -64,7 +60,9 @@ const HomePage = () => {
           <S.TabArea>
             <S.MoreTab
               onClick={() => {
-                navigate('/group-buy');
+                alert('서비스 준비 중입니다.');
+                return;
+                // navigate('/group-buy');
               }}
             >
               <S.TitleArea>
@@ -75,8 +73,8 @@ const HomePage = () => {
                 더보기 <Icon name="chevron-right" size={16} />
               </S.ButtonMore>
             </S.MoreTab>
-
-            <ul>
+            <S.Title>서비스 준비 중입니다.</S.Title>
+            {/* <ul>
               {data?.groupBuy.map((data) => {
                 return (
                   <li key={data.id} style={{ borderBottom: '1px solid #eee' }}>
@@ -86,7 +84,7 @@ const HomePage = () => {
                   </li>
                 );
               })}
-            </ul>
+            </ul> */}
           </S.TabArea>
         </S.ContentsBox>
       </S.Container>

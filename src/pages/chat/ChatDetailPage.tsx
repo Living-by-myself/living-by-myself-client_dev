@@ -6,9 +6,7 @@ import styled from 'styled-components';
 import * as StompJs from '@stomp/stompjs';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
-import { useInputErrorStore, useMesssageStore, useRoomTitleStore } from 'src/store/chatStore';
-import { async } from 'q';
-import ChatMessageInput from './ChatMessageInput';
+import { useRoomTitleStore } from 'src/store/chatStore';
 
 interface ChatMessage {
   chatId: number;
@@ -20,15 +18,23 @@ interface ChatMessage {
   };
 }
 
+interface ChatRoom {
+  id: number;
+  lastChatMessage: string;
+  lastChatTime: string;
+  userCount: number;
+  title: string;
+}
+
 const ChatDetailPage = () => {
   const [message, setMessage] = useState(''); // 입력한 메시지
-
   const token = localStorage.getItem('atk');
   const userId = Number(localStorage.getItem('id'));
-  const roomId = useParams();
-  const { currentRoomTitle } = useRoomTitleStore();
-  const [roomTitle] = useState('Title');
+  const param = useParams();
+  const paramId = param.id;
+  const { currentRoomTitle, setCurrentRoomTitle } = useRoomTitleStore();
   const [chatList, setChatList] = useState<ChatMessage[]>([]); // 채팅방 메시지 배열
+  const [_, setRoomList] = useState<ChatRoom[]>([]); // 채팅방 전체 목록 배열
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
   const [hasInputError, setHasInputError] = useState(false);
@@ -40,9 +46,9 @@ const ChatDetailPage = () => {
   // 해당 채팅방 메시지 조회
   const getChatMessage = async () => {
     console.log('나 채팅방 메시지 조회한다!');
-    console.log(roomId);
+    console.log('메시지 조회되면서 나오는 roomId..', paramId);
     try {
-      const response = await axiosInstance.get('/home/chats/room/' + roomId.id);
+      const response = await axiosInstance.get('/home/chats/room/' + paramId);
       setChatList(response.data);
       console.log('채팅방 메시지 목록 조회 성공!', response.data);
       return response.data;
@@ -51,18 +57,37 @@ const ChatDetailPage = () => {
     }
   };
 
+  // 채팅 메시지 웹소켓 실시간 전송 시 서버에서 오는 시간 값과 같은 값으로 보내주기 위해 설정
+  const getMessageTransferTime = () => {
+    let currentDate = new Date();
+    let year = currentDate.getFullYear();
+    let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    let day = currentDate.getDate().toString().padStart(2, '0');
+    let hours = currentDate.getHours().toString().padStart(2, '0');
+    let minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    let seconds = currentDate.getSeconds().toString().padStart(2, '0');
+
+    let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    console.log('Current time: ', currentDate);
+    console.log('formattedDate : ', formattedDate);
+    return formattedDate;
+  };
+
   // 메세지 보내기 버튼 클릭 시
-  const sendMessageButtonClick = async () => {
+  const sendMessageButtonClick = async (e: any) => {
+    e.preventDefault();
+    console.log('메시지 전송 버튼 클릭 시 message :', message);
     if (message.length > 0) {
       console.log('message', message);
       setHasInputError(false);
 
       // 메시지 보내기
       // 이미 연결된 WebSocket이 있다면 메시지 전송
-      if (webSocketClient && webSocketClient.connected) {
+      if (webSocketClient) {
         // 특정 채팅방으로 메시지 전송
         webSocketClient.publish({
-          destination: '/app/' + roomId.id, // 채팅방 주소,
+          destination: '/app/' + paramId, // 채팅방 주소,
           body: JSON.stringify({
             // userId랑 메시지 내용만 보내기 - 서버에서 정해줌
             userId: userId,
@@ -71,10 +96,10 @@ const ChatDetailPage = () => {
         });
 
         webSocketClient.publish({
-          destination: '/topic/room/' + roomId.id, // 채팅방 주소,
+          destination: '/topic/room/' + paramId, // 채팅방 주소,
           body: JSON.stringify({
             chatId: Math.random(),
-            localTime: new Date(),
+            localTime: getMessageTransferTime(),
             msg: message,
             responseDto: {
               id: userId,
@@ -115,21 +140,14 @@ const ChatDetailPage = () => {
 
     // WebSocket 연결 성공 시 실행되는 콜백
     client.onConnect = () => {
-      console.log('연결 성공!');
-      console.log('roomId', roomId.id);
-
       // send,,subscribe,,publish ,,
       // 특정 채팅방에 topic으로 subscribe
       // 받아온 데이터를 subcribe하고, publish하여 데이터를 받아오도록 한다?
-      client.subscribe('/topic/room/' + roomId.id, (message) => {
-        console.log('구독 성공!');
-        console.log('Received message:', message.body);
+      client.subscribe('/topic/room/' + paramId, (message) => {
         if (message) {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
           let msg = JSON.parse(message.body);
-          if (!chatList.some((chat) => chat.chatId === msg.chatId)) {
-            setChatList((prevChats) => [...prevChats, msg]);
-          }
+          setChatList((prevChats) => [...prevChats, msg]);
         }
       });
     };
@@ -144,38 +162,36 @@ const ChatDetailPage = () => {
   };
 
   useEffect(() => {
-    console.log('추가한 채팅 리스트다! → ', chatList);
-    // messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatList]);
 
   // 컴포넌트 마운트 시 WebSocket 연결 및 메시지 내용 불러오기
   useEffect(() => {
     connectWebSocket();
     getChatMessage();
-    console.log('userId : ', userId);
-    // setChatRoomTitle();
 
     return () => disConnect();
   }, []);
 
   // 채팅방 제목이 날라가면 대체할..
-  // const setChatRoomTitle = async () => {
-  //   if (currentRoomTitle.length === 0) {
-  //     try {
-  //       const response = await axiosInstance.get(`/home/chats/rooms`, {
-  //         // headers: {
-  //         //   Accept: 'application/json, text/plain, */*',
-  //         //   'Content-Type': 'application/json'
-  //         // }
-  //       });
-  //       console.log('ChatDetailPage에서 조회한 response.data', response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   } else {
-  //     return currentRoomTitle;
-  //   }
-  // };
+  const setChatRoomTitle = useCallback(async () => {
+    if (currentRoomTitle.length === 0) {
+      try {
+        const response = await axiosInstance.get(`/home/chats/rooms`);
+        console.log('채팅방 title 설정을 위해 전체 채팅 목록 조회! ', response.data);
+        setRoomList(response.data);
+        const foundRoom: ChatRoom | undefined = response.data.find((room: ChatRoom) => room.id === Number(paramId));
+        if (foundRoom) {
+          console.log('나 title 새로 설정한다?');
+          setCurrentRoomTitle(foundRoom.title);
+        }
+      } catch (error) {
+        console.log('채팅방 title 설정을 위해 전체 채팅 목록 실패! ', error);
+      }
+    } else {
+      return currentRoomTitle;
+    }
+  }, [currentRoomTitle, paramId, setCurrentRoomTitle]);
 
   // 스크롤 관련
   useEffect(() => {
@@ -199,13 +215,19 @@ const ChatDetailPage = () => {
     };
   }, [chatList]);
 
+  useEffect(() => {
+    console.log(currentRoomTitle);
+    if (currentRoomTitle.length === 0) {
+      setChatRoomTitle();
+    }
+  }, [currentRoomTitle, setChatRoomTitle]);
+
   return (
     <MobileContainer>
       <S.Container>
         <S.ChatHeader>
-          {currentRoomTitle !== null ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{roomTitle}</S.Title>}
-          <S.Title>{roomTitle}</S.Title>
-          <S.MoreButton onClick={() => navigate(`/chat/${roomId.id}/edit`)}>더보기</S.MoreButton>
+          {currentRoomTitle.length !== 0 ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{null}</S.Title>}
+          <S.MoreButton onClick={() => navigate(`/chat/${paramId}/edit`)}>더보기</S.MoreButton>
         </S.ChatHeader>
         {/*채팅 관련 하나의 컴포넌트로 내부에서 또다시 map을 돌려야함 한 줄에 유저가 나냐 아니냐로 구분해서 */}
         <S.Inner>
@@ -222,7 +244,7 @@ const ChatDetailPage = () => {
               </S.MessageWrapper>
             );
           })}
-          {/* <div ref={messageEndRef}></div> */}
+          <div ref={messageEndRef}></div>
           {!isScrolledToBottom && (
             <S.ScrollToBottomIcon onClick={() => messageEndRef.current?.scrollIntoView({ behavior: 'smooth' })}>
               ⬇

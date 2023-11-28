@@ -19,9 +19,7 @@ function App() {
       setProfile(res);
       setToken(token);
       localStorage.setItem('id', res.userId);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }, [setProfile]);
 
   useEffect(() => {
@@ -40,38 +38,38 @@ function App() {
     <BrowserRouter>
       <Router />
       <ToastContainer
-          style={{
-            width: '30rem'
-          }}
-          toastStyle={{
-            backgroundColor: `${COLORS.RED[400]}`,
-            color: `${COLORS.GRAY[0]}`,
-            minWidth: '12rem',
-            maxHeight: '200px',
-            marginBottom: '0 10px',
-            padding: '0',
-            textAlign: 'center',
-            borderRadius: '10px',
+        style={{
+          width: '30rem'
+        }}
+        toastStyle={{
+          backgroundColor: `${COLORS.RED[400]}`,
+          color: `${COLORS.GRAY[0]}`,
+          minWidth: '12rem',
+          maxHeight: '200px',
+          marginBottom: '0 10px',
+          padding: '0',
+          textAlign: 'center',
+          borderRadius: '10px',
 
-            fontFamily: 'Pretendard',
-            fontSize: '16px',
-            fontStyle: 'normal',
-            fontWeight: '600',
-            lineHeight: '24px'
-          }}
-          position="bottom-center"
-          autoClose={2000}
-          hideProgressBar
-          newestOnTop
-          // closeOnClick
-          limit={1}
-          closeButton={false}
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable
-          transition={Slide}
-          pauseOnHover={false}
-        />
+          fontFamily: 'Pretendard',
+          fontSize: '16px',
+          fontStyle: 'normal',
+          fontWeight: '600',
+          lineHeight: '24px'
+        }}
+        position="bottom-center"
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop
+        // closeOnClick
+        limit={1}
+        closeButton={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        transition={Slide}
+        pauseOnHover={false}
+      />
       <ModalView />
     </BrowserRouter>
   );

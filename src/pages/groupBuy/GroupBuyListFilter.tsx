@@ -23,9 +23,8 @@ const GroupBuyListFilter = () => {
 
   useEffect(() => {
     if (isLogged && profile?.address) {
-      console.log(profile?.address);
       const address = profile?.address.split(', ');
-      console.log(address);
+
       setAddress(address[0]);
       setSearchAddress(Number(address[1])!);
     }
@@ -49,7 +48,6 @@ const GroupBuyListFilter = () => {
         <input
           type="checkbox"
           onChange={() => {
-            console.log(status);
             if (status === 'DEADLINE') setStatus('ONGOING');
             else setStatus('DEADLINE');
           }}
