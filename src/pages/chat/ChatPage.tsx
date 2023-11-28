@@ -6,62 +6,98 @@ import styled from 'styled-components';
 import ChatList from './ChatList';
 import axiosInstance from 'src/api/AxiosInstance';
 import { useNavigate } from 'react-router-dom';
-
-interface ChatUser {
-  id: number;
-  nickname: string;
-  address: string;
-}
+import { useRoomTitleStore, useUsersIdStore } from 'src/store/chatStore';
 
 interface ChatRoom {
   id: number;
-  users: ChatUser[];
   lastChatMessage: string;
   lastChatTime: string;
+  userCount: number;
+  title: string;
 }
 
 const ChatPage = () => {
-  const [chatList, setChatList] = useState<ChatRoom[]>([]);
-  const userId = 8; // 임의로 지정한 상대 id -> 클릭한 user의 id를 받도록 변경해야함
+  const [roomList, setRoomList] = useState<ChatRoom[]>([]);
   const navigate = useNavigate();
   const token = localStorage.getItem('atk');
+  const [myNickname, setMyNickname] = useState(''); // 1:1 title로 보낼 내 닉네임
+  const { currentRoomTitle } = useRoomTitleStore(); // 1:1 title로 보낼 상대 닉네임 or 공구 제목 set할 예정
+  const { currentUsersId } = useUsersIdStore();
+
+  // title로 보내기 위해 내 정보 조회
+  const getMyProfile = async () => {
+    try {
+      const response = await axiosInstance.get('/home/profile');
+      console.log('내 정보 : ', response.data);
+      const myProfile = response.data;
+      setMyNickname(myProfile.nickname);
+    } catch (error) {
+      console.log('내 프로필 가져오기 실패! ', error);
+    }
+  };
 
   // 채팅방 조회
-  const getChatList = async () => {
+  const getRoomList = async () => {
     try {
       const response = await axiosInstance.get('/home/chats/rooms');
-      setChatList(response.data);
+      setRoomList(response.data);
+      console.log('채팅방 전체 목록 조회 성공!', response.data);
 
       return response;
     } catch (error) {}
   };
 
-  // 채팅방 생성 - 상대 id를 가지고 있어야 함
+  // 채팅방 생성
   const createChat = async () => {
-    try {
-      const response = await axiosInstance.post('/room', [userId]);
-
-      return response.data;
-    } catch (error) {}
+    if (currentUsersId.length > 1) {
+      try {
+        const response = await axiosInstance.post('/room', {
+          usersId: currentUsersId,
+          title: `${currentRoomTitle}`
+        });
+        console.log('공구 채팅방 생성 성공!', response.data); // response로 newRoomId를 받는다?
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = await axiosInstance.post('/room', {
+          usersId: currentUsersId,
+          title: `${myNickname}, ${currentRoomTitle}`
+        });
+        console.log('1:1 채팅방 생성 성공!', response.data); // response로 newRoomId를 받는다?
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   useEffect(() => {
-    getChatList();
+    getRoomList();
+    getMyProfile();
   }, []);
 
   const handleCreateChatButtonClick = async () => {
-    const oneOnOneRoom = chatList.find((room) => {
-      const users = room.users;
-      return users.length === 2 && users.some((user) => user.id === userId);
-    });
-
-    if (oneOnOneRoom?.id! !== undefined) {
-      navigate(`/chat/${oneOnOneRoom?.id!}`);
+    if (roomList.length > 0) {
+      for (const room of roomList) {
+        if ('room.title에 상대 유저 닉네임(currentRoomtitle)이 포함되어 있는지?') {
+          navigate(`/chat/${room.id!}`);
+        } else {
+          try {
+            const newRoomId = await createChat(); // 상대 id 담길 듯?
+            console.log('2');
+            navigate(`/chat/${newRoomId}`);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
     } else {
-      try {
-        const newRoomId = await createChat(); // 상대 id 담길 듯?
-        navigate(`/chat/${newRoomId}`);
-      } catch (error) {}
+      // 채팅 내역이 하나도 없으면 비교 필요 없이 바로 생성
+      const newRoomId = await createChat(); // 상대 id 담길 듯?
+      navigate(`/chat/${newRoomId}`);
     }
   };
 

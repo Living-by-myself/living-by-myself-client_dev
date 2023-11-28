@@ -69,11 +69,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data?.users[data?.users.length - 1].nickname}</h1>
-                  <h2>{data?.users[data?.users.length - 1].address}</h2>
+                  <h1>{data!.users[data?.users.length-1].nickname}</h1>
+                  <h2>{data!.users[data?.users.length-1].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data?.users[data?.users.length - 1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data!.users[data?.users.length-1].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>

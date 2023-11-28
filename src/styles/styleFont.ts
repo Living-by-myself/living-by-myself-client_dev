@@ -34,7 +34,7 @@ export const styleFont = {
     line-height: normal;
   `,
   body1: css`
-    cobor: var(--gray-gray-800, #212121);
+    color: var(--gray-gray-800, #212121);
     /* body1 */
     font-family: Pretendard;
     font-size: 16px;
