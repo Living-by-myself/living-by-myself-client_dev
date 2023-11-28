@@ -14,6 +14,7 @@ import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
+import { toast } from 'react-toastify';
 
 interface JoinUserType {
   id: number;
@@ -47,7 +48,7 @@ const GroupBuyDetail = () => {
       const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
       mutation.mutate(id);
 
-      alert('공동구매 마감 완료');
+      toast('공동구매 마감 완료');
     } catch (error) {}
   };
 
@@ -69,11 +70,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data!.users[data?.users.length-1].nickname}</h1>
-                  <h2>{data!.users[data?.users.length-1].address}</h2>
+                  <h1>{data!.users[data?.users.length - 1].nickname}</h1>
+                  <h2>{data!.users[data?.users.length - 1].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data!.users[data?.users.length-1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data!.users[data?.users.length - 1].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>

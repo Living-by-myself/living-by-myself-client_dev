@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import GroupBuyInputImage from './GroupBuyInputImage';
 import { addGroupBuyPost } from 'src/api/groupBuy/groupBuy';
+import { toast } from 'react-toastify';
 
 export const validateUrl = (url: string) => {
   const urlRegex = new RegExp('^(https?://)?([a-zA-Z0-9_-]+.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/[^/]*)*$');
@@ -118,9 +119,9 @@ const GroupBuyWriteForm = () => {
 
       try {
         await addGroupBuyPost(form);
-        alert('글 등록이 완료되었습니다.');
+        toast('글 등록이 완료되었습니다.');
       } catch (e) {
-        alert('글 등록에 실패하였습니다.');
+        toast('글 등록에 실패하였습니다.');
       }
     },
     (onError) => {}

@@ -10,6 +10,7 @@ import { getOtherUserProfile, reportOtherUser } from 'src/api/user/user';
 import { UserProps } from 'src/pages/mypage/MyPage';
 import { set } from 'react-hook-form';
 import Button from '../button/Button';
+import { toast } from 'react-toastify';
 
 interface ModalProps {
   onClose: () => void;
@@ -51,7 +52,7 @@ const OtherUserProfile = ({ onClose, userId }: ModalProps) => {
             size="sm"
             color="primary"
             onClick={() => {
-              alert('1:1 채팅 기능은 준비중입니다.');
+              toast('1:1 채팅 기능은 준비중입니다.');
               return;
             }}
             children={'1:1 채팅'}
@@ -64,15 +65,15 @@ const OtherUserProfile = ({ onClose, userId }: ModalProps) => {
               const description = prompt('신고 사유를 입력해주세요.', '');
 
               if (description?.length === 0) {
-                alert('신고 사유를 입력해주세요.');
+                toast('신고 사유를 입력해주세요.');
                 return;
               }
               const response = await reportOtherUser(userId as unknown as string, description!);
               if (response) {
-                alert('신고가 완료되었습니다.');
+                toast('신고가 완료되었습니다.');
                 onClose();
               } else {
-                alert('신고에 실패했습니다.');
+                toast('신고에 실패했습니다.');
               }
             }}
             children={'신고하기'}

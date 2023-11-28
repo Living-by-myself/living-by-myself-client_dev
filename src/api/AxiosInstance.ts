@@ -3,6 +3,7 @@ import { getAccessTokenWhenExpiration } from './user/user';
 import { Navigate, useNavigate } from 'react-router-dom';
 import axiosRetry from 'axios-retry';
 import userStore from 'src/store/userStore';
+import { toast } from 'react-toastify';
 
 export const axiosBaseInstance = axios.create({
   baseURL: 'https://tracelover.shop'
@@ -59,7 +60,8 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('atk');
         localStorage.removeItem('rtk');
         localStorage.removeItem('id');
-        alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+        toast('로그인이 만료되었습니다. 다시 로그인해주세요.');
+
         // userStore.logout();
         Navigate({ to: '/login' });
       }
