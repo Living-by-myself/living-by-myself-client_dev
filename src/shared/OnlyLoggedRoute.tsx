@@ -1,6 +1,7 @@
 import { get } from 'http';
 import React from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getUserProfile } from 'src/api/user/user';
 import userStore, { UserProfile } from 'src/store/userStore';
 
@@ -19,7 +20,7 @@ const OnlyLoggedRoute = () => {
   if (token) {
     return <Outlet />;
   } else {
-    alert('로그인이 필요합니다.');
+    toast('로그인이 필요합니다.');
   }
   return <Navigate to="/" />;
 };

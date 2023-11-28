@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { COLORS } from 'src/styles/styleConstants';
 import styled from 'styled-components';
 import { z } from 'zod';
@@ -33,7 +34,7 @@ const FindPhoneAuth = () => {
       await axios.post('https://tracelover.shop/home/auth/message?authentication=find', {
         phoneNumber
       });
-      alert('인증번호 발송');
+      toast('인증번호 발송');
     } catch (error: any) {}
   };
 

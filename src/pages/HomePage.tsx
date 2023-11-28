@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getMainPageData } from 'src/api/home/mainPage';
 import CommunityPostCard from 'src/components/community/CommunityPostCard';
 import GroupBuyPostCard from 'src/components/groupBuy/GroupBuyPostCard';
@@ -54,7 +55,7 @@ const HomePage = () => {
                   <li key={post.id}>
                     <S.Container
                       onClick={() => {
-                        if (!isLogged) return alert('로그인이 필요합니다.');
+                        if (!isLogged) return toast('로그인이 필요합니다.');
                         navigate(`/community/${post.id}`);
                       }}
                     >
@@ -86,7 +87,7 @@ const HomePage = () => {
                   <li key={data.id} style={{ borderBottom: '1px solid #eee' }}>
                     <S.Container
                       onClick={() => {
-                        if (!isLogged) return alert('로그인이 필요합니다.');
+                        if (!isLogged) return toast('로그인이 필요합니다.');
                         navigate(`/group-buy/${data.id}`);
                       }}
                     >

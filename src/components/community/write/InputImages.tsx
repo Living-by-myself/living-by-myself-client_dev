@@ -10,6 +10,7 @@ import { set } from 'react-hook-form';
 import { useStore } from 'zustand';
 import { communityWriteImageStore } from 'src/store/communityStore';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface InputImagesProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: 'file';
@@ -35,7 +36,7 @@ const InputImages = () => {
           if (fileInput.current?.files) {
             const fileList = Array.from(fileInput.current?.files);
             if (fileList.length > 5) {
-              alert('이미지는 5개까지만 가능합니다.');
+              toast('이미지는 5개까지만 가능합니다.');
               return;
             }
             setFiles(fileInput.current?.files ? Array.from(fileInput.current?.files) : []);
