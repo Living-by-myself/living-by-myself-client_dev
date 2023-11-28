@@ -39,14 +39,18 @@ function App() {
       <Router />
       <ToastContainer
         style={{
-          width: '30rem'
+          // marginBottom: '0 30px'
+          padding: '0 16px',
+          paddingBottom: '30px',
+          zIndex: 9999
+          // width: '30rem'
         }}
         toastStyle={{
-          backgroundColor: `${COLORS.RED[400]}`,
+          backgroundColor: `${COLORS.GREEN[400]}`,
           color: `${COLORS.GRAY[0]}`,
-          minWidth: '12rem',
+          minWidth: '300px',
           maxHeight: '200px',
-          marginBottom: '0 10px',
+          marginBottom: '0 30px',
           padding: '0',
           textAlign: 'center',
           borderRadius: '10px',

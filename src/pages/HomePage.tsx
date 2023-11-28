@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getMainPageData } from 'src/api/home/mainPage';
 import CommunityPostCard from 'src/components/community/CommunityPostCard';
+import GroupBuyPostCard from 'src/components/groupBuy/GroupBuyPostCard';
 import Icon from 'src/components/icon/Icon';
+import userStore from 'src/store/userStore';
 import { MobileContainer } from 'src/styles/styleBox';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -17,6 +20,7 @@ export interface HomePageData {
 
 const HomePage = () => {
   const location = useLocation();
+  const { isLogged } = userStore();
   const navigate = useNavigate();
 
   const { data, isLoading, isError } = useQuery<HomePageData>(['mainPage'], getMainPageData);
@@ -45,24 +49,28 @@ const HomePage = () => {
                 더보기 <Icon name="chevron-right" size={16} />
               </S.ButtonMore>
             </S.MoreTab>
-
-            {data?.community.map((post) => {
-              return (
-                <div key={post.id}>
-                  <Link to={`/community/${post.id}`}>
-                    <CommunityPostCard post={post} />
-                  </Link>
-                </div>
-              );
-            })}
+            <ul>
+              {data?.community.map((post) => {
+                return (
+                  <li key={post.id}>
+                    <S.Container
+                      onClick={() => {
+                        if (!isLogged) return toast('로그인이 필요합니다.');
+                        navigate(`/community/${post.id}`);
+                      }}
+                    >
+                      <CommunityPostCard post={post} />
+                    </S.Container>
+                  </li>
+                );
+              })}
+            </ul>
           </S.TabArea>
 
           <S.TabArea>
             <S.MoreTab
               onClick={() => {
-                alert('서비스 준비 중입니다.');
-                return;
-                // navigate('/group-buy');
+                navigate(`/group-buy/`);
               }}
             >
               <S.TitleArea>
@@ -73,18 +81,22 @@ const HomePage = () => {
                 더보기 <Icon name="chevron-right" size={16} />
               </S.ButtonMore>
             </S.MoreTab>
-            <S.Title>서비스 준비 중입니다.</S.Title>
-            {/* <ul>
+            <ul>
               {data?.groupBuy.map((data) => {
                 return (
                   <li key={data.id} style={{ borderBottom: '1px solid #eee' }}>
-                    <Link to={`/group-buy/${data.id}`} state={{ id: data.id }}>
+                    <S.Container
+                      onClick={() => {
+                        if (!isLogged) return toast('로그인이 필요합니다.');
+                        navigate(`/group-buy/${data.id}`);
+                      }}
+                    >
                       <GroupBuyPostCard data={data} />
-                    </Link>
+                    </S.Container>
                   </li>
                 );
               })}
-            </ul> */}
+            </ul>
           </S.TabArea>
         </S.ContentsBox>
       </S.Container>
@@ -97,6 +109,8 @@ export default HomePage;
 const S = {
   Container: styled.div`
     width: 100%;
+
+    /* background-color: royalblue; */
   `,
   Banner: styled.div`
     display: flex;
@@ -131,12 +145,14 @@ const S = {
   `,
   Category: styled.div``,
   TabArea: styled.div`
+    width: 100vw;
     ${styleFont.body3}
     color: ${COLORS.GRAY[400]};
     padding: 10px 0;
   `,
   MoreTab: styled.div`
     display: flex;
+    /* width: 375px; */
     border-top: 1px solid ${COLORS.GRAY[300]};
     border-bottom: 1px solid ${COLORS.GRAY[300]};
     padding: 10px 16px;

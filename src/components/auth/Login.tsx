@@ -8,6 +8,7 @@ import { styleFont } from 'src/styles/styleFont';
 import { getKakaoLoginToken, getUserProfile, loginWithEmailPassword } from 'src/api/user/user';
 import userStore from 'src/store/userStore';
 import { axiosBaseInstance } from 'src/api/AxiosInstance';
+import { toast } from 'react-toastify';
 
 export interface LoginUserType {
   username: string;
@@ -32,7 +33,7 @@ const Login = () => {
 
   //주소로 이동해서 해당 인가코드를 백엔드에 보내주면 response로 atk와rtk 데이터가 들어옴 안됨
   const kakaoLoginHandler = async () => {
-    alert('소셜로그인 기능은 준비중입니다.');
+    toast('소셜로그인 기능은 준비중입니다.');
     // const key = process.env.REACT_APP_KAKAO_ADMIN_KEY;
     // const uri = process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI;
 

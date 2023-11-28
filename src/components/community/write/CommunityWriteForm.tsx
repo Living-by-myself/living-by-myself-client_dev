@@ -37,7 +37,9 @@ const CommunityWriteForm = () => {
 export default CommunityWriteForm;
 
 const S = {
-  Container: styled.div``,
+  Container: styled.div`
+    width: 100%;
+  `,
   TextContainer: styled.div`
     padding: 0 16px;
   `,

@@ -5,6 +5,7 @@ import { COLORS } from 'src/styles/styleConstants';
 import axios from 'axios';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-toastify';
 
 interface NumberType {
   phoneNumber: string;
@@ -39,7 +40,7 @@ const SignUpPhoneAuth = () => {
     await axios.post('https://tracelover.shop/home/auth/message', {
       phoneNumber
     });
-    alert('인증번호 전송');
+    toast('인증번호 전송');
   };
 
   return (

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteComment, postComment, updateComment } from './comment';
+import { toast } from 'react-toastify';
 interface Props {
   postId: string;
 }
@@ -28,8 +29,9 @@ const useCommentMutate = (postId?: string) => {
   const deleteCommentHandler = (id: string) => {
     if (window.confirm('댓글을 삭제하시겠습니까?')) {
       deleteCommentMutation.mutate(id);
+      toast('댓글이 삭제되었습니다.');
     } else {
-      alert('취소되었습니다.');
+      toast('취소되었습니다.');
     }
   };
 

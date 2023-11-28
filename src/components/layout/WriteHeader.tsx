@@ -36,6 +36,7 @@ const WriteHeader = () => {
                 description: description,
                 category: category
               };
+
               formData.append('requestDto', JSON.stringify(requestDto));
 
               if (files.length === 0) {
