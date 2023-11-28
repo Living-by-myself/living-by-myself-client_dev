@@ -1,15 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addCommunityPost, deleteCommunityPost, updateCommunityPost } from './community';
+import { communityAPIOptionStore } from 'src/store/communityStore';
 interface Props {
   postId: string;
 }
 
 const useCommunityMutate = (postId?: string) => {
+  const { category, sort, keyword } = communityAPIOptionStore();
   const queryclient = useQueryClient();
 
   const success = {
     onSuccess: () => {
-      queryclient.invalidateQueries(['posts', 'ALL']);
+      queryclient.invalidateQueries(['posts', { category, sort, keyword }]);
     }
   };
 

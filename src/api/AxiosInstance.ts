@@ -38,19 +38,23 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    const {
-      config,
-      response: { status }
-    } = error;
+    console.log(error);
+    const { config } = error;
 
     if (error) {
+      console.log('에러 이프문 들어옴');
       const originalRequest = config;
+      console.log('originalRequest', originalRequest);
       const newAtk = await getAccessTokenWhenExpiration();
+      console.log('newAtk', newAtk);
       if (newAtk) {
         console.log('newAtk', newAtk);
         originalRequest.headers['Authorization'] = newAtk.atk;
         localStorage.setItem('atk', newAtk.atk);
-        return axiosInstance(originalRequest);
+        error.config.headers['Authorization'] = newAtk.atk;
+        const response = await axiosInstance.request(error.config);
+        return response;
+        // return axiosInstance(originalRequest);
       } else {
         localStorage.removeItem('atk');
         localStorage.removeItem('rtk');
@@ -59,6 +63,7 @@ axiosInstance.interceptors.response.use(
         // userStore.logout();
         Navigate({ to: '/login' });
       }
+      return Promise.reject(error);
     }
   }
 );
