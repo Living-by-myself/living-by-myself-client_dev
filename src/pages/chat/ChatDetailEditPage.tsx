@@ -1,5 +1,5 @@
 //import Button from "@/components/common/button";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import axiosInstance from 'src/api/AxiosInstance';
 import useOverlay from 'src/hooks/useOverlay';
@@ -20,11 +20,21 @@ const ChatDetailEditPage = () => {
   const navigate = useNavigate();
   const param = useParams();
   const paramId = param.id;
-  const [postId, setPostId] = useState(0);
+  const [postId, setPostId] = useState(1);
   const [userList, setUserList] = useState<User[] | null>(null); // 게시물 아이디 알아야 함..
   const overlay = useOverlay();
 
-  // 유저 정보 가져오기 위한 로직 필요.. 여기서 paramId 사용될 듯
+  // 유저들 정보 가져오기
+  const getChatUsers = async () => {
+    try {
+      console.log('roomId : ', paramId);
+      const response = await axiosInstance.get(`/home/chats/rooms/${paramId}/users`);
+      console.log('채팅에 참여한 유저 정보! ', response.data);
+      setUserList(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // 공구 게시물 id나 title 가져올 방법 ...
 
@@ -49,8 +59,12 @@ const ChatDetailEditPage = () => {
     }
   };
 
-  const openOtherUserProfileModal = () => {
-    // overlay.open(({ close }) => <OtherUserProfile userId={userId} onClose={close} />);
+  useEffect(() => {
+    getChatUsers();
+  }, []);
+
+  const openOtherUserProfileModal = (userId: number) => {
+    overlay.open(({ close }) => <OtherUserProfile userId={userId} onClose={close} />);
   };
 
   return (
@@ -63,7 +77,7 @@ const ChatDetailEditPage = () => {
             return (
               <S.User>
                 <S.UserProfileImg
-                  onClick={openOtherUserProfileModal}
+                  onClick={() => openOtherUserProfileModal(user.id)}
                   alt="profileUmg"
                   src={user.profileImage == null ? 'http://via.placeholder.com/640x480' : user.profileImage}
                 />
@@ -75,9 +89,6 @@ const ChatDetailEditPage = () => {
         ) : (
           <>
             <div>유저 목록이 없습니다.</div>
-            <S.User>
-              {/* <S.UserProfileImg onClick={openOtherUserProfileModal} alt="profileUmg" src={user.profileImage == null ? 'http://via.placeholder.com/640x480' : user.profileImage}/> */}
-            </S.User>
           </>
         )}
       </S.UserContainer>
@@ -119,6 +130,7 @@ const S = {
     background-color: royalblue;
     border-radius: 30px;
     border: none;
+    cursor: pointer;
   `,
   UserNickname: styled.div`
     font-size: ${styleFont.body1};

@@ -51,12 +51,11 @@ const ChatList = () => {
             // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
             <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id, chat.title)}>
               <S.ChatInfoBox>
-                {/* 원래는 chat.title로 하고싶은데 그냥 아이디 값으로 대체해 놓음.. */}
-                <S.ChatRoomName>{chat.id}</S.ChatRoomName>
+                <S.ChatRoomName>{chat.title}</S.ChatRoomName>
                 {chat.userCount > 2 && <S.ChatUserCount>{chat.userCount}</S.ChatUserCount>}
                 {/* <S.ChatRoomLastMessageTime>{chat.lastChatTime.slice(-8, -3) || '기록없음'}</S.ChatRoomLastMessageTime> */}
                 <S.ChatRoomLastMessageTime>
-                  {chat.lastChatTime ? chat.lastChatTime.slice(-8, -3) : '기록없음'}
+                  {chat.lastChatTime ? chat.lastChatTime.slice(11, 16) : '기록없음'}
                 </S.ChatRoomLastMessageTime>
               </S.ChatInfoBox>
               <S.ChatRoomLastMessage>{chat.lastChatMsg || '메시지 없음'}</S.ChatRoomLastMessage>

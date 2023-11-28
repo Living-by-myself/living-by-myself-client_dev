@@ -38,10 +38,12 @@ const GroupBuyDetail = () => {
   });
   if (isLoading) return <div>로딩중</div>;
   if (isError) return <div>에러</div>;
+  console.log(data);
 
   const findBuyUser = data?.users?.find((user: JoinUserType) => {
     return user?.id.toString() === localStorage.getItem('id');
   });
+  console.log(findBuyUser);
 
   const closeGroupBuyButton = async () => {
     try {
@@ -56,7 +58,10 @@ const GroupBuyDetail = () => {
     try {
       const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
       mutation.mutate(id);
-    } catch (error) {}
+      console.log('공구 취소', res);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
