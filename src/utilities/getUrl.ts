@@ -1,16 +1,21 @@
-import { getGroupBuyListOption } from 'src/api/groupBuy/groupBuy';
 import { CommunityCategoryValues, CommunitySortValues } from 'src/types/community/types';
+import {
+  GroupBuyCategoriesValues,
+  GroupBuyCategoryShareValues,
+  GroupBuySortValues,
+  GroupBuyStatusValues
+} from 'src/types/groupBuy/types';
 
-export const getGroupBuyListURL = (option: getGroupBuyListOption): string => {
+export const getGroupBuyListURL = ({ page, option }: getGroupBuyPostListAPIOption): string => {
   const base_url = 'home/group-buying';
 
-  let url = `${base_url}/search?page=${option.page}&size=6`;
+  let url = `${base_url}/search?page=${page}&size=6&sort=${option.sort}`;
 
   if (option.category && option.category !== 'ALL') {
     url += `&category=${option.category}`;
   }
 
-  if (option.category_share && option.category_share !== 'ALL') {
+  if (option && option.category_share !== 'ALL') {
     url += `&category_share=${option.category_share}`;
   }
 
@@ -30,6 +35,20 @@ export const getGroupBuyListURL = (option: getGroupBuyListOption): string => {
 
   return url;
 };
+
+export interface getGroupBuyPostListOption {
+  category?: GroupBuyCategoriesValues;
+  keyword?: string;
+  category_share: GroupBuyCategoryShareValues;
+  category_status: GroupBuyStatusValues;
+  sort: GroupBuySortValues;
+  address?: string;
+}
+
+export interface getGroupBuyPostListAPIOption {
+  page: number;
+  option: getGroupBuyPostListOption;
+}
 
 export interface getCommunityPostListOption {
   category?: CommunityCategoryValues;
