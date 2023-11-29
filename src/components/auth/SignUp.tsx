@@ -45,8 +45,7 @@ const SignUp = () => {
   });
 
   const navigate = useNavigate();
-  const phoneNumber = getValues('phoneNumber');
-  const phoneAuthNumber = getValues('phoneAuthNumber');
+
 
   const [isPhoneAuthCompleted, setIsPhoneAuthCompleted] = useState<boolean>(false);
 
@@ -72,6 +71,8 @@ const SignUp = () => {
   };
 
   const phoneAuthNumberButton = async () => {
+    const phoneNumber = getValues('phoneNumber');
+    console.log(phoneNumber)
     try {
       await axiosBaseInstance.post('/home/auth/message', {
         phoneNumber
@@ -79,17 +80,20 @@ const SignUp = () => {
       toast('인증번호가 전송되었습니다.');
       setIsPhoneAuthCompleted(false);
     } catch (error) {
-      if(phoneNumber === ""){
-        toast("휴대폰 번호를 확인해주세요.")
-      }else if(validatePhoneNumber(phoneNumber)){
-        toast(`${phoneNumber}는 이미 있는 번호입니다.`)
-      }else{
-        toast("휴대폰 번호를 확인해주세요.")
-      }
+      console.log(error)
+      // if(phoneNumber === ""){
+      //   toast("휴대폰 번호를 확인해주세요.")
+      // }else if(validatePhoneNumber(phoneNumber)){
+      //   toast(`${phoneNumber}는 이미 있는 번호입니다.`)
+      // }else{
+      //   toast("휴대폰 번호를 확인해주세요.")
+      // }
     }
   };
 
   const checkPhoneAuthNumberButton = async () => {
+    const phoneNumber = getValues('phoneNumber');
+    const phoneAuthNumber = getValues('phoneAuthNumber');
     try {
       await axiosBaseInstance.post('/home/auth/message-code/signup', {
         phoneNumber,
@@ -115,7 +119,7 @@ const SignUp = () => {
           <S.FormRow>
             <label>전화번호</label>
             <S.FormColumn>
-              <input id="phoneNUmber" placeholder="전화번호" {...register('phoneNumber')} />
+              <input id="phoneNumber" placeholder="전화번호" {...register('phoneNumber')} />
               <S.Button type="button" onClick={phoneAuthNumberButton}>
                 인증번호 받기
               </S.Button>

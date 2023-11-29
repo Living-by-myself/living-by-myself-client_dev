@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import axiosInstance from 'src/api/AxiosInstance'
 import userStore from 'src/store/userStore'
 import { COLORS } from 'src/styles/styleConstants'
 import { styleFont } from 'src/styles/styleFont'
 import styled from 'styled-components'
+
+const option = ["1"]
 
 export interface RequestPayAdditionalParams {
   digital?: boolean;
@@ -83,10 +85,16 @@ declare global {
 
 
 const PointCharge = () => {
+  const { profile: user } = userStore();
+  const [selectedValue,setSelectedValue] = useState(0)
+
+  const selectButton = (e:React.ChangeEvent<HTMLSelectElement>) => {
+
+  }
 
   const pointChargeButton = () => {
 
-    const { profile: user } = userStore();
+    
     /* 1. 가맹점 식별하기 */
     if(!window.IMP) {
      return;
@@ -139,13 +147,20 @@ const PointCharge = () => {
     <S.Container>
       <S.Title>포인트 충전</S.Title>
       <S.PointBefore>
-          <S.PointRow>
-            <h2>보유 포인트</h2>
-            <p>100000원</p>
+      <S.PointRow>
+            <h2>결제 포인트</h2>
+            <select onChange={selectButton}>
+              <option value={10000}>1만원</option>
+              <option value={10000}>5만원</option>
+              <option value={10000}>10만원</option>
+              <option value={10000}>30만원</option>
+              <option value={10000}>50만원</option>
+              <option value={10000}>100만원</option>
+            </select>
           </S.PointRow>
           <S.PointRow>
-            <h2>결제 포인트</h2>
-            <p className="pointColor">10000원</p>
+            <h2>보유 포인트</h2>
+            <p>{user!.cash.toLocaleString()}원</p>
           </S.PointRow>
         </S.PointBefore>
         <S.PointAfter>
@@ -183,8 +198,22 @@ PointAfter: styled.div`
     margin: 15px 0px;
   }
   button {
-    float: right;
-    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    width: 100%;
+    padding: 0.8rem 0px;
+    background-color: ${COLORS.GREEN[300]};
+    color: ${COLORS.GRAY[0]};
+    border-radius: 6px;
+    &:hover {
+      cursor: pointer;
+    }
+    &:disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 `,
 PointRow: styled.div`
