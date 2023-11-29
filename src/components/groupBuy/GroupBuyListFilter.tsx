@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { groupBuyAPIOptionStore, useGroupBuyQuery } from 'src/store/groupStore';
+import { groupBuyAPIOptionStore } from 'src/store/groupStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled, { css } from 'styled-components';

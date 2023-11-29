@@ -26,31 +26,6 @@ export interface GroupBuyWriteFormImageProps {
   image: File[] | null;
 }
 
-export type GroupBuyCategory = 'ALL' | 'LIFE' | 'FOOD' | 'OTHER';
-export type GroupBuyFilter = 'asc' | 'desc';
-export type GroupBuyShare = 'SHARE' | 'BUY';
-export type GroupBuyStatus = 'ONGOING' | 'DEADLINE';
-
-export interface GroupBuyQueryOption {
-  option: getGroupBuyListOption;
-  setOption: (option: getGroupBuyListOption) => void;
-}
-
-export const useGroupBuyQuery = create<GroupBuyQueryOption>()(
-  devtools((set) => ({
-    option: {
-      page: 1,
-      category: 'LIFE',
-      category_share: 'ALL',
-      category_status: 'DEADLINE',
-      address: 0,
-      keyword: '',
-      sort: 'desc'
-    },
-    setOption: (option: getGroupBuyListOption) => set(() => ({ option }))
-  }))
-);
-
 export interface getGroupBuyListOptionStore {
   category: GroupBuyCategoriesValues;
   category_share: GroupBuyCategoryShareValues;

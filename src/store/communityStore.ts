@@ -46,10 +46,6 @@ export const communityWriteImageStore = create<CommunityWriteImageStore>()(
   }))
 );
 
-// export interface CommunityAPI {category: CommunityCategoryValues;
-//     sort: CommunitySortValues;
-//     keyword: string;}
-
 export interface getCommunityPostListOptionStore {
   category?: CommunityCategoryValues;
   keyword?: string;

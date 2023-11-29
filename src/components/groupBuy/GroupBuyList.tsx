@@ -1,10 +1,9 @@
-import { FetchNextPageOptions, InfiniteQueryObserverResult, useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import React, { useMemo } from 'react';
+import { FetchNextPageOptions, InfiniteQueryObserverResult, useInfiniteQuery } from '@tanstack/react-query';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Link } from 'react-router-dom';
 import { getGroupBuyList } from 'src/api/groupBuy/groupBuy';
 import GroupBuyPostCard from 'src/components/groupBuy/GroupBuyPostCard';
-import { groupBuyAPIOptionStore, useGroupBuyQuery } from 'src/store/groupStore';
+import { groupBuyAPIOptionStore } from 'src/store/groupStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import { GroupBuyPreviewType } from 'src/types/groupBuy/types';

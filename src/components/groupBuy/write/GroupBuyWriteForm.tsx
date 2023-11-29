@@ -11,6 +11,10 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import GroupBuyInputImage from './GroupBuyInputImage';
 import { addGroupBuyPost } from 'src/api/groupBuy/groupBuy';
 import { toast } from 'react-toastify';
+import GroupBuyWriteCategory from './GroupBuyWriteCategory';
+import { styleFont } from 'src/styles/styleFont';
+import { COLORS } from 'src/styles/styleConstants';
+import { FlexBox } from 'src/styles/styleBox';
 
 export const validateUrl = (url: string) => {
   const urlRegex = new RegExp('^(https?://)?([a-zA-Z0-9_-]+.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/[^/]*)*$');
@@ -66,8 +70,8 @@ const GroupBuyWriteForm = () => {
     defaultValues: {
       enumShare: 'BUY',
       enumCategory: 'FOOD',
-      address: '서울특별시 양천구 신월동',
-      beobJeongDong: '12345',
+      address: '',
+      beobJeongDong: '',
       lat: 33.5563,
       lng: 126.79581
     },
@@ -129,9 +133,11 @@ const GroupBuyWriteForm = () => {
 
   return (
     <S.Container>
+      <S.FilterArea>
+        <GroupBuyWriteCategory watch={watch} setValue={setValue} />
+      </S.FilterArea>
       <S.GroupBuyForm onSubmit={onSubmit}>
-        <button type="submit">제출</button>
-        <div>
+        <div style={{ padding: '0 16px' }}>
           <GroupBuyInputImage
             currentImageNum={watch('images')?.length || 0}
             maxImageNum={5}
@@ -140,139 +146,91 @@ const GroupBuyWriteForm = () => {
             onRemoveFile={(fileList) => setValue('images', fileList)}
           />
         </div>
+        <S.InputArea>
+          <S.InputWrapper>
+            <S.Label>제목</S.Label>
+            <S.Input type="text" placeholder="제목" {...register('title')}></S.Input>
+            {errors.title && <p>{errors.title.message}</p>}
+          </S.InputWrapper>
 
-        <S.InputWrapper>
-          <S.CategoryButtonBux>
-            <Button
-              type="button"
-              variants={watch('enumCategory') === 'FOOD' ? 'contain' : 'outline'}
-              onClick={() => {
-                setValue('enumCategory', 'FOOD');
-              }}
-            >
-              음식
-            </Button>
-            <Button
-              type="button"
-              variants={watch('enumCategory') === 'LIFE' ? 'contain' : 'outline'}
-              onClick={() => {
-                setValue('enumCategory', 'LIFE');
-              }}
-            >
-              생필품
-            </Button>
-            <Button
-              type="button"
-              variants={watch('enumCategory') === 'OTHER' ? 'contain' : 'outline'}
-              onClick={() => {
-                setValue('enumCategory', 'OTHER');
-              }}
-            >
-              기타
-            </Button>
-          </S.CategoryButtonBux>
-          <S.Label>제목</S.Label>
-          <S.Input type="text" placeholder="제목" {...register('title')}></S.Input>
-          {errors.title && <p>{errors.title.message}</p>}
-        </S.InputWrapper>
+          <S.InputWrapper>
+            <S.Label>공동구매 물품 링크</S.Label>
+            <S.Input type="text" placeholder="물품링크" {...register('itemLink')}></S.Input>
+            {errors.itemLink && <p>{errors.itemLink.message}</p>}
+          </S.InputWrapper>
 
-        <S.InputWrapper>
-          <S.Label>공동구매 물품 링크</S.Label>
-          <S.Input type="text" placeholder="물품링크" {...register('itemLink')}></S.Input>
-          {errors.itemLink && <p>{errors.itemLink.message}</p>}
-        </S.InputWrapper>
+          <S.InputWrapper>
+            <S.Label>가격</S.Label>
+            {watch('enumShare') === 'BUY' ? (
+              <S.Input
+                type="number"
+                placeholder="가격"
+                {...register('perUserPrice', {
+                  setValueAs: (v) => (v === '' ? undefined : parseInt(v, 10))
+                })}
+              ></S.Input>
+            ) : (
+              <S.Input
+                type="number"
+                placeholder="가격"
+                disabled
+                {...register('perUserPrice', {
+                  setValueAs: (v) => (v === '' ? undefined : parseInt(v, 10))
+                })}
+              ></S.Input>
+            )}
+            {errors.perUserPrice && <p>{errors.perUserPrice.message}</p>}
+          </S.InputWrapper>
 
-        <S.InputWrapper>
-          <S.EnumShareButtonBox>
-            <S.EnumShareButton
-              type="button"
-              onClick={() => {
-                setValue('enumShare', 'BUY');
-              }}
-            >
-              판매하기
-            </S.EnumShareButton>
-            <S.EnumShareButton
-              type="button"
-              onClick={() => {
-                setValue('enumShare', 'SHARE');
-              }}
-            >
-              나눔하기
-            </S.EnumShareButton>
-          </S.EnumShareButtonBox>
-          <S.Label>가격</S.Label>
-          {watch('enumShare') === 'BUY' ? (
+          <S.InputWrapper>
+            <S.Label>인원</S.Label>
             <S.Input
               type="number"
-              placeholder="가격"
-              {...register('perUserPrice', {
+              placeholder="인원"
+              {...register('maxUser', {
                 setValueAs: (v) => (v === '' ? undefined : parseInt(v, 10))
               })}
             ></S.Input>
-          ) : (
-            <S.Input
-              type="number"
-              placeholder="가격"
-              disabled
-              {...register('perUserPrice', {
-                setValueAs: (v) => (v === '' ? undefined : parseInt(v, 10))
-              })}
-            ></S.Input>
-          )}
-          {errors.perUserPrice && <p>{errors.perUserPrice.message}</p>}
-        </S.InputWrapper>
+            {errors.maxUser && <p>{errors.maxUser.message}</p>}
+          </S.InputWrapper>
 
-        <S.InputWrapper>
-          <S.Label>인원</S.Label>
-          <S.Input
-            type="number"
-            placeholder="인원"
-            {...register('maxUser', {
-              setValueAs: (v) => (v === '' ? undefined : parseInt(v, 10))
-            })}
-          ></S.Input>
-          {errors.maxUser && <p>{errors.maxUser.message}</p>}
-        </S.InputWrapper>
+          <S.InputWrapper>
+            <S.Label>설명</S.Label>
+            <S.Input style={{ height: '86px' }} type="text" placeholder="설명" {...register('description')}></S.Input>
+            {errors.description && <p>{errors.description.message}</p>}
+          </S.InputWrapper>
 
-        <S.InputWrapper>
-          <S.Label>설명</S.Label>
-          <S.Input type="text" placeholder="설명" {...register('description')}></S.Input>
-          {errors.description && <p>{errors.description.message}</p>}
-        </S.InputWrapper>
+          <S.InputWrapper>
+            <S.Label>거래희망장소</S.Label>
+            <S.Input type="text" placeholder="거래장소 선택" {...register('address')}></S.Input>
+            {errors.address && <p>{errors.address.message}</p>}
+          </S.InputWrapper>
+          <S.InputWrapper>
+            <Button type="button" variants="outline" onClick={() => setIsToggle(true)}>
+              장소 선택하기
+            </Button>
+            {isToggle && (
+              <>
+                <Button type="button" onClick={() => setIsToggle(false)}>
+                  닫기
+                </Button>
+                <DaumPostcodeEmbed onComplete={setAddressHandler} />
+              </>
+            )}
+            {isMapToggle && (
+              <div>
+                <Map center={address} style={{ width: '300px', height: '200px' }} level={3}>
+                  <MapMarker position={address} />
+                </Map>
+              </div>
+            )}
+          </S.InputWrapper>
 
-        <S.InputWrapper>
-          <S.Label>거래희망장소</S.Label>
-          <S.Input type="text" placeholder="거래장소 선택" {...register('address')}></S.Input>
-          {errors.address && <p>{errors.address.message}</p>}
-        </S.InputWrapper>
-
-        <S.InputWrapper>
-          <S.Label>법정동?</S.Label>
-          <S.Input type="text" placeholder="거래장소 선택" {...register('beobJeongDong')}></S.Input>
-          {/* {errors.address && <p>{errors.address.message}</p>} */}
-        </S.InputWrapper>
+          <Button type="submit" full>
+            글 등록하기
+          </Button>
+        </S.InputArea>
       </S.GroupBuyForm>
-      <S.InputWrapper>
-        <Button type="button" onClick={() => setIsToggle(true)}>
-          수령주소 설정
-        </Button>
-        {isToggle && (
-          <>
-            <Button type="button" onClick={() => setIsToggle(false)}>
-              닫기
-            </Button>
-            <DaumPostcodeEmbed onComplete={setAddressHandler} />
-          </>
-        )}
-        {isMapToggle && (
-          <div>
-            <Map center={address} style={{ width: '300px', height: '200px' }} level={3}>
-              <MapMarker position={address} />
-            </Map>
-          </div>
-        )}
-      </S.InputWrapper>
     </S.Container>
   );
 };
@@ -282,18 +240,44 @@ const S = {
   Container: styled.div`
     display: flex;
     flex-direction: column;
-    gap: 26px;
-    background-color: gray;
     position: relative;
     width: 100%;
   `,
-
-  InputWrapper: styled.div``,
-  GroupBuyForm: styled.form``,
-  Input: styled.input``,
-  Label: styled.p``,
-  EnumShareButtonBox: styled.div``,
-  EnumShareButton: styled.button``,
-  CategoryButtonBux: styled.div``,
-  CategoryButton: styled.button``
+  FilterArea: styled(FlexBox)`
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid ${COLORS.GRAY[400]};
+    background-color: ${COLORS.GRAY[0]};
+    justify-content: center;
+  `,
+  InputArea: styled.div`
+    display: flex;
+    padding: 0 16px;
+    flex-direction: column;
+    gap: 26px;
+    margin-top: 25px;
+  `,
+  InputWrapper: styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  `,
+  GroupBuyForm: styled.form`
+    padding: 12px 0 0;
+    margin-bottom: 100px;
+  `,
+  Input: styled.input`
+    ${styleFont.body1}
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid ${COLORS.GRAY[400]};
+    &:focus {
+      outline: none;
+      border: 1px solid ${COLORS.GREEN[400]};
+    }
+  `,
+  Label: styled.p`
+    ${styleFont.body1}
+  `
 };

@@ -1,21 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import axios, { AxiosPromise } from 'axios';
 import styled from 'styled-components';
 import { FlexBox, MobileContainer } from 'src/styles/styleBox';
-import RoundButton from 'src/components/button/RoundButton';
 import { COLORS } from 'src/styles/styleConstants';
-import { styleFont } from 'src/styles/styleFont';
-import CommunityPostCard from 'src/components/community/CommunityPostCard';
 import {
   CommunityCategory as CommunityCategorys,
   CommunityCategoryValues,
   CommunitySortValues,
   Post
 } from 'src/types/community/types';
-import { InfiniteQueryObserverResult, useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getCommunityPostList } from 'src/api/community/community';
-import InfiniteScroll from 'react-infinite-scroller';
-import { Link } from 'react-router-dom';
 import CommunityList from 'src/components/community/CommunityList';
 import CommunityListFilter from 'src/components/community/CommunityListFilter';
 
