@@ -69,6 +69,8 @@ export const S = {
     border-bottom: 1px solid ${COLORS.GRAY[400]};
     background-color: ${COLORS.GRAY[0]};
     position: fixed;
+
+    justify-content: center;
   `,
   CommunityList: styled.ul`
     width: 100%;

@@ -1,71 +1,87 @@
-import { useQuery } from '@tanstack/react-query';
+import { FetchNextPageOptions, InfiniteQueryObserverResult, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
 import { Link } from 'react-router-dom';
 import { getGroupBuyList } from 'src/api/groupBuy/groupBuy';
 import GroupBuyPostCard from 'src/components/groupBuy/GroupBuyPostCard';
-import { useGroupBuyQuery } from 'src/store/groupStore';
+import { groupBuyAPIOptionStore, useGroupBuyQuery } from 'src/store/groupStore';
+import { COLORS } from 'src/styles/styleConstants';
+import { styleFont } from 'src/styles/styleFont';
 import { GroupBuyPreviewType } from 'src/types/groupBuy/types';
+import styled from 'styled-components';
 
-interface GroupBuyPageDataProps {
-  groupBuyingResponseDtoList: GroupBuyPreviewType[];
-  len: number;
+export interface GroupBuyPageQueryDataProp {
+  data: GroupBuyPreviewType[];
+  page: number;
+  totalPages: number;
 }
 
 const GroupBuyList = () => {
-  const { option: queryOption, setOption } = useGroupBuyQuery();
-  const [postList, setPostList] = React.useState<GroupBuyPreviewType[]>([]);
+  const { category, category_share, category_status, sort, keyword } = groupBuyAPIOptionStore();
 
-  const { data, isError, isLoading } = useQuery<GroupBuyPageDataProps>(['groupBuyList', queryOption], () => {
-    return getGroupBuyList(queryOption);
-  });
-
-  const list = useMemo(() => {
-    if (!data && postList.length === 0) {
-      return [];
-    } else if (data && postList.length === 0) {
-      setPostList(data.groupBuyingResponseDtoList);
-      return data.groupBuyingResponseDtoList;
-    } else if (data && postList.length !== 0) {
-      if (data.groupBuyingResponseDtoList.length === 0) {
-        return postList;
-      } else {
-        setPostList([...postList, ...data.groupBuyingResponseDtoList]);
-        return [...postList, ...data.groupBuyingResponseDtoList];
+  const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    ['posts', { category, category_share, category_status, sort, keyword }],
+    ({ pageParam = 0 }) =>
+      getGroupBuyList({ page: pageParam, option: { category, category_share, category_status, sort, keyword } }),
+    {
+      getNextPageParam: (lastPage) => {
+        if (lastPage!.page + 1 < lastPage!.totalPages) {
+          return lastPage!.page + 1;
+        }
+        return false;
       }
     }
-  }, [data]);
+  ) as InfiniteQueryObserverResult<GroupBuyPageQueryDataProp, Error> & {
+    fetchNextPage: (
+      options: FetchNextPageOptions
+    ) => Promise<InfiniteQueryObserverResult<GroupBuyPageQueryDataProp, Error>>;
+  };
 
-  if (isLoading) return <div>로딩중</div>;
-  if (isError) return <div>에러</div>;
-  if (data.len === 0) return <div>데이터가 없습니다.</div>;
+  if (isLoading) return <div>loading...</div>;
+  if (isError) return <div>error...</div>;
+
+  console.log(data);
 
   return (
-    <>
-      <div>
-        <ul
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            maxWidth: '500px'
-          }}
-        >
-          {postList.map((data) => {
-            return (
-              <li key={data.id} style={{ borderBottom: '1px solid #eee' }}>
-                <Link to={`/group-buy/${data.id}`} state={{ id: data.id }}>
-                  <GroupBuyPostCard data={data} />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <button type="button" onClick={() => setOption({ ...queryOption, page: queryOption.page + 1 })}>
-        더보기
-      </button>
-    </>
+    <div>
+      <InfiniteScroll
+        pageStart={0}
+        loadMore={() => fetchNextPage()} // Add this line
+        hasMore={hasNextPage} // Add this line
+        loader={<div>Loading...</div>} // Add this line
+      >
+        {data.pages?.map((item, index) => {
+          return (
+            <div key={index}>
+              {item.data.map((data) => {
+                return (
+                  <div key={data.id}>
+                    <Link to={`/group-buy/${data.id}`}>
+                      <GroupBuyPostCard data={data} />
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </InfiniteScroll>
+      {!hasNextPage && <S.NoScroll>더 이상 게시글이 없습니다.</S.NoScroll>}
+    </div>
   );
 };
 
 export default GroupBuyList;
+
+const S = {
+  NoScroll: styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    ${styleFont.h3}
+    color: ${COLORS.GREEN[400]};
+    width: 100%;
+    height: 30px;
+    padding: 50px;
+  `
+};

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { communityAPIOptionStore } from 'src/store/communityStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
@@ -60,11 +59,14 @@ const S = {
     padding: 12px 0;
     overflow-x: scroll;
     /* min-width: 400px; */
+    max-width: 768px;
     width: 100%;
   `,
   SortButton: styled.div`
     ${styleFont.body3}
+    font-weight: 600;
     color: ${COLORS.GREEN[400]};
+    cursor: pointer;
   `,
   FormBox: styled.div`
     display: flex;
@@ -92,21 +94,3 @@ const S = {
       `}
   `
 };
-
-// const FormCheckLeft = styled.input.attrs({ type: 'radio' })`
-//   &:checked {
-//     display: inline-block;
-//     background: none;
-//     padding: 0px 10px;
-//     text-align: center;
-//     height: 35px;
-//     line-height: 33px;
-//     font-weight: 500;
-//     display: none;
-//   }
-//   /* &:checked + ${FormCheckText} {
-//     background: #e4794d;
-//     color: #fff;
-//   } */
-//   display: none;
-// `;
