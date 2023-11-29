@@ -51,6 +51,6 @@ export default MyPageMenuList;
 
 const S = {
   Container: styled.div`
-    width: 100vw;
+    width: 100%;
   `
 };

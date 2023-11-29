@@ -1,8 +1,9 @@
 import axiosInstance from '../AxiosInstance';
-import { getGroupBuyListURL } from 'src/utilities/getUrl';
+import { getGroupBuyListURL, getGroupBuyPostListAPIOption } from 'src/utilities/getUrl';
 import {
   GroupBuyCategoriesValues,
   GroupBuyCategoryShareValues,
+  GroupBuyPreviewType,
   GroupBuySortValues,
   GroupBuyStatusValues
 } from 'src/types/groupBuy/types';
@@ -17,17 +18,25 @@ export interface getGroupBuyListOption {
   keyword?: string;
 }
 
-export const getGroupBuyList = async (option: getGroupBuyListOption) => {
-  const url = getGroupBuyListURL(option);
-
+export const getGroupBuyList = async ({ option, page }: getGroupBuyPostListAPIOption) => {
   try {
-    const res = await axiosInstance.get(url, {
+    const url = getGroupBuyListURL({ option, page });
+    console.log(url);
+
+    const response = await axiosInstance.get(url, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
+    const data = response.data.groupBuyingResponseDtoList as GroupBuyPreviewType[];
 
-    return res.data;
+    // 전체 게시글 수
+    const allPostCount = response.data.len;
+
+    // 전체 페이징 수
+    const allPageCount = Math.ceil(allPostCount / 6);
+    const returnData = { data, totalPages: allPageCount, page };
+    return returnData;
   } catch (error) {}
 };
 
