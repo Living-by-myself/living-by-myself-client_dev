@@ -11,6 +11,7 @@ export const getWonString = (price: number) => price.toLocaleString('ko-KR');
 
 const MyPagePayment = () => {
   const { profile: user } = userStore();
+  console.log("충전후 마이페이지에 왔을때 유저 정보",user)
 
   const navigate = useNavigate()
 

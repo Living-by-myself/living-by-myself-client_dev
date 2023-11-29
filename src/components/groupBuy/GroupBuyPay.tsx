@@ -11,6 +11,7 @@ import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 import Icon from '../icon/Icon';
 import { extractImageUrls } from 'src/utilities/image';
+import { toast } from 'react-toastify';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const GroupBuyPay = () => {
     try {
       const res = await axiosInstance.post(`/home/group-buying/${id}/application`);
 
-      alert('공동구매 신청 완료');
+      toast('공동구매 신청 완료');
       mutation.mutate(id);
       navigate(`/group-buy/${id}`);
     } catch (error: any) {
@@ -84,7 +85,7 @@ const GroupBuyPay = () => {
             <h2>결제 후 포인트</h2>
             <p>{reaminingPoints.toLocaleString()}원</p>
           </S.PointRow>
-          <button onClick={()=>navigate('/mypage/point-charge')}>충전하러 가기</button>
+          <button onClick={() => navigate('/mypage/point-charge')}>충전하러 가기</button>
         </S.PointAfter>
       </S.ContainerInner>
       <S.PayButton onClick={goupBuyPayButton}>

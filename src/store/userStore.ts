@@ -41,8 +41,8 @@ const initValue2 = {
   isLogged: false
 };
 
-const userStore = create(
-  devtools<UserStoreType>((set) => ({
+const userStore = create<UserStoreType>()(
+  devtools((set) => ({
     ...initValue2,
     setProfile: (user) => set({ profile: user }),
     setToken: (token) => set({ token }),

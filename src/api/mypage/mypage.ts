@@ -1,7 +1,5 @@
 import axiosInstance from '../AxiosInstance';
 
-const userId = localStorage.getItem('id');
-
 export const getMyBadge = async () => {
   try {
     const response = await axiosInstance.get('/home/profile/badge');
@@ -18,7 +16,7 @@ export const getMyBadge = async () => {
 };
 
 //슬기님과 엔드포인트 협의
-export const getMyCommunity = async () => {
+export const getMyCommunity = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/community/${userId}`);
 
@@ -26,7 +24,7 @@ export const getMyCommunity = async () => {
   } catch (error) {}
 };
 
-export const getMyGroupBuyByMe = async () => {
+export const getMyGroupBuyByMe = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/group-buying/${userId}`);
 
@@ -34,7 +32,7 @@ export const getMyGroupBuyByMe = async () => {
   } catch (error) {}
 };
 
-export const getMyBookmark = async () => {
+export const getMyBookmark = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/group-buying/pick/${userId}`);
 
@@ -42,7 +40,7 @@ export const getMyBookmark = async () => {
   } catch (error) {}
 };
 
-export const getMyGroupBuy = async () => {
+export const getMyGroupBuy = async (userId: string) => {
   try {
     const response = await axiosInstance.get(`/home/profile/group-buying/application/${userId}`);
 

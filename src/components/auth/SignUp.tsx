@@ -38,6 +38,7 @@ const SignUp = () => {
     register,
     handleSubmit,
     getValues,
+    watch,
     formState: { errors }
   } = useForm<SignFormType>({
     mode: 'onSubmit',
@@ -45,7 +46,8 @@ const SignUp = () => {
   });
 
   const navigate = useNavigate();
-
+  // const phoneNumber = getValues('phoneNumber');
+  // const phoneAuthNumber = getValues('phoneAuthNumber');
 
   const [isPhoneAuthCompleted, setIsPhoneAuthCompleted] = useState<boolean>(false);
 
@@ -71,38 +73,38 @@ const SignUp = () => {
   };
 
   const phoneAuthNumberButton = async () => {
-    const phoneNumber = getValues('phoneNumber');
-    console.log(phoneNumber)
+    const number = watch('phoneNumber');
+    console.log(typeof number);
     try {
       await axiosBaseInstance.post('/home/auth/message', {
-        phoneNumber
+        phoneNumber: number
       });
       toast('인증번호가 전송되었습니다.');
       setIsPhoneAuthCompleted(false);
     } catch (error) {
-      console.log(error)
-      // if(phoneNumber === ""){
-      //   toast("휴대폰 번호를 확인해주세요.")
-      // }else if(validatePhoneNumber(phoneNumber)){
-      //   toast(`${phoneNumber}는 이미 있는 번호입니다.`)
-      // }else{
-      //   toast("휴대폰 번호를 확인해주세요.")
-      // }
+      if (number === '') {
+        toast('휴대폰 번호를 확인해주세요.');
+      } else if (validatePhoneNumber(number.trim())) {
+        // to 대성님... 아래 else if는 이미 있는 번호인지 검사하는거 아니죠..? 요 함수는 번호형식만 검사하는 함수입니다.
+        toast(`${number}는 이미 있는 번호입니다.`);
+      } else {
+        toast('휴대폰 번호를 확인해주세요.');
+      }
     }
   };
 
   const checkPhoneAuthNumberButton = async () => {
-    const phoneNumber = getValues('phoneNumber');
-    const phoneAuthNumber = getValues('phoneAuthNumber');
+    const number = watch('phoneNumber');
+    console.log(number);
     try {
       await axiosBaseInstance.post('/home/auth/message-code/signup', {
-        phoneNumber,
-        code: phoneAuthNumber
+        phoneNumber: number,
+        code: number
       });
       setIsPhoneAuthCompleted(true);
       toast('휴대폰 인증 완료');
     } catch (error) {
-      toast("인증번호가 다릅니다.");
+      toast('인증번호가 다릅니다.');
     }
   };
 
@@ -119,7 +121,12 @@ const SignUp = () => {
           <S.FormRow>
             <label>전화번호</label>
             <S.FormColumn>
-              <input id="phoneNumber" placeholder="전화번호" {...register('phoneNumber')} />
+              <input
+                id="phoneNumber"
+                value={watch('phoneNumber')}
+                placeholder="전화번호"
+                {...register('phoneNumber')}
+              />
               <S.Button type="button" onClick={phoneAuthNumberButton}>
                 인증번호 받기
               </S.Button>
@@ -171,9 +178,8 @@ const CommonButton = styled.button`
 const S = {
   Container: styled.div`
     width: 100%;
+    padding: 0 16px;
     max-width: 400px;
-
-    /* gap: 6rem; */
   `,
   ContainerInner: styled.div`
     display: flex;

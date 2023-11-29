@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import MyPageMenuCard from './MyPageMenuCard';
 import userStore from 'src/store/userStore';
+import { toast } from 'react-toastify';
 
 const menuList = [
   { url: '/mypage/badge', name: '활동 배지' },
@@ -23,7 +24,7 @@ const MyPageMenuList = () => {
             key={index}
             onClick={() => {
               if (menu.url === '/mypage/group-buy') {
-                alert('서비스 준비 중입니다.');
+                toast('서비스 준비 중입니다.');
                 return;
               }
 
@@ -32,7 +33,7 @@ const MyPageMenuList = () => {
                 localStorage.removeItem('rtk');
                 clearToken();
                 logout();
-                alert('로그아웃 되었습니다.');
+                toast('로그아웃 되었습니다.');
                 navigate('/');
               } else {
                 navigate(menu.url);

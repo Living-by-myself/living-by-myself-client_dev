@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { styleFont } from 'src/styles/styleFont';
 import { COLORS } from 'src/styles/styleConstants';
+import { toast } from 'react-toastify';
 
 interface SearchBarProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -23,7 +24,7 @@ const SearchBar = (props: SearchBarProps) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      alert('검색기능은 준비중입니다.');
+      toast('검색기능은 준비중입니다.');
       // handleSearch();
     }
   };

@@ -15,14 +15,14 @@ interface ChatUser {
 interface ChatRoom {
   id: number;
   title: string;
-  users: ChatUser[];
+  userCount: number;
   lastChatMsg: string;
   lastChatTime: string;
 }
 
 const ChatList = () => {
   const navigate = useNavigate();
-  const [chatList, setChatList] = useState<ChatRoom[]>([]);
+  const [chatList, setChatList] = useState<ChatRoom[] | null>(null);
   const { setCurrentRoomTitle } = useRoomTitleStore();
 
   const ChatRoomClick = (id: number, title: string) => {
@@ -45,20 +45,20 @@ const ChatList = () => {
 
   return (
     <>
-      {Array.isArray(chatList) && chatList?.length !== 0 ? (
+      {chatList !== null && chatList?.length !== 0 ? (
         chatList.map((chat) => {
           return (
             // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
             <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id, chat.title)}>
               <S.ChatInfoBox>
-                {/* 원래는 chat.title로 하고싶은데 그냥 아이디 값으로 대체해 놓음.. */}
-                <S.ChatRoomName>{chat.id}</S.ChatRoomName>
-                {chat.users.length > 2 && <S.ChatUserCount>{chat.users.length}</S.ChatUserCount>}
-                {/* <S.ChattingRoomLastMessageTime>{chat.getCreatedAtAsString.slice(-8, -3)}</S.ChattingRoomLastMessageTime> */}
-                {/* <S.ChatRoomLastMessageTime>{chat.lastChatTime.slice(-8, -3)}</S.ChatRoomLastMessageTime> */}
+                <S.ChatRoomName>{chat.title}</S.ChatRoomName>
+                {chat.userCount > 2 && <S.ChatUserCount>{chat.userCount}</S.ChatUserCount>}
+                {/* <S.ChatRoomLastMessageTime>{chat.lastChatTime.slice(-8, -3) || '기록없음'}</S.ChatRoomLastMessageTime> */}
+                <S.ChatRoomLastMessageTime>
+                  {chat.lastChatTime ? chat.lastChatTime.slice(11, 16) : '기록없음'}
+                </S.ChatRoomLastMessageTime>
               </S.ChatInfoBox>
-              {/* <S.ChatRoomLastMessage>{chat.lastChatMsg}</S.ChatRoomLastMessage> */}
-              <S.ChatRoomLastMessage>안녕하세요</S.ChatRoomLastMessage>
+              <S.ChatRoomLastMessage>{chat.lastChatMsg || '메시지 없음'}</S.ChatRoomLastMessage>
             </S.ChatContainer>
           );
         })

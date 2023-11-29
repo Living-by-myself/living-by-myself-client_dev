@@ -4,11 +4,9 @@ import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
 import * as StompJs from '@stomp/stompjs';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
-import { useInputErrorStore, useRoomTitleStore } from 'src/store/chatStore';
-import { async } from 'q';
-import ChatMessageInput from './ChatMessageInput';
+import { useRoomTitleStore } from 'src/store/chatStore';
 
 interface ChatMessage {
   chatId: number;
@@ -20,80 +18,108 @@ interface ChatMessage {
   };
 }
 
+interface ChatRoom {
+  id: number;
+  lastChatMessage: string;
+  lastChatTime: string;
+  userCount: number;
+  title: string;
+}
+
 const ChatDetailPage = () => {
   const [message, setMessage] = useState(''); // 입력한 메시지
-
   const token = localStorage.getItem('atk');
   const userId = Number(localStorage.getItem('id'));
-  const roomId = useParams();
-  const { currentRoomTitle } = useRoomTitleStore();
-  const { setCurrentInputError } = useInputErrorStore();
-  const [roomTitle, setRoomTitle] = useState('Title');
+  const param = useParams();
+  const paramId = param.id;
+  const { currentRoomTitle, setCurrentRoomTitle } = useRoomTitleStore();
   const [chatList, setChatList] = useState<ChatMessage[]>([]); // 채팅방 메시지 배열
+  const [_, setRoomList] = useState<ChatRoom[]>([]); // 채팅방 전체 목록 배열
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
+  const [hasInputError, setHasInputError] = useState(false);
+  const navigate = useNavigate();
 
   // WebSocket 클라이언트를 상태로 관리 → 최초 연결 후 메시지 전송 시 다시 연결하면 코드 중복
   const [webSocketClient, setWebSocketClient] = useState<StompJs.Client | null>(null);
 
   // 해당 채팅방 메시지 조회
   const getChatMessage = async () => {
+    console.log('나 채팅방 메시지 조회한다!');
+    console.log('메시지 조회되면서 나오는 roomId..', paramId);
     try {
-      const response = await axiosInstance.get('/home/chats/room/' + roomId.id);
+      const response = await axiosInstance.get('/home/chats/room/' + paramId);
       setChatList(response.data);
-
+      console.log('채팅방 메시지 목록 조회 성공!', response.data);
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log('채팅방 메시지 목록 조회 실패!', error);
+    }
+  };
+
+  // 채팅 메시지 웹소켓 실시간 전송 시 서버에서 오는 시간 값과 같은 값으로 보내주기 위해 설정
+  const getMessageTransferTime = () => {
+    let currentDate = new Date();
+    let year = currentDate.getFullYear();
+    let month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    let day = currentDate.getDate().toString().padStart(2, '0');
+    let hours = currentDate.getHours().toString().padStart(2, '0');
+    let minutes = currentDate.getMinutes().toString().padStart(2, '0');
+    let seconds = currentDate.getSeconds().toString().padStart(2, '0');
+
+    let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    console.log('Current time: ', currentDate);
+    console.log('formattedDate : ', formattedDate);
+    return formattedDate;
   };
 
   // 메세지 보내기 버튼 클릭 시
-  const sendMessageButtonClick = useCallback(
-    async (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (message.length > 0) {
-        setCurrentInputError(false);
+  const sendMessageButtonClick = async (e: any) => {
+    e.preventDefault();
+    console.log('메시지 전송 버튼 클릭 시 message :', message);
+    if (message.length > 0) {
+      console.log('message', message);
+      setHasInputError(false);
 
-        // 메시지 보내기
-        // 이미 연결된 WebSocket이 있다면 메시지 전송
-        if (webSocketClient) {
-          // 특정 채팅방으로 메시지 전송
-          webSocketClient.publish({
-            destination: '/app/' + roomId.id, // 채팅방 주소,
-            body: JSON.stringify({
-              // userId랑 메시지 내용만 보내기
-              userId: userId,
-              message: message
-            }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
-          });
-          webSocketClient.publish({
-            destination: '/topic/room/' + roomId.id, // 채팅방 주소,
-            body: JSON.stringify({
-              chatId: Math.random(),
-              localTime: new Date(),
-              msg: message,
-              responseDto: {
-                id: userId,
-                nickname: userId
-              }
-            }) //채팅방으로 내가 줘야 할 것? 백엔드에 물어보기
-          });
-          setMessage('');
+      // 메시지 보내기
+      // 이미 연결된 WebSocket이 있다면 메시지 전송
+      if (webSocketClient) {
+        // 특정 채팅방으로 메시지 전송
+        webSocketClient.publish({
+          destination: '/app/' + paramId, // 채팅방 주소,
+          body: JSON.stringify({
+            // userId랑 메시지 내용만 보내기 - 서버에서 정해줌
+            userId: userId,
+            message: message
+          })
+        });
 
-          // await getChatMessage();
-        }
-      } else {
-        setCurrentInputError(true);
+        webSocketClient.publish({
+          destination: '/topic/room/' + paramId, // 채팅방 주소,
+          body: JSON.stringify({
+            chatId: Math.random(),
+            localTime: getMessageTransferTime(),
+            msg: message,
+            responseDto: {
+              id: userId,
+              nickname: userId
+            }
+          })
+        });
+        setMessage(''); // 메시지 초기화
       }
-    },
-    [webSocketClient]
-  );
+    } else {
+      setHasInputError(true);
+    }
+  };
 
   // 연결 끊기
   const disConnect = () => {
     if (webSocketClient === null) {
       return;
     }
-
+    console.log('연결 해제!');
     webSocketClient.deactivate();
   };
 
@@ -104,7 +130,9 @@ const ChatDetailPage = () => {
       connectHeaders: {
         Authorization: token! // token 값을 사용하여 사용자 인증
       },
-      debug: (str) => {},
+      debug: (str) => {
+        console.log(str);
+      },
       reconnectDelay: 5000, //자동 재연결을 위한 시간 설정
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000 // 연결이 유지되고 있는지 확인
@@ -115,24 +143,26 @@ const ChatDetailPage = () => {
       // send,,subscribe,,publish ,,
       // 특정 채팅방에 topic으로 subscribe
       // 받아온 데이터를 subcribe하고, publish하여 데이터를 받아오도록 한다?
-      client.subscribe('/topic/room/' + roomId.id, (message) => {
+      client.subscribe('/topic/room/' + paramId, (message) => {
         if (message) {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
-
           let msg = JSON.parse(message.body);
           setChatList((prevChats) => [...prevChats, msg]);
         }
       });
     };
     // WebSocket 연결이 실패한 경우
-    client.onStompError = (frame) => {};
+    client.onStompError = (frame) => {
+      console.log('Broker reported error: ' + frame.headers['message']);
+      console.log('Additional details: ' + frame.body);
+    };
 
     setWebSocketClient(client);
     client.activate();
   };
 
   useEffect(() => {
-    // messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatList]);
 
   // 컴포넌트 마운트 시 WebSocket 연결 및 메시지 내용 불러오기
@@ -140,30 +170,28 @@ const ChatDetailPage = () => {
     connectWebSocket();
     getChatMessage();
 
-    setRoomTitle(currentRoomTitle);
-    // setChatRoomTitle();
-
     return () => disConnect();
   }, []);
 
   // 채팅방 제목이 날라가면 대체할..
-  // const setChatRoomTitle = async () => {
-  //   if (currentRoomTitle.length === 0) {
-  //     try {
-  //       const response = await axiosInstance.get(`/home/chats/rooms`, {
-  //         // headers: {
-  //         //   Accept: 'application/json, text/plain, */*',
-  //         //   'Content-Type': 'application/json'
-  //         // }
-  //       });
-  //
-  //     } catch (error) {
-  //
-  //     }
-  //   } else {
-  //     return currentRoomTitle;
-  //   }
-  // };
+  const setChatRoomTitle = useCallback(async () => {
+    if (currentRoomTitle.length === 0) {
+      try {
+        const response = await axiosInstance.get(`/home/chats/rooms`);
+        console.log('채팅방 title 설정을 위해 전체 채팅 목록 조회! ', response.data);
+        setRoomList(response.data);
+        const foundRoom: ChatRoom | undefined = response.data.find((room: ChatRoom) => room.id === Number(paramId));
+        if (foundRoom) {
+          console.log('나 title 새로 설정한다?');
+          setCurrentRoomTitle(foundRoom.title);
+        }
+      } catch (error) {
+        console.log('채팅방 title 설정을 위해 전체 채팅 목록 실패! ', error);
+      }
+    } else {
+      return currentRoomTitle;
+    }
+  }, [currentRoomTitle, paramId, setCurrentRoomTitle]);
 
   // 스크롤 관련
   useEffect(() => {
@@ -187,13 +215,19 @@ const ChatDetailPage = () => {
     };
   }, [chatList]);
 
+  useEffect(() => {
+    console.log(currentRoomTitle);
+    if (currentRoomTitle.length === 0) {
+      setChatRoomTitle();
+    }
+  }, [currentRoomTitle, setChatRoomTitle]);
+
   return (
     <MobileContainer>
       <S.Container>
         <S.ChatHeader>
-          {currentRoomTitle.length !== 0 ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{roomTitle}</S.Title>}
-          <S.Title>{roomTitle}</S.Title>
-          <button>더보기</button>
+          {currentRoomTitle.length !== 0 ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{null}</S.Title>}
+          <S.MoreButton onClick={() => navigate(`/chat/${paramId}/edit`)}>더보기</S.MoreButton>
         </S.ChatHeader>
         {/*채팅 관련 하나의 컴포넌트로 내부에서 또다시 map을 돌려야함 한 줄에 유저가 나냐 아니냐로 구분해서 */}
         <S.Inner>
@@ -210,7 +244,7 @@ const ChatDetailPage = () => {
               </S.MessageWrapper>
             );
           })}
-          {/* <div ref={messageEndRef}></div> */}
+          <div ref={messageEndRef}></div>
           {!isScrolledToBottom && (
             <S.ScrollToBottomIcon onClick={() => messageEndRef.current?.scrollIntoView({ behavior: 'smooth' })}>
               ⬇
@@ -218,7 +252,16 @@ const ChatDetailPage = () => {
           )}
         </S.Inner>
         <S.MessageInputBox>
-          <ChatMessageInput />
+          <S.MessageInput
+            placeholder="메세지를 작성하시오."
+            id="chatMessage"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              setHasInputError(false);
+            }}
+            hasError={hasInputError}
+          />
           <S.MessageInputButton type="submit" onClick={sendMessageButtonClick}>
             전송
           </S.MessageInputButton>
@@ -292,7 +335,7 @@ const S = {
   `,
   MessageContent: styled.div<IMessageBox>`
     padding: 10px;
-    background-color: ${({ $isMine }) => ($isMine ? COLORS.GRAY[400] : COLORS.GRAY[200])};
+    background-color: ${({ $isMine }) => ($isMine ? COLORS.GREEN[400] : COLORS.GRAY[200])};
     border-radius: 10px;
     max-width: 70%;
     word-wrap: break-word;
@@ -323,5 +366,20 @@ const S = {
     align-items: center;
     justify-content: center;
     z-index: 999;
+  `,
+  MessageInput: styled.input<{ hasError: boolean }>`
+    padding: 13px;
+    min-height: 40px;
+    min-width: 80%;
+    outline: none;
+    border: ${({ hasError }) => (hasError ? '1px solid red' : 'none')};
+    font-size: ${styleFont.body3};
+    background-color: ${COLORS.GRAY[200]};
+    border-radius: 50px;
+  `,
+  MoreButton: styled.button`
+    font-size: ${styleFont.body4};
+    color: ${COLORS.GRAY[400]};
+    margin-left: 10px;
   `
 };

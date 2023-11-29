@@ -12,7 +12,9 @@ import CommunityPostCard from 'src/components/community/CommunityPostCard';
 const MyPageCommunityPage = () => {
   const userId = localStorage.getItem('id');
 
-  const { data, isLoading, isError } = useQuery<Post[]>(['myPageCommunity'], getMyCommunity);
+  const { data, isLoading, isError } = useQuery<Post[]>(['myPageCommunity'], () => {
+    return getMyCommunity(userId!);
+  });
 
   isLoading && <div>로딩중</div>;
   isError && <div>에러</div>;

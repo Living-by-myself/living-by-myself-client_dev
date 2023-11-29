@@ -29,3 +29,13 @@ export const useInputErrorStore = create<inputErrorStore>()((set) => ({
   currentInputError: false,
   setCurrentInputError: (inputError) => set(() => ({ currentInputError: inputError }))
 }));
+
+interface usersIdStore {
+  currentUsersId: number[];
+  setCurrentUsersId: (usersId: number[]) => void;
+}
+
+export const useUsersIdStore = create<usersIdStore>()((set) => ({
+  currentUsersId: [],
+  setCurrentUsersId: (usersId) => set(() => ({ currentUsersId: usersId }))
+}));
