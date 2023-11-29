@@ -1,11 +1,9 @@
 import { MobileContainer } from 'src/styles/styleBox';
 import styled from 'styled-components';
-import GroupBuyListFilter from './GroupBuyListFilter';
 import { useGroupBuyQuery } from 'src/store/groupStore';
-import GroupBuyList from './GroupBuyList';
-import { Button } from 'src/components/button/styles';
-import { useEffect } from 'react';
 import { COLORS } from 'src/styles/styleConstants';
+import GroupBuyListFilter from 'src/components/groupBuy/GroupBuyListFilter';
+import GroupBuyList from 'src/components/groupBuy/GroupBuyList';
 
 const GroupBuyPage = () => {
   const { option: queryOption, setOption } = useGroupBuyQuery();
