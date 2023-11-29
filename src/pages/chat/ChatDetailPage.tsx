@@ -7,24 +7,8 @@ import * as StompJs from '@stomp/stompjs';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
 import { useRoomTitleStore } from 'src/store/chatStore';
-
-interface ChatMessage {
-  chatId: number;
-  localTime: string;
-  msg: string;
-  responseDto: {
-    id: number;
-    nickname: string;
-  };
-}
-
-interface ChatRoom {
-  id: number;
-  lastChatMessage: string;
-  lastChatTime: string;
-  userCount: number;
-  title: string;
-}
+import { ChatMessage, ChatRoom, ChatUser } from 'src/types/chat/types';
+import { getUserProfile } from 'src/api/user/user';
 
 const ChatDetailPage = () => {
   const [message, setMessage] = useState(''); // 입력한 메시지
@@ -39,9 +23,18 @@ const ChatDetailPage = () => {
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
   const [hasInputError, setHasInputError] = useState(false);
   const navigate = useNavigate();
+  const [userNickname, setUserNickname] = useState({} as ChatUser);
+  const [lastMessageDate, setLastMessageDate] = useState<string | null>(null);
 
   // WebSocket 클라이언트를 상태로 관리 → 최초 연결 후 메시지 전송 시 다시 연결하면 코드 중복
   const [webSocketClient, setWebSocketClient] = useState<StompJs.Client | null>(null);
+
+  // 내 닉네임도 publish에 보내서 상대방이 내 닉네임 실시간으로 볼 수 있는지 test..
+  const getUserNickname = async () => {
+    const profile = await getUserProfile();
+    console.log('현재 로그인한 유저의 닉네임은? ', profile.nickname);
+    setUserNickname(profile.nickname);
+  };
 
   // 해당 채팅방 메시지 조회
   const getChatMessage = async () => {
@@ -77,11 +70,14 @@ const ChatDetailPage = () => {
   // 메세지 보내기 버튼 클릭 시
   const sendMessageButtonClick = async (e: any) => {
     e.preventDefault();
-    console.log('메시지 전송 버튼 클릭 시 message :', message);
-    if (message.length > 0) {
-      console.log('message', message);
-      setHasInputError(false);
 
+    const currentDate = getMessageTransferTime();
+    if (lastMessageDate !== currentDate) {
+      setLastMessageDate(currentDate);
+    }
+
+    if (message.length > 0) {
+      setHasInputError(false);
       // 메시지 보내기
       // 이미 연결된 WebSocket이 있다면 메시지 전송
       if (webSocketClient) {
@@ -103,7 +99,7 @@ const ChatDetailPage = () => {
             msg: message,
             responseDto: {
               id: userId,
-              nickname: userId
+              nickname: userNickname
             }
           })
         });
@@ -169,6 +165,7 @@ const ChatDetailPage = () => {
   useEffect(() => {
     connectWebSocket();
     getChatMessage();
+    getUserNickname();
 
     return () => disConnect();
   }, []);

@@ -8,21 +8,15 @@ import { COLORS } from 'src/styles/styleConstants';
 import { styleFont } from 'src/styles/styleFont';
 import styled from 'styled-components';
 import OtherUserProfile from 'src/components/user/OtherUserProfileModal';
-
-interface User {
-  id: number;
-  profileImage: string;
-  nickname: string;
-  address: string;
-}
+import { ChatUser } from 'src/types/chat/types';
 
 const ChatDetailEditPage = () => {
   const navigate = useNavigate();
   const param = useParams();
   const paramId = param.id;
-  const [postId, setPostId] = useState(1);
-  const [userList, setUserList] = useState<User[] | null>(null); // 게시물 아이디 알아야 함..
+  const [userList, setUserList] = useState<ChatUser[] | null>(null); // 게시물 아이디 알아야 함..
   const overlay = useOverlay();
+  const [postId, setPostId] = useState<number | null>(null);
 
   // 유저들 정보 가져오기
   const getChatUsers = async () => {
@@ -31,24 +25,18 @@ const ChatDetailEditPage = () => {
       const response = await axiosInstance.get(`/home/chats/rooms/${paramId}/users`);
       console.log('채팅에 참여한 유저 정보! ', response.data);
       setUserList(response.data);
+      setPostId(response.data[0].groupBuyingRoomId);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // 공구 게시물 id나 title 가져올 방법 ...
-
   // (공구) 게시물로 이동
-  const goToPostButtonClick = () => {
-    // 필요한 것 : 해당 게시물 id..아니면 title..?
-    // id가 있으면 바로 찾아갈 수 있는데 어디서 나.. 이걸..
-    // 항상 공구 페이지에서 여기까지 넘어오진 않을 거니까 공구 목록 가져와서
-    // title로 찾아야하나? 근데 title은 고유값이 아닐텐데..
-    // title로 찾고 user정보로 같이 찾는다고 해도 고유하다고 장담할 수 없음..
+  const goToPostButtonClick = (postId: number) => {
     navigate(`/group-buy/${postId}`);
   };
 
-  // 채팅방 나가는 버튼 .. 근데 이렇게 나가면 공구나 1:1이나 남는 한 사람은 어떻게 되나..? 허허허
+  // 채팅방 나가는 버튼 .. 사실상 삭제.. 한명이라도 나가기 누르면 방 폭파되는데 이걸 해야하나..
   const leaveChatRoomButtonClick = async () => {
     try {
       const response = await axiosInstance.delete(`/home/chats/room/${paramId}`);
@@ -63,8 +51,8 @@ const ChatDetailEditPage = () => {
     getChatUsers();
   }, []);
 
-  const openOtherUserProfileModal = (userId: number) => {
-    overlay.open(({ close }) => <OtherUserProfile userId={userId} onClose={close} />);
+  const openOtherUserProfileModal = (userId: number, postId: number | null) => {
+    overlay.open(({ close }) => <OtherUserProfile userId={userId} onClose={close} postId={postId} />);
   };
 
   return (
@@ -77,7 +65,7 @@ const ChatDetailEditPage = () => {
             return (
               <S.User>
                 <S.UserProfileImg
-                  onClick={() => openOtherUserProfileModal(user.id)}
+                  onClick={() => openOtherUserProfileModal(user.id, postId)}
                   alt="profileUmg"
                   src={user.profileImage == null ? 'http://via.placeholder.com/640x480' : user.profileImage}
                 />
@@ -96,7 +84,11 @@ const ChatDetailEditPage = () => {
       {/* 해당게시글 이동 버튼 (공구채팅방일때만..) */}
       {/* 채팅방 나가기 버튼 */}
       <S.ButtonContainer>
-        <S.GoToPostButton onClick={goToPostButtonClick}>해당 게시글로 이동</S.GoToPostButton>
+        {userList !== null && userList[0].groupBuyingRoomId !== null ? (
+          <S.GoToPostButton onClick={() => goToPostButtonClick(userList[0].groupBuyingRoomId)}>
+            해당 게시글로 이동
+          </S.GoToPostButton>
+        ) : null}
         <S.LeaveChatRoomButton onClick={leaveChatRoomButtonClick}>채팅방 나가기</S.LeaveChatRoomButton>
       </S.ButtonContainer>
     </MobileContainer>
