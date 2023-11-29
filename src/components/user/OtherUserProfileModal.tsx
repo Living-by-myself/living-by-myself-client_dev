@@ -5,28 +5,64 @@ import React, { useEffect, useState } from 'react';
 import BaseModal from '../modal/BaseModal';
 import styled from 'styled-components';
 import { COLORS } from 'src/styles/styleConstants';
-import { Link } from 'react-router-dom';
-import { getOtherUserProfile, reportOtherUser } from 'src/api/user/user';
+import { Link, useNavigate } from 'react-router-dom';
+import { getOtherUserProfile, getUserProfile, reportOtherUser } from 'src/api/user/user';
 import { UserProps } from 'src/pages/mypage/MyPage';
 import { set } from 'react-hook-form';
 import Button from '../button/Button';
 import { toast } from 'react-toastify';
+import { createChat, getRoomList } from 'src/api/chat/chat';
+import { ChatRoom, ChatUser } from 'src/types/chat/types';
+import { useRoomTitleStore } from 'src/store/chatStore';
 
 interface ModalProps {
   onClose: () => void;
   userId: number;
+  postId: number | null;
 }
 
-const OtherUserProfile = ({ onClose, userId }: ModalProps) => {
+const OtherUserProfile = ({ onClose, userId, postId }: ModalProps) => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({} as UserProps);
+  const [otherProfile, setOtherProfile] = useState({} as ChatUser);
+  const [myProfile, setMyProfile] = useState({} as ChatUser);
+  const [roomList, setRoomList] = useState([] as ChatRoom[]);
+  const { currentRoomTitle, setCurrentRoomTitle } = useRoomTitleStore();
+  const currentUserId = localStorage.getItem('id');
 
   const getProfileUser = async () => {
-    const profile = await getOtherUserProfile(userId as unknown as string);
-
-    setProfile(profile);
+    const otherProfile = await getOtherUserProfile(userId as unknown as string);
+    const myProfile = await getUserProfile();
+    setProfile(otherProfile);
+    setOtherProfile(otherProfile);
+    setMyProfile(myProfile);
   };
+
+  const getAllRoomList = async () => {
+    const roomList = await getRoomList();
+    setRoomList(roomList);
+  };
+
+  const handleCreateChatButtonClick = async () => {
+    // 새롭게 만드는 title을 가진 방이 이미 있는지 확인
+    const existingRoom = roomList.find((room) => room.title === `${myProfile.nickname}, ${otherProfile.nickname}`);
+
+    if (existingRoom) {
+      navigate(`/chat/${existingRoom.id!}`);
+    } else {
+      try {
+        const newRoomId = await createChat([userId], myProfile.nickname, otherProfile.nickname, postId);
+        setCurrentRoomTitle(`${myProfile.nickname}, ${otherProfile.nickname}`);
+        navigate(`/chat/${newRoomId}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   useEffect(() => {
     getProfileUser();
+    getAllRoomList();
   }, []);
 
   if (!profile) return <div>로딩중입니다.</div>;
@@ -37,7 +73,7 @@ const OtherUserProfile = ({ onClose, userId }: ModalProps) => {
         <S.UserContainer>
           <S.ProfileImg
             alt="profileImg"
-            src={profile?.profileImage == null ? 'http://via.placeholder.com/640x480' : profile?.profileImage}
+            src={profile?.profileImage == null ? 'http://via.placeholder.com/640x480' : otherProfile?.profileImage}
           />
           <S.InfoContainer>
             <S.NickName>{profile?.nickname}</S.NickName>
@@ -46,39 +82,42 @@ const OtherUserProfile = ({ onClose, userId }: ModalProps) => {
             </S.Address>
           </S.InfoContainer>
         </S.UserContainer>
-        <S.ButtonBox>
-          <Button
-            variants="contain"
-            size="sm"
-            color="primary"
-            onClick={() => {
-              toast('1:1 채팅 기능은 준비중입니다.');
-              return;
-            }}
-            children={'1:1 채팅'}
-          />
-          <Button
-            variants="outline"
-            size="sm"
-            color="danger"
-            onClick={async () => {
-              const description = prompt('신고 사유를 입력해주세요.', '');
+        {userId !== Number(currentUserId) && (
+          <S.ButtonBox>
+            <Button
+              variants="contain"
+              size="sm"
+              color="primary"
+              onClick={() => {
+                // toast('1:1 채팅 기능은 준비중입니다.');
+                // return;
+                handleCreateChatButtonClick();
+              }}
+              children={'1:1 채팅'}
+            />
+            <Button
+              variants="outline"
+              size="sm"
+              color="danger"
+              onClick={async () => {
+                const description = prompt('신고 사유를 입력해주세요.', '');
 
-              if (description?.length === 0) {
-                toast('신고 사유를 입력해주세요.');
-                return;
-              }
-              const response = await reportOtherUser(userId as unknown as string, description!);
-              if (response) {
-                toast('신고가 완료되었습니다.');
-                onClose();
-              } else {
-                toast('신고에 실패했습니다.');
-              }
-            }}
-            children={'신고하기'}
-          />
-        </S.ButtonBox>
+                if (description?.length === 0) {
+                  toast('신고 사유를 입력해주세요.');
+                  return;
+                }
+                const response = await reportOtherUser(userId as unknown as string, description!);
+                if (response) {
+                  toast('신고가 완료되었습니다.');
+                  onClose();
+                } else {
+                  toast('신고에 실패했습니다.');
+                }
+              }}
+              children={'신고하기'}
+            />
+          </S.ButtonBox>
+        )}
       </S.Container>
     </BaseModal>
   );

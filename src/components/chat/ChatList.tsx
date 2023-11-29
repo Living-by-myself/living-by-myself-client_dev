@@ -5,20 +5,8 @@ import { styleFont } from 'src/styles/styleFont';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/api/AxiosInstance';
 import { useRoomTitleStore } from 'src/store/chatStore';
-
-interface ChatUser {
-  id: number;
-  nickname: string;
-  address: string;
-}
-
-interface ChatRoom {
-  id: number;
-  title: string;
-  userCount: number;
-  lastChatMsg: string;
-  lastChatTime: string;
-}
+import { ChatRoom } from 'src/types/chat/types';
+import { getRelativeTimeString } from 'src/utilities/getDate';
 
 const ChatList = () => {
   const navigate = useNavigate();
@@ -39,6 +27,19 @@ const ChatList = () => {
     } catch (error) {}
   };
 
+  const padZero = (number: number) => {
+    return number.toString().padStart(2, '0');
+  };
+
+  // 서버에서 넘겨주는 형식을 getRelativeTimeString에서 바로 받을 수 있는 형식으로 먼저 변환
+  const changeLastChatTime = (originalDateValue: string) => {
+    const originalDate = new Date(originalDateValue);
+    const formattedDate = `${originalDate.getFullYear()}-${padZero(originalDate.getMonth() + 1)}-${padZero(
+      originalDate.getDate()
+    )} ${padZero(originalDate.getHours())}:${padZero(originalDate.getMinutes())}:${padZero(originalDate.getSeconds())}`;
+    return formattedDate;
+  };
+
   useEffect(() => {
     getChatList();
   }, []);
@@ -48,14 +49,13 @@ const ChatList = () => {
       {chatList !== null && chatList?.length !== 0 ? (
         chatList.map((chat) => {
           return (
-            // 마지막 메시지 보낸 시간과 내용은 담겨오지 않기 때문에 주석처리 후 텍스트 대체
             <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id, chat.title)}>
               <S.ChatInfoBox>
                 <S.ChatRoomName>{chat.title}</S.ChatRoomName>
                 {chat.userCount > 2 && <S.ChatUserCount>{chat.userCount}</S.ChatUserCount>}
-                {/* <S.ChatRoomLastMessageTime>{chat.lastChatTime.slice(-8, -3) || '기록없음'}</S.ChatRoomLastMessageTime> */}
                 <S.ChatRoomLastMessageTime>
-                  {chat.lastChatTime ? chat.lastChatTime.slice(11, 16) : '기록없음'}
+                  {/* {chat.lastChatTime ? chat.lastChatTime.slice(11, 16) : '기록없음'} */}
+                  {chat.lastChatTime ? getRelativeTimeString(changeLastChatTime(chat.lastChatTime)) : '기록없음'}
                 </S.ChatRoomLastMessageTime>
               </S.ChatInfoBox>
               <S.ChatRoomLastMessage>{chat.lastChatMsg || '메시지 없음'}</S.ChatRoomLastMessage>

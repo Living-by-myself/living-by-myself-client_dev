@@ -47,6 +47,7 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
   const param = useParams() as { id: string };
   const queryClient = useQueryClient();
   const overlay = useOverlay();
+  const postId = null;
 
   const postData = queryClient.getQueryData(['post', param.id as unknown as string]);
 
@@ -65,7 +66,7 @@ const CommunityUserProfile = ({ userId, getCreatedAtAsString }: CommunityUserPro
   };
 
   const openOtherUserProfileModal = () => {
-    overlay.open(({ close }) => <OtherUserProfileModal userId={userId} onClose={close} />);
+    overlay.open(({ close }) => <OtherUserProfileModal userId={userId} onClose={close} postId={postId} />);
   };
 
   if (isLoading) return <div>로딩중</div>;
