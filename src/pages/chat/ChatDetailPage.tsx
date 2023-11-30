@@ -20,7 +20,7 @@ const ChatDetailPage = () => {
   const [chatList, setChatList] = useState<ChatMessage[]>([]); // 채팅방 메시지 배열
   const [_, setRoomList] = useState<ChatRoom[]>([]); // 채팅방 전체 목록 배열
   const messageEndRef = useRef<HTMLDivElement | null>(null);
-  const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
+  // const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
   const [hasInputError, setHasInputError] = useState(false);
   const navigate = useNavigate();
   const [userNickname, setUserNickname] = useState({} as ChatUser);
@@ -59,11 +59,7 @@ const ChatDetailPage = () => {
     let hours = currentDate.getHours().toString().padStart(2, '0');
     let minutes = currentDate.getMinutes().toString().padStart(2, '0');
     let seconds = currentDate.getSeconds().toString().padStart(2, '0');
-
     let formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-    console.log('Current time: ', currentDate);
-    console.log('formattedDate : ', formattedDate);
     return formattedDate;
   };
 
@@ -136,9 +132,6 @@ const ChatDetailPage = () => {
 
     // WebSocket 연결 성공 시 실행되는 콜백
     client.onConnect = () => {
-      // send,,subscribe,,publish ,,
-      // 특정 채팅방에 topic으로 subscribe
-      // 받아온 데이터를 subcribe하고, publish하여 데이터를 받아오도록 한다?
       client.subscribe('/topic/room/' + paramId, (message) => {
         if (message) {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
@@ -179,7 +172,6 @@ const ChatDetailPage = () => {
         setRoomList(response.data);
         const foundRoom: ChatRoom | undefined = response.data.find((room: ChatRoom) => room.id === Number(paramId));
         if (foundRoom) {
-          console.log('나 title 새로 설정한다?');
           setCurrentRoomTitle(foundRoom.title);
         }
       } catch (error) {
@@ -190,30 +182,7 @@ const ChatDetailPage = () => {
     }
   }, [currentRoomTitle, paramId, setCurrentRoomTitle]);
 
-  // 스크롤 관련
   useEffect(() => {
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = messageEndRef.current || {};
-      if (scrollTop! + clientHeight! >= scrollHeight! - 5) {
-        setIsScrolledToBottom(true);
-      } else {
-        setIsScrolledToBottom(false);
-      }
-    };
-
-    if (messageEndRef.current) {
-      messageEndRef.current.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      if (messageEndRef.current) {
-        messageEndRef.current.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [chatList]);
-
-  useEffect(() => {
-    console.log(currentRoomTitle);
     if (currentRoomTitle.length === 0) {
       setChatRoomTitle();
     }
@@ -223,7 +192,13 @@ const ChatDetailPage = () => {
     <MobileContainer>
       <S.Container>
         <S.ChatHeader>
-          {currentRoomTitle.length !== 0 ? <S.Title>{currentRoomTitle}</S.Title> : <S.Title>{null}</S.Title>}
+          {currentRoomTitle.length !== 0 ? (
+            <S.TitleBox>
+              <S.Title>{currentRoomTitle}</S.Title> 의 채팅방
+            </S.TitleBox>
+          ) : (
+            <S.Title>{null}</S.Title>
+          )}
           <S.MoreButton onClick={() => navigate(`/chat/${paramId}/edit`)}>더보기</S.MoreButton>
         </S.ChatHeader>
         {/*채팅 관련 하나의 컴포넌트로 내부에서 또다시 map을 돌려야함 한 줄에 유저가 나냐 아니냐로 구분해서 */}
@@ -242,11 +217,6 @@ const ChatDetailPage = () => {
             );
           })}
           <div ref={messageEndRef}></div>
-          {!isScrolledToBottom && (
-            <S.ScrollToBottomIcon onClick={() => messageEndRef.current?.scrollIntoView({ behavior: 'smooth' })}>
-              ⬇
-            </S.ScrollToBottomIcon>
-          )}
         </S.Inner>
         <S.MessageInputBox>
           <S.MessageInput
@@ -345,9 +315,20 @@ const S = {
   `,
   Message: styled.p``,
   Nickname: styled.p``,
+  TitleBox: styled.div`
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    font-size: ${styleFont.h3};
+  `,
   Title: styled.h3`
     display: inline;
     font-size: ${styleFont.h3};
+    max-width: 430px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 3px;
   `,
   ScrollToBottomIcon: styled.div`
     position: fixed;
