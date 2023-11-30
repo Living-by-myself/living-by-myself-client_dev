@@ -16,6 +16,8 @@ export type GroupBuyDetailType = {
   modifiedAt: string;
   fileUrls: string | null;
   perUserPrice: number;
+  pickLike: boolean;
+  enumStatus: 'ONGOING' | 'DEADLINE';
   enumShare: 'BUY' | 'SHARE';
   created_at: string;
   viewCnt: number;
@@ -27,20 +29,24 @@ export type GroupBuyDetailType = {
 
 export type GroupBuyPreviewType = Pick<
   GroupBuyDetailType,
-  | 'id'
-  | 'title'
-  | 'maxUser'
-  | 'currentUserCount'
-  | 'createdAt'
-  | 'modifiedAt'
-  | 'fileUrls'
-  | 'perUserPrice'
-  | 'enumShare'
-  | 'viewCnt'
   | 'address'
   | 'beobJeongDong'
+  | 'createdAt'
+  | 'currentUserCount'
+  | 'enumShare'
+  | 'enumStatus'
+  | 'fileUrls'
+  | 'id'
+  | 'maxUser'
+  | 'modifiedAt'
+  | 'perUserPrice'
+  | 'pickLike'
+  | 'title'
+  | 'viewCnt'
 >;
 
+{
+}
 export type GroupBuyCategoryShare = (typeof GROUP_BUY_CATEGORY_SHARE)[keyof typeof GROUP_BUY_CATEGORY_SHARE];
 
 export type GroupBuyCategoryShareValues = GroupBuyCategoryShare['value'];

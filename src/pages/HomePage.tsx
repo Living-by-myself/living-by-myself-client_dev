@@ -49,7 +49,7 @@ const HomePage = () => {
                 더보기 <Icon name="chevron-right" size={16} />
               </S.ButtonMore>
             </S.MoreTab>
-            <ul>
+            <ul style={{ padding: '0 16px' }}>
               {data?.community.map((post) => {
                 return (
                   <li key={post.id}>
@@ -81,7 +81,7 @@ const HomePage = () => {
                 더보기 <Icon name="chevron-right" size={16} />
               </S.ButtonMore>
             </S.MoreTab>
-            <ul>
+            <ul style={{ padding: '0 16px' }}>
               {data?.groupBuy.map((data) => {
                 return (
                   <li key={data.id} style={{ borderBottom: '1px solid #eee' }}>
@@ -145,7 +145,7 @@ const S = {
   `,
   Category: styled.div``,
   TabArea: styled.div`
-    width: 100vw;
+    width: 100%;
     ${styleFont.body3}
     color: ${COLORS.GRAY[400]};
     padding: 10px 0;
