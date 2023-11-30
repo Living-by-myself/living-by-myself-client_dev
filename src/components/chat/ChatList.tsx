@@ -51,12 +51,16 @@ const ChatList = () => {
           return (
             <S.ChatContainer key={chat.id} onClick={() => ChatRoomClick(chat.id, chat.title)}>
               <S.ChatInfoBox>
-                <S.ChatRoomName>{chat.title}</S.ChatRoomName>
-                {chat.userCount > 2 && <S.ChatUserCount>{chat.userCount}</S.ChatUserCount>}
-                <S.ChatRoomLastMessageTime>
-                  {/* {chat.lastChatTime ? chat.lastChatTime.slice(11, 16) : '기록없음'} */}
-                  {chat.lastChatTime ? getRelativeTimeString(changeLastChatTime(chat.lastChatTime)) : '기록없음'}
-                </S.ChatRoomLastMessageTime>
+                <S.ChatInfoBoxLeftContents>
+                  <S.ChatRoomName>{chat.title}</S.ChatRoomName>
+                  {chat.userCount > 2 && <S.ChatUserCount>{chat.userCount}</S.ChatUserCount>}
+                </S.ChatInfoBoxLeftContents>
+                <div>
+                  <S.ChatRoomLastMessageTime>
+                    {/* {chat.lastChatTime ? chat.lastChatTime.slice(11, 16) : '기록없음'} */}
+                    {chat.lastChatTime ? getRelativeTimeString(changeLastChatTime(chat.lastChatTime)) : '기록없음'}
+                  </S.ChatRoomLastMessageTime>
+                </div>
               </S.ChatInfoBox>
               <S.ChatRoomLastMessage>{chat.lastChatMsg || '메시지 없음'}</S.ChatRoomLastMessage>
             </S.ChatContainer>
@@ -84,14 +88,25 @@ const S = {
     display: flex;
     gap: 6px;
     align-items: center;
+    justify-content: space-between;
+  `,
+  ChatInfoBoxLeftContents: styled.div`
+    display: flex;
+    align-items: center;
   `,
   ChatRoomName: styled.p`
     ${styleFont.h4}
     color: ${COLORS.GRAY[900]};
+    max-width: 530px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   `,
   ChatUserCount: styled.p`
-    ${styleFont.body3}
-    color: ${COLORS.GREEN[400]};
+    ${styleFont.body2}
+    color: ${COLORS.GRAY[400]};
+    margin-left: 7px;
+    font-weight: bold;
   `,
   ChatRoomLastMessageTime: styled.p`
     ${styleFont.body3}
