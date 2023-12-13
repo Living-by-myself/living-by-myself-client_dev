@@ -21,7 +21,6 @@ const ChatDetailPage = () => {
   const [_, setRoomList] = useState<ChatRoom[]>([]); // 채팅방 전체 목록 배열
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
-  // const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
   const [hasInputError, setHasInputError] = useState(false);
   const navigate = useNavigate();
   const [userNickname, setUserNickname] = useState({} as ChatUser);
@@ -139,9 +138,10 @@ const ChatDetailPage = () => {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
           let msg = JSON.parse(message.body);
           setChatList((prevChats) => [...prevChats, msg]);
-          if(msg.responseDto.id == userId) {
+          if (msg.responseDto.id == userId) {
             setIsNewMessage(false);
-            setTimeout(() => { //새로운 메시지가 추가된 후에 채팅창 제일 아래로 이동
+            setTimeout(() => {
+              //새로운 메시지가 추가된 후에 채팅창 제일 아래로 이동
               messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
             }, 0);
             return;
@@ -162,21 +162,22 @@ const ChatDetailPage = () => {
   };
 
   const scrollToBottomButtonClick = () => {
-        messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        setIsNewMessage(false);
-  }
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setIsNewMessage(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       connectWebSocket();
       await getChatMessage();
       await getUserNickname();
-  
-      if (innerRef.current) { //채팅 스크롤 제일 아래로
+
+      if (innerRef.current) {
+        //채팅 스크롤 제일 아래로
         innerRef.current.scrollTop = innerRef.current.scrollHeight;
       }
     };
-  
+
     fetchData();
     return () => disConnect();
   }, []);
@@ -206,32 +207,28 @@ const ChatDetailPage = () => {
     }
   }, [currentRoomTitle, setChatRoomTitle]);
 
+  //------------------- 스크롤 다 내려오면 버튼 사라지게
+  const handleScroll = () => {
+    const isScrolledToBottom =
+      innerRef.current!.scrollTop + innerRef.current!.clientHeight === innerRef.current!.scrollHeight;
+    setIsNewMessage(isScrolledToBottom);
 
-  //------------------- 스크롤 다 내려오면 버튼 사라지는 test
+    // 스크롤이 맨 아래로 내려왔을 때
+    if (isScrolledToBottom) {
+      setIsNewMessage(false);
+    }
+  };
+
   useEffect(() => {
-    const handleScroll = () => {
-      const isScrolledToBottom =
-        innerRef.current!.scrollTop + innerRef.current!.clientHeight ===
-        innerRef.current!.scrollHeight;
-    
-        setIsNewMessage(isScrolledToBottom);
-    
-        // if (isNewMessage) {
-        //   setTimeout(() => {
-        //     setIsNewMessage(false);
-        //   }, 3000); // 버튼이 사라지기까지의 시간 (예: 3000 밀리초 뒤)
-        // }
-    };
-    window.addEventListener('scroll', handleScroll);
+    innerRef.current!.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      innerRef.current!.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   const elementStyle = {
-    display: isNewMessage? 'block': 'none'
-  }
-
+    display: isNewMessage ? 'block' : 'none'
+  };
 
   return (
     <MobileContainer>
@@ -262,7 +259,11 @@ const ChatDetailPage = () => {
             );
           })}
           <div ref={messageEndRef}></div>
-          {isNewMessage && (<S.ScrollToBottomIcon onClick={scrollToBottomButtonClick} style={elementStyle}>⬇ 새로운 메시지가 도착하였습니다. ⬇</S.ScrollToBottomIcon>)}
+          {isNewMessage && (
+            <S.ScrollToBottomIcon onClick={scrollToBottomButtonClick} style={elementStyle}>
+              ⬇ 새로운 메시지가 도착하였습니다. ⬇
+            </S.ScrollToBottomIcon>
+          )}
         </S.Inner>
         <S.MessageInputBox>
           <S.MessageInput
@@ -333,7 +334,7 @@ const S = {
     height: 100%;
     overflow-y: auto;
     padding: 10px;
-    
+    position: relative;
   `,
   MessageWrapper: styled.div`
     display: flex;
@@ -378,18 +379,18 @@ const S = {
     white-space: nowrap;
     margin-right: 3px;
   `,
-  ScrollToBottomIcon: styled.div`
+  ScrollToBottomIcon: styled.button`
     position: fixed;
-    bottom: 15%;
+    bottom: 10%;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
     background-color: ${COLORS.GRAY[600]};
-    padding:  8px;
+    padding: 8px;
     border-radius: 5px;
     border: none;
     color: ${COLORS.GRAY[200]};
-    // z-index: 999;
+    z-index: 999;
   `,
   MessageInput: styled.input<{ hasError: boolean }>`
     padding: 13px;
