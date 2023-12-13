@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MobileContainer } from 'src/styles/styleBox';
 import { COLORS } from 'src/styles/styleConstants';
@@ -222,9 +223,11 @@ const ChatDetailPage = () => {
   useEffect(() => {
     innerRef.current!.addEventListener('scroll', handleScroll);
     return () => {
-      innerRef.current!.removeEventListener('scroll', handleScroll);
+      if (innerRef.current) {
+        innerRef.current.removeEventListener('scroll', handleScroll);
+      }
     };
-  }, []);
+  }, [handleScroll]);
 
   const elementStyle = {
     display: isNewMessage ? 'block' : 'none'

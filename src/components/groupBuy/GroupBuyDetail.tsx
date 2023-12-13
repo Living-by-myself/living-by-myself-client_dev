@@ -15,6 +15,8 @@ import { getRelativeTimeString } from 'src/utilities/getDate';
 import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
+import GroupBuyChat from './GroupBuyChat';
+import GroupBuyClose from './GroupBuyClose';
 
 interface JoinUserType {
   id: number;
@@ -44,15 +46,6 @@ const GroupBuyDetail = () => {
     return user?.id.toString() === localStorage.getItem('id');
   });
   console.log(findBuyUser);
-
-  const closeGroupBuyButton = async () => {
-    try {
-      const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
-      mutation.mutate(id);
-
-      toast('공동구매 마감 완료');
-    } catch (error) {}
-  };
 
   const cancelGroupBuyButton = async () => {
     try {
@@ -132,9 +125,9 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
-          <S.ChatButton>채팅하기</S.ChatButton>
+          <GroupBuyChat />
           {data?.users[data?.users.length - 1] && data?.currentUserCount === data?.maxUser ? (
-            <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
+            <GroupBuyClose id={id} />
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
           ) : (
@@ -300,21 +293,6 @@ const S = {
     padding: 0.8rem 3.6rem;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-  `,
-  ChatButton: styled.button`
-    border: solid 1px ${COLORS.GREEN[300]};
-    padding: 0.8rem 1.6rem;
-    color: ${COLORS.GREEN[300]};
     border-radius: 6px;
     font-weight: 600;
     font-size: 15px;
