@@ -7,8 +7,6 @@ import { COLORS } from 'src/styles/styleConstants';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { validateEmail, validatePassword, validatePhoneNumber } from './Validate';
 import { SignFormType } from 'src/types/user/types';
-import axios from 'axios';
-import SignUpPhoneAuth from './SignUpPhoneAuth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -131,7 +129,6 @@ const SignUp = () => {
                 인증번호 받기
               </S.Button>
             </S.FormColumn>
-            {/* <SignUpPhoneAuth/> */}
             <S.ErrorMessage>{errors.phoneNumber?.message}</S.ErrorMessage>
             <input id="phoneAuthNumber" placeholder="인증번호 입력" {...register('phoneAuthNumber')} />
             <S.ErrorMessage>{errors.phoneAuthNumber?.message}</S.ErrorMessage>

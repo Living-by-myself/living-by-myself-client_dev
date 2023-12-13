@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import App from 'src/App';
 import RootLayout from 'src/components/layout/RootLayout';
 import OnlyLoggedRoute from './OnlyLoggedRoute';
@@ -32,6 +32,9 @@ import GoogleOAuth from 'src/pages/oAuth/GoogleOAuth';
 import KakaoOAuth from 'src/pages/oAuth/KakaoOAuth';
 
 const Router = () => {
+
+  const location = useLocation()
+  console.log(location)
   return (
     <Routes>
       <Route path="/" element={<RootLayout />}>

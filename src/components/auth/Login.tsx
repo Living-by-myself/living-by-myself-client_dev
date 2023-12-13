@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { SubmitHandler, set, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { COLORS } from 'src/styles/styleConstants';
 import axios from 'axios';
 import { styleFont } from 'src/styles/styleFont';
 import { getKakaoLoginToken, getUserProfile, loginWithEmailPassword } from 'src/api/user/user';
 import userStore from 'src/store/userStore';
-import { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { toast } from 'react-toastify';
+import { LoginUserType } from 'src/types/user/types';
 
-export interface LoginUserType {
-  username: string;
-  password: string;
-}
 
 const Login = () => {
   const { register, handleSubmit } = useForm<LoginUserType>();
@@ -62,14 +58,14 @@ const Login = () => {
         <S.socialLoginContainer>
           <h1>SNS 계정으로 간편 로그인/회원가입</h1>
           <div>
-            <button>
-              <a onClick={kakaoLoginHandler}>
-                <img src="/imgs/kakao.png" />
+            <button onClick={kakaoLoginHandler}>
+              <a >
+                <img src="/imgs/kakao.png" alt='카카오 로그인 이미지' width={48} height={48}/>
               </a>
             </button>
             <button onClick={kakaoLoginHandler}>
               {/* <Link to="https://accounts.google.com/o/oauth2/v2/auth?client_id=480627412963-2kv4rhdck7u0svv6urq7req1ro0jq8hv.apps.googleusercontent.com&redirect_uri=https://tracelover.shop/home/oauth/login/oauth2/code/google&response_type=code&scope=profile"> */}
-              <img src="/imgs/google.png" />
+              <img src="/imgs/google.png" alt='구글 로그인 이미지' width={48} height={48}/>
               {/* </Link> */}
             </button>
           </div>

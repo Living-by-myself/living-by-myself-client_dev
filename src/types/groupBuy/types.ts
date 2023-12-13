@@ -45,6 +45,12 @@ export type GroupBuyPreviewType = Pick<
   | 'viewCnt'
 >;
 
+export interface JoinUserType {
+  id: number;
+  nickname: string;
+  profileImage: string;
+}
+
 {
 }
 export type GroupBuyCategoryShare = (typeof GROUP_BUY_CATEGORY_SHARE)[keyof typeof GROUP_BUY_CATEGORY_SHARE];

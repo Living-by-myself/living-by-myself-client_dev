@@ -5,7 +5,6 @@ import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
@@ -15,14 +14,10 @@ import { getRelativeTimeString } from 'src/utilities/getDate';
 import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
+import { JoinUserType } from 'src/types/groupBuy/types';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
 
-interface JoinUserType {
-  id: number;
-  nickname: string;
-  fileUrls: string;
-}
 
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
@@ -43,7 +38,7 @@ const GroupBuyDetail = () => {
   console.log(data);
 
   const findBuyUser = data?.users?.find((user: JoinUserType) => {
-    return user?.id.toString() === localStorage.getItem('id');
+    return user?.id.toString() == localStorage.getItem('id');
   });
   console.log(findBuyUser);
 
@@ -56,6 +51,29 @@ const GroupBuyDetail = () => {
       console.log(error);
     }
   };
+  const joinUser = (userLength: number) => {
+    if (userLength === 1) {
+      return 0
+    } else {
+      return userLength - 1
+    }
+  }
+
+  console.log(typeof (data!.users!.length), "데이터 길이")
+
+  const writer = data?.users[joinUser(data!.users!.length as number)];
+
+  console.log(writer, "작성자")
+
+  const joinUserNickname = (nickName: string) => {
+    const delEmail = nickName.indexOf('@')
+    if (delEmail !== -1) {
+      return nickName.substring(0, delEmail)
+    } else {
+      return nickName
+    }
+  }
+
   return (
     <>
       <S.Container>
@@ -65,14 +83,15 @@ const GroupBuyDetail = () => {
             <S.UserInfoInner>
               <S.UserInfo>
                 <p>
-                  <img></img>
+                  {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
+
                 </p>
                 <div>
-                  <h1>{data!.users[data?.users.length - 1].nickname}</h1>
-                  <h2>{data!.users[data?.users.length - 1].address}</h2>
+                  <h1>{writer?.nickname}</h1>
+                  <h2>{writer?.address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data!.users[data?.users.length - 1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {writer?.level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
@@ -106,9 +125,9 @@ const GroupBuyDetail = () => {
                 return (
                   <li>
                     <h1>
-                      <img src={joinUser.fileUrls}></img>
+                      {joinUser.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={joinUser.profileImage}></img>}
                     </h1>
-                    <h2>{joinUser.nickname}</h2>
+                    <h2>{joinUserNickname(joinUser.nickname)}</h2>
                   </li>
                 );
               })}
@@ -126,7 +145,7 @@ const GroupBuyDetail = () => {
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <GroupBuyChat />
-          {data?.users[data?.users.length - 1] && data?.currentUserCount === data?.maxUser ? (
+          {writer && data?.currentUserCount === data?.maxUser ? (
             <GroupBuyClose id={id} />
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
@@ -180,7 +199,10 @@ const S = {
       width: 44px;
       height: 44px;
       border-radius: 100%;
-      background-color: #5a0000;
+      img{
+        width: 100%;
+        height: 100%;
+      }
     }
     div {
       display: flex;
@@ -250,16 +272,25 @@ const S = {
   `,
   JoinUserWrap: styled.div`
     display: flex;
+    margin-top: 20px;
+    gap: calc(20% / 3);
     width: 100%;
     li {
-      width: 25%;
+      width: 20%;
+      list-style: none;
+      text-align: center;
     }
     h1 {
       width: 100%;
+      margin-bottom: 5px;
       img {
         display: block;
         width: 100%;
       }
+    }
+    h2{
+      ${styleFont.body2}
+        color: ${COLORS.GRAY[900]};
     }
   `,
   BuyMapWrap: styled.div`
