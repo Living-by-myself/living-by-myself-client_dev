@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { LoginUserType } from 'src/components/auth/Login';
 import axiosInstance from '../AxiosInstance';
 import { toast } from 'react-toastify';
+import { LoginUserType } from 'src/types/user/types';
 
 export const loginWithEmailPassword = async ({ username, password }: LoginUserType) => {
   try {

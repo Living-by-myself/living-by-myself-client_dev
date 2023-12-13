@@ -48,7 +48,7 @@ const Header = () => {
         </S.MobileMenuButton>
 
         <S.LogoContainer onClick={() => navigate('/')}>
-          <img src={logo} alt="logo" />
+          <img src={logo} alt="logo" width={104} height={31}/>
         </S.LogoContainer>
 
         <S.RightMenu>

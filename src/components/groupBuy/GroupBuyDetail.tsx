@@ -5,7 +5,6 @@ import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
@@ -15,12 +14,8 @@ import { getRelativeTimeString } from 'src/utilities/getDate';
 import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
+import { JoinUserType } from 'src/types/groupBuy/types';
 
-interface JoinUserType {
-  id: number;
-  nickname: string;
-  fileUrls: string;
-}
 
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
@@ -51,7 +46,7 @@ const GroupBuyDetail = () => {
       mutation.mutate(id);
 
       toast('공동구매 마감 완료');
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const cancelGroupBuyButton = async () => {
@@ -63,6 +58,20 @@ const GroupBuyDetail = () => {
       console.log(error);
     }
   };
+  const joinUser = (userLength:number) => {
+    if (userLength === 1) {
+      return 0
+    } else {
+      return userLength - 1
+    }
+  }
+
+  console.log(typeof(data!.users!.length),"데이터 길이")
+
+  const writer = data?.users[joinUser(data!.users!.length as number)];
+
+  console.log(writer,"작성자")
+
   return (
     <>
       <S.Container>
@@ -72,14 +81,15 @@ const GroupBuyDetail = () => {
             <S.UserInfoInner>
               <S.UserInfo>
                 <p>
-                  <img></img>
+                  {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
+                  
                 </p>
                 <div>
-                  <h1>{data!.users[data?.users.length - 1].nickname}</h1>
-                  <h2>{data!.users[data?.users.length - 1].address}</h2>
+                  <h1>{writer?.nickname}</h1>
+                  <h2>{writer?.address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data!.users[data?.users.length - 1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {writer?.level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
@@ -133,7 +143,7 @@ const GroupBuyDetail = () => {
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <S.ChatButton>채팅하기</S.ChatButton>
-          {data?.users[data?.users.length - 1] && data?.currentUserCount === data?.maxUser ? (
+          {writer && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
@@ -187,7 +197,10 @@ const S = {
       width: 44px;
       height: 44px;
       border-radius: 100%;
-      background-color: #5a0000;
+      img{
+        width: 100%;
+        height: 100%;
+      }
     }
     div {
       display: flex;
