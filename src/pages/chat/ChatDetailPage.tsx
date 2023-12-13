@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MobileContainer } from 'src/styles/styleBox';
 import { COLORS } from 'src/styles/styleConstants';
@@ -20,11 +21,12 @@ const ChatDetailPage = () => {
   const [chatList, setChatList] = useState<ChatMessage[]>([]); // 채팅방 메시지 배열
   const [_, setRoomList] = useState<ChatRoom[]>([]); // 채팅방 전체 목록 배열
   const messageEndRef = useRef<HTMLDivElement | null>(null);
-  // const [isScrolledToBottom, setIsScrolledToBottom] = useState(true); //스크롤이 제일 아래에 있는지 확인
+  const innerRef = useRef<HTMLDivElement | null>(null);
   const [hasInputError, setHasInputError] = useState(false);
   const navigate = useNavigate();
   const [userNickname, setUserNickname] = useState({} as ChatUser);
   const [lastMessageDate, setLastMessageDate] = useState<string | null>(null);
+  const [isNewMessage, setIsNewMessage] = useState(false);
 
   // WebSocket 클라이언트를 상태로 관리 → 최초 연결 후 메시지 전송 시 다시 연결하면 코드 중복
   const [webSocketClient, setWebSocketClient] = useState<StompJs.Client | null>(null);
@@ -137,6 +139,16 @@ const ChatDetailPage = () => {
           // 새로 받은 메시지를 기존 채팅 배열에 추가
           let msg = JSON.parse(message.body);
           setChatList((prevChats) => [...prevChats, msg]);
+          if (msg.responseDto.id == userId) {
+            setIsNewMessage(false);
+            setTimeout(() => {
+              //새로운 메시지가 추가된 후에 채팅창 제일 아래로 이동
+              messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 0);
+            return;
+          } else {
+            setIsNewMessage(true);
+          }
         }
       });
     };
@@ -150,16 +162,24 @@ const ChatDetailPage = () => {
     client.activate();
   };
 
-  useEffect(() => {
+  const scrollToBottomButtonClick = () => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatList]);
+    setIsNewMessage(false);
+  };
 
-  // 컴포넌트 마운트 시 WebSocket 연결 및 메시지 내용 불러오기
   useEffect(() => {
-    connectWebSocket();
-    getChatMessage();
-    getUserNickname();
+    const fetchData = async () => {
+      connectWebSocket();
+      await getChatMessage();
+      await getUserNickname();
 
+      if (innerRef.current) {
+        //채팅 스크롤 제일 아래로
+        innerRef.current.scrollTop = innerRef.current.scrollHeight;
+      }
+    };
+
+    fetchData();
     return () => disConnect();
   }, []);
 
@@ -188,6 +208,31 @@ const ChatDetailPage = () => {
     }
   }, [currentRoomTitle, setChatRoomTitle]);
 
+  //------------------- 스크롤 다 내려오면 버튼 사라지게
+  const handleScroll = () => {
+    const isScrolledToBottom =
+      innerRef.current!.scrollTop + innerRef.current!.clientHeight === innerRef.current!.scrollHeight;
+    setIsNewMessage(isScrolledToBottom);
+
+    // 스크롤이 맨 아래로 내려왔을 때
+    if (isScrolledToBottom) {
+      setIsNewMessage(false);
+    }
+  };
+
+  useEffect(() => {
+    innerRef.current!.addEventListener('scroll', handleScroll);
+    return () => {
+      if (innerRef.current) {
+        innerRef.current.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
+  const elementStyle = {
+    display: isNewMessage ? 'block' : 'none'
+  };
+
   return (
     <MobileContainer>
       <S.Container>
@@ -202,7 +247,7 @@ const ChatDetailPage = () => {
           <S.MoreButton onClick={() => navigate(`/chat/${paramId}/edit`)}>더보기</S.MoreButton>
         </S.ChatHeader>
         {/*채팅 관련 하나의 컴포넌트로 내부에서 또다시 map을 돌려야함 한 줄에 유저가 나냐 아니냐로 구분해서 */}
-        <S.Inner>
+        <S.Inner ref={innerRef}>
           {chatList.map((chat) => {
             return (
               <S.MessageWrapper key={chat.chatId}>
@@ -217,6 +262,11 @@ const ChatDetailPage = () => {
             );
           })}
           <div ref={messageEndRef}></div>
+          {isNewMessage && (
+            <S.ScrollToBottomIcon onClick={scrollToBottomButtonClick} style={elementStyle}>
+              ⬇ 새로운 메시지가 도착하였습니다. ⬇
+            </S.ScrollToBottomIcon>
+          )}
         </S.Inner>
         <S.MessageInputBox>
           <S.MessageInput
@@ -287,11 +337,13 @@ const S = {
     height: 100%;
     overflow-y: auto;
     padding: 10px;
+    position: relative;
   `,
   MessageWrapper: styled.div`
     display: flex;
     flex-direction: column;
     gap: 5px;
+    position: relative;
   `,
   MessageBox: styled.div<IMessageBox>`
     width: 100%;
@@ -330,19 +382,17 @@ const S = {
     white-space: nowrap;
     margin-right: 3px;
   `,
-  ScrollToBottomIcon: styled.div`
+  ScrollToBottomIcon: styled.button`
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
     cursor: pointer;
-    font-size: 24px;
-    background-color: #fff;
+    background-color: ${COLORS.GRAY[600]};
     padding: 8px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 5px;
+    border: none;
+    color: ${COLORS.GRAY[200]};
     z-index: 999;
   `,
   MessageInput: styled.input<{ hasError: boolean }>`

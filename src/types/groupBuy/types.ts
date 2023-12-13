@@ -48,7 +48,7 @@ export type GroupBuyPreviewType = Pick<
 export interface JoinUserType {
   id: number;
   nickname: string;
-  fileUrls: string;
+  profileImage: string;
 }
 
 {

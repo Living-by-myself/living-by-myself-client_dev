@@ -15,6 +15,8 @@ import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
 import { JoinUserType } from 'src/types/groupBuy/types';
+import GroupBuyChat from './GroupBuyChat';
+import GroupBuyClose from './GroupBuyClose';
 
 
 const GroupBuyDetail = () => {
@@ -36,18 +38,9 @@ const GroupBuyDetail = () => {
   console.log(data);
 
   const findBuyUser = data?.users?.find((user: JoinUserType) => {
-    return user?.id.toString() === localStorage.getItem('id');
+    return user?.id.toString() == localStorage.getItem('id');
   });
   console.log(findBuyUser);
-
-  const closeGroupBuyButton = async () => {
-    try {
-      const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
-      mutation.mutate(id);
-
-      toast('공동구매 마감 완료');
-    } catch (error) { }
-  };
 
   const cancelGroupBuyButton = async () => {
     try {
@@ -58,7 +51,7 @@ const GroupBuyDetail = () => {
       console.log(error);
     }
   };
-  const joinUser = (userLength:number) => {
+  const joinUser = (userLength: number) => {
     if (userLength === 1) {
       return 0
     } else {
@@ -66,11 +59,20 @@ const GroupBuyDetail = () => {
     }
   }
 
-  console.log(typeof(data!.users!.length),"데이터 길이")
+  console.log(typeof (data!.users!.length), "데이터 길이")
 
   const writer = data?.users[joinUser(data!.users!.length as number)];
 
-  console.log(writer,"작성자")
+  console.log(writer, "작성자")
+
+  const joinUserNickname = (nickName: string) => {
+    const delEmail = nickName.indexOf('@')
+    if (delEmail !== -1) {
+      return nickName.substring(0, delEmail)
+    } else {
+      return nickName
+    }
+  }
 
   return (
     <>
@@ -82,7 +84,7 @@ const GroupBuyDetail = () => {
               <S.UserInfo>
                 <p>
                   {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
-                  
+
                 </p>
                 <div>
                   <h1>{writer?.nickname}</h1>
@@ -123,9 +125,9 @@ const GroupBuyDetail = () => {
                 return (
                   <li>
                     <h1>
-                      <img src={joinUser.fileUrls}></img>
+                      {joinUser.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={joinUser.profileImage}></img>}
                     </h1>
-                    <h2>{joinUser.nickname}</h2>
+                    <h2>{joinUserNickname(joinUser.nickname)}</h2>
                   </li>
                 );
               })}
@@ -142,9 +144,9 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
-          <S.ChatButton>채팅하기</S.ChatButton>
+          <GroupBuyChat />
           {writer && data?.currentUserCount === data?.maxUser ? (
-            <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
+            <GroupBuyClose id={id} />
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
           ) : (
@@ -270,16 +272,25 @@ const S = {
   `,
   JoinUserWrap: styled.div`
     display: flex;
+    margin-top: 20px;
+    gap: calc(20% / 3);
     width: 100%;
     li {
-      width: 25%;
+      width: 20%;
+      list-style: none;
+      text-align: center;
     }
     h1 {
       width: 100%;
+      margin-bottom: 5px;
       img {
         display: block;
         width: 100%;
       }
+    }
+    h2{
+      ${styleFont.body2}
+        color: ${COLORS.GRAY[900]};
     }
   `,
   BuyMapWrap: styled.div`
@@ -313,21 +324,6 @@ const S = {
     padding: 0.8rem 3.6rem;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-  `,
-  ChatButton: styled.button`
-    border: solid 1px ${COLORS.GREEN[300]};
-    padding: 0.8rem 1.6rem;
-    color: ${COLORS.GREEN[300]};
     border-radius: 6px;
     font-weight: 600;
     font-size: 15px;
