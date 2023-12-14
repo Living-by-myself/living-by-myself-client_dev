@@ -12,6 +12,7 @@ import { ChatMessage, ChatRoom, ChatUser } from 'src/types/chat/types';
 import { getUserProfile } from 'src/api/user/user';
 
 const ChatDetailPage = () => {
+  const messageInput = useRef<HTMLInputElement | null>(null);
   const [message, setMessage] = useState(''); // 입력한 메시지
   const token = localStorage.getItem('atk');
   const userId = Number(localStorage.getItem('id'));
@@ -34,18 +35,14 @@ const ChatDetailPage = () => {
   // 내 닉네임도 publish에 보내서 상대방이 내 닉네임 실시간으로 볼 수 있는지 test..
   const getUserNickname = async () => {
     const profile = await getUserProfile();
-    console.log('현재 로그인한 유저의 닉네임은? ', profile.nickname);
     setUserNickname(profile.nickname);
   };
 
   // 해당 채팅방 메시지 조회
   const getChatMessage = async () => {
-    console.log('나 채팅방 메시지 조회한다!');
-    console.log('메시지 조회되면서 나오는 roomId..', paramId);
     try {
       const response = await axiosInstance.get('/home/chats/room/' + paramId);
       setChatList(response.data);
-      console.log('채팅방 메시지 목록 조회 성공!', response.data);
       return response.data;
     } catch (error) {
       console.log('채팅방 메시지 목록 조회 실패!', error);
@@ -168,6 +165,7 @@ const ChatDetailPage = () => {
   };
 
   useEffect(() => {
+    messageInput.current?.focus();
     const fetchData = async () => {
       connectWebSocket();
       await getChatMessage();
@@ -188,14 +186,13 @@ const ChatDetailPage = () => {
     if (currentRoomTitle.length === 0) {
       try {
         const response = await axiosInstance.get(`/home/chats/rooms`);
-        console.log('채팅방 title 설정을 위해 전체 채팅 목록 조회! ', response.data);
         setRoomList(response.data);
         const foundRoom: ChatRoom | undefined = response.data.find((room: ChatRoom) => room.id === Number(paramId));
         if (foundRoom) {
           setCurrentRoomTitle(foundRoom.title);
         }
       } catch (error) {
-        console.log('채팅방 title 설정을 위해 전체 채팅 목록 실패! ', error);
+        console.log('전체 채팅 목록 실패! ', error);
       }
     } else {
       return currentRoomTitle;
@@ -270,6 +267,7 @@ const ChatDetailPage = () => {
         </S.Inner>
         <S.MessageInputBox>
           <S.MessageInput
+            ref={messageInput}
             placeholder="메세지를 작성하시오."
             id="chatMessage"
             value={message}
@@ -296,12 +294,13 @@ interface IMessageBox {
 
 const S = {
   MessageInputButton: styled.button`
-    width: 40px;
+    width: 60px;
     height: 40px;
-    border-radius: 50px;
+    border-radius: 10px;
     ${styleFont.body3}
     border: none;
     outline: none;
+    background-color: ${COLORS.GRAY[200]};
   `,
   MessageInputBox: styled.form`
     width: 100%;
@@ -312,7 +311,6 @@ const S = {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: 100%;
   `,
 
   Container: styled.div`
@@ -403,7 +401,7 @@ const S = {
     border: ${({ hasError }) => (hasError ? '1px solid red' : 'none')};
     font-size: ${styleFont.body3};
     background-color: ${COLORS.GRAY[200]};
-    border-radius: 50px;
+    border-radius: 10px;
   `,
   MoreButton: styled.button`
     font-size: ${styleFont.body4};
