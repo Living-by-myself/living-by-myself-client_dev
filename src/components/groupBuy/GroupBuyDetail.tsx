@@ -161,7 +161,6 @@ const GroupBuyDetail = () => {
             </S.GroupBuyButton>
           )}
         </S.FnWrap>
-        <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
       </S.Container>
     </>
   );
