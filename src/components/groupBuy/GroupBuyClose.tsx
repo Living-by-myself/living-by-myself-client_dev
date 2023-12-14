@@ -15,9 +15,10 @@ interface GroupBuyCloseProps {
   id: number; //paramsId
   users: ChatUser[];
   writerId: number;
+  writerNickname: string;
 }
 
-const GroupBuyClose = ({ id, users, writerId }: GroupBuyCloseProps) => {
+const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyCloseProps) => {
   const navigate = useNavigate();
   const [usersNickname, setUsersNickname] = useState([] as string[]); // 참여 유저 닉네임 배열
   const [usersId, setUsersId] = useState([] as number[]); // 참여 유저 닉네임 배열
@@ -49,7 +50,6 @@ const GroupBuyClose = ({ id, users, writerId }: GroupBuyCloseProps) => {
 
     if (users.length > 1) {
       try {
-        setCurrentRoomTitle(roomTitle);
         const newRoomId = await createChat(usersId, myProfile.nickname, roomTitle, id);
         toast('공동구매 채팅 방으로 이동합니다!');
         navigate(`/chat/${newRoomId}`); // 페이지 이동될 지 아직 모름
@@ -64,10 +64,12 @@ const GroupBuyClose = ({ id, users, writerId }: GroupBuyCloseProps) => {
   useEffect(() => {
     getProfileUser();
     // 채팅 생성 시 사용할 채팅 참여 유저 닉네임 및 아이디 배열 만들어주고 set
-    const usersNickname = users.map((user) => user.nickname);
-    setUsersNickname(usersNickname);
-    const usersId1 = users.map((user) => user.id);
-    setUsersId(usersId1.filter((userId) => userId !== writerId));
+    let usersNickname = users.map((user) => user.nickname);
+    usersNickname = [writerNickname, ...usersNickname.filter((nickname) => nickname !== writerNickname)];
+    setCurrentRoomTitle(usersNickname.join(', '));
+    setUsersNickname(usersNickname.filter((userNickname) => userNickname !== writerNickname));
+    const usersId = users.map((user) => user.id);
+    setUsersId(usersId.filter((userId) => userId !== writerId));
   }, []);
   return <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>;
 };

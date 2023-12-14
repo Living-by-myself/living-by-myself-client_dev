@@ -15,10 +15,6 @@ const GroupBuyBookmark = ({ likeCount, id, pickLike }: BookmarkProps) => {
   const [bookmark, setBookmark] = useState({ likeCount, pickLike });
 
   useEffect(() => {
-    console.log('데이터야 잘 넘어왔니? ', likeCount, id, pickLike);
-  }, [likeCount, pickLike, id]);
-
-  useEffect(() => {
     setBookmark({ likeCount, pickLike });
   }, [pickLike]);
 

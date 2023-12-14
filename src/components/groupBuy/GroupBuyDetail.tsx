@@ -152,7 +152,7 @@ const GroupBuyDetail = () => {
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <GroupBuyChat id={writer.id} />
           {writer && data?.currentUserCount === data?.maxUser ? (
-            <GroupBuyClose id={id} users={data.users} writerId={writer.id} />
+            <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
           ) : (
@@ -161,6 +161,7 @@ const GroupBuyDetail = () => {
             </S.GroupBuyButton>
           )}
         </S.FnWrap>
+        <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
       </S.Container>
     </>
   );
