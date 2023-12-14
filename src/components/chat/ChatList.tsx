@@ -23,6 +23,7 @@ const ChatList = () => {
       const response = await axiosInstance.get(`/home/chats/rooms`);
 
       setChatList(response.data);
+      console.log('채팅 페이지 채팅 목록 : ', response.data);
       return response;
     } catch (error) {}
   };

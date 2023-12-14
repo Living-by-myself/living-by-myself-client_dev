@@ -1,14 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createChat, getRoomList } from 'src/api/chat/chat';
+import { getOtherUserProfile, getUserProfile } from 'src/api/user/user';
+import { useRoomTitleStore } from 'src/store/chatStore';
 import { COLORS } from 'src/styles/styleConstants';
+import { ChatRoom, ChatUser } from 'src/types/chat/types';
 import styled from 'styled-components';
 
-const GroupBuyChat = () => {
-  const handleCreateChatButtonClick = () => {
-    console.log('버튼 연결 완료~');
-    // 이 컴포넌트는 작성자가 아닌 유저에게만 나타날 것이기 때문에
-    // 무조건 작성자 id를 넘겨받아서 중복 확인 후 1:1..
-    // 그럼 이건 공구 채팅이 아닌거겠지..? 그냥 문의 개념의 1:1..
+interface GroupBuyChatProps {
+  id: number;
+}
+
+const GroupBuyChat = (id: GroupBuyChatProps) => {
+  const navigate = useNavigate();
+  const [otherProfile, setOtherProfile] = useState({} as ChatUser);
+  const [myProfile, setMyProfile] = useState({} as ChatUser);
+  const { currentRoomTitle, setCurrentRoomTitle } = useRoomTitleStore();
+  const [roomList, setRoomList] = useState([] as ChatRoom[]);
+  const [usersNickname, setUsersNickname] = useState([] as string[]);
+  const writerId = id.id;
+
+  const getProfileUser = async () => {
+    const otherProfile = await getOtherUserProfile(writerId as unknown as string);
+    const myProfile = await getUserProfile();
+    setOtherProfile(otherProfile);
+    setUsersNickname([otherProfile.nickname]);
+    setMyProfile(myProfile);
   };
+
+  const getAllRoomList = async () => {
+    const roomList = await getRoomList();
+    setRoomList(roomList);
+  };
+
+  const handleCreateChatButtonClick = async () => {
+    // 새롭게 만드는 title을 가진 방이 이미 있는지 확인
+    const existingRoom = roomList.find((room) => {
+      const titleArray = room.title.split(',').map((item) => item.trim());
+      const filteredArray = titleArray.filter((item) => !usersNickname.includes(item));
+      return filteredArray.length === 1;
+    });
+    if (existingRoom) {
+      navigate(`/chat/${existingRoom.id!}`);
+    } else {
+      try {
+        setCurrentRoomTitle(`${myProfile.nickname}, ${otherProfile.nickname}`);
+        const newRoomId = await createChat([writerId], myProfile.nickname, otherProfile.nickname, null);
+        navigate(`/chat/${newRoomId}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getProfileUser();
+    getAllRoomList();
+  }, []);
 
   return <S.ChatButton onClick={handleCreateChatButtonClick}>채팅하기</S.ChatButton>;
 };
