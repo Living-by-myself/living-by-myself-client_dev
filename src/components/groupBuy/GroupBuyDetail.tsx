@@ -18,7 +18,6 @@ import { JoinUserType } from 'src/types/groupBuy/types';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
 
-
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
   const paramsId = useParams() as unknown as { id: number };
@@ -53,26 +52,26 @@ const GroupBuyDetail = () => {
   };
   const joinUser = (userLength: number) => {
     if (userLength === 1) {
-      return 0
+      return 0;
     } else {
-      return userLength - 1
+      return userLength - 1;
     }
-  }
+  };
 
-  console.log(typeof (data!.users!.length), "데이터 길이")
+  console.log(typeof data!.users!.length, '데이터 길이');
 
   const writer = data?.users[joinUser(data!.users!.length as number)];
 
-  console.log(writer, "작성자")
+  console.log(writer, '작성자');
 
   const joinUserNickname = (nickName: string) => {
-    const delEmail = nickName.indexOf('@')
+    const delEmail = nickName.indexOf('@');
     if (delEmail !== -1) {
-      return nickName.substring(0, delEmail)
+      return nickName.substring(0, delEmail);
     } else {
-      return nickName
+      return nickName;
     }
-  }
+  };
 
   return (
     <>
@@ -83,8 +82,11 @@ const GroupBuyDetail = () => {
             <S.UserInfoInner>
               <S.UserInfo>
                 <p>
-                  {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
-
+                  {writer?.profileImage === null ? (
+                    <img src="/imgs/basicUserImage.png"></img>
+                  ) : (
+                    <img src={writer?.profileImage}></img>
+                  )}
                 </p>
                 <div>
                   <h1>{writer?.nickname}</h1>
@@ -125,7 +127,11 @@ const GroupBuyDetail = () => {
                 return (
                   <li>
                     <h1>
-                      {joinUser.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={joinUser.profileImage}></img>}
+                      {joinUser.profileImage === null ? (
+                        <img src="/imgs/basicUserImage.png"></img>
+                      ) : (
+                        <img src={joinUser.profileImage}></img>
+                      )}
                     </h1>
                     <h2>{joinUserNickname(joinUser.nickname)}</h2>
                   </li>
@@ -144,9 +150,9 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
-          <GroupBuyChat />
+          <GroupBuyChat id={writer.id} />
           {writer && data?.currentUserCount === data?.maxUser ? (
-            <GroupBuyClose id={id} />
+            <GroupBuyClose id={id} users={data.users} writerId={writer.id} />
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
           ) : (
@@ -199,7 +205,7 @@ const S = {
       width: 44px;
       height: 44px;
       border-radius: 100%;
-      img{
+      img {
         width: 100%;
         height: 100%;
       }
@@ -288,9 +294,9 @@ const S = {
         width: 100%;
       }
     }
-    h2{
+    h2 {
       ${styleFont.body2}
-        color: ${COLORS.GRAY[900]};
+      color: ${COLORS.GRAY[900]};
     }
   `,
   BuyMapWrap: styled.div`
