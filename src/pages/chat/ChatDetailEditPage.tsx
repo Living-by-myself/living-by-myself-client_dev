@@ -21,9 +21,7 @@ const ChatDetailEditPage = () => {
   // 유저들 정보 가져오기
   const getChatUsers = async () => {
     try {
-      console.log('roomId : ', paramId);
       const response = await axiosInstance.get(`/home/chats/rooms/${paramId}/users`);
-      console.log('채팅에 참여한 유저 정보! ', response.data);
       setUserList(response.data);
       setPostId(response.data[0].groupBuyingRoomId);
     } catch (error) {
@@ -40,7 +38,6 @@ const ChatDetailEditPage = () => {
   const leaveChatRoomButtonClick = async () => {
     try {
       const response = await axiosInstance.delete(`/home/chats/room/${paramId}`);
-      console.log('채팅방 나가기 성공!', response.data);
       navigate(`/chat`);
     } catch (error) {
       console.log('채팅방 나가기 실패! ', error);

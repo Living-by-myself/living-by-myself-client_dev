@@ -14,9 +14,9 @@ import { getRelativeTimeString } from 'src/utilities/getDate';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
 import { JoinUserType } from 'src/types/groupBuy/types';
+import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
-import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
 
 
 const GroupBuyDetail = () => {
@@ -52,6 +52,7 @@ const GroupBuyDetail = () => {
 
 
   const writer = data?.users[joinUser(data!.users!.length as number)];
+
   const findWriter = writer?.id.toString() === localStorage.getItem('id');
 
   const joinUsers = data?.users.find((users: JoinUserType) => {
@@ -109,7 +110,11 @@ const GroupBuyDetail = () => {
                 return (
                   <li key={joinUser.id}>
                     <h1>
-                      {joinUser.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={joinUser.profileImage}></img>}
+                      {joinUser.profileImage === null ? (
+                        <img src="/imgs/basicUserImage.png"></img>
+                      ) : (
+                        <img src={joinUser.profileImage}></img>
+                      )}
                     </h1>
                     <h2>{joinUserNickname(joinUser.nickname)}</h2>
                   </li>
@@ -128,9 +133,10 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
-          <GroupBuyChat />
+          <GroupBuyChat id={id} />
           {findWriter && data?.currentUserCount === data?.maxUser ? (
-            <GroupBuyClose id={id} />
+            // <GroupBuyClose id={id} />
+            <></>
           ) : findWriter && data?.currentUserCount === 1 ? (
             <S.GroupBuyButton>글내리기</S.GroupBuyButton>) : !findWriter && !joinUsers ? (
               <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
@@ -186,7 +192,7 @@ const S = {
       width: 44px;
       height: 44px;
       border-radius: 100%;
-      img{
+      img {
         width: 100%;
         height: 100%;
       }
@@ -275,9 +281,9 @@ const S = {
         width: 100%;
       }
     }
-    h2{
+    h2 {
       ${styleFont.body2}
-        color: ${COLORS.GRAY[900]};
+      color: ${COLORS.GRAY[900]};
     }
   `,
   BuyMapWrap: styled.div`
