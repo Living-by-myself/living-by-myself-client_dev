@@ -12,7 +12,8 @@ interface GroupBuyPreviewProps {
 }
 
 const GroupBuyPostCard = ({ data }: GroupBuyPreviewProps) => {
-  const { title, maxUser, currentUserCount, createdAt, fileUrls, perUserPrice, enumShare, address } = data;
+  const { title, maxUser, current_user_count, createdAt, fileUrls, perUserPrice, enumShare, address } = data;
+  console.log(data)
 
   const firstImage = getImageUrls(fileUrls)[0];
 
@@ -30,7 +31,7 @@ const GroupBuyPostCard = ({ data }: GroupBuyPreviewProps) => {
           <S.PreviewParticipants>
             <Icon name="users" color={COLORS.GRAY[500]} size={16} />
             {/* <Typography variants="caption1"> */}
-            {currentUserCount}/{maxUser}명{/* </Typography> */}
+            {current_user_count+1}/{maxUser}명{/* </Typography> */}
           </S.PreviewParticipants>
         </S.PreviewSellInfo>
       </S.PreviewInfo>

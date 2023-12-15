@@ -11,7 +11,7 @@ export type GroupBuyDetailType = {
   description: string;
   itemLink: string | null;
   maxUser: number;
-  currentUserCount: number;
+  current_user_count: number;
   createdAt: string;
   modifiedAt: string;
   fileUrls: string | null;
@@ -32,7 +32,7 @@ export type GroupBuyPreviewType = Pick<
   | 'address'
   | 'beobJeongDong'
   | 'createdAt'
-  | 'currentUserCount'
+  | 'current_user_count'
   | 'enumShare'
   | 'enumStatus'
   | 'fileUrls'
