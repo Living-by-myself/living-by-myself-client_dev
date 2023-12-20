@@ -11,12 +11,13 @@ import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
-import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
 import { JoinUserType } from 'src/types/groupBuy/types';
+import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
+
 
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
@@ -36,42 +37,28 @@ const GroupBuyDetail = () => {
   if (isError) return <div>에러</div>;
   console.log(data);
 
-  const findBuyUser = data?.users?.find((user: JoinUserType) => {
-    return user?.id.toString() == localStorage.getItem('id');
-  });
-  console.log(findBuyUser);
+
 
   const cancelGroupBuyButton = async () => {
     try {
       const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
       mutation.mutate(id);
       console.log('공구 취소', res);
+      toast('공동구매 취소가 완료되었습니다.')
     } catch (error) {
       console.log(error);
     }
   };
-  const joinUser = (userLength: number) => {
-    if (userLength === 1) {
-      return 0;
-    } else {
-      return userLength - 1;
-    }
-  };
 
-  console.log(typeof data!.users!.length, '데이터 길이');
 
   const writer = data?.users[joinUser(data!.users!.length as number)];
 
-  console.log(writer, '작성자');
+  const findWriter = writer?.id.toString() === localStorage.getItem('id');
 
-  const joinUserNickname = (nickName: string) => {
-    const delEmail = nickName.indexOf('@');
-    if (delEmail !== -1) {
-      return nickName.substring(0, delEmail);
-    } else {
-      return nickName;
-    }
-  };
+  const joinUsers = data?.users.find((users: JoinUserType) => {
+    return users.id.toString() === localStorage.getItem('id')
+  })
+
 
   return (
     <>
@@ -82,11 +69,7 @@ const GroupBuyDetail = () => {
             <S.UserInfoInner>
               <S.UserInfo>
                 <p>
-                  {writer?.profileImage === null ? (
-                    <img src="/imgs/basicUserImage.png"></img>
-                  ) : (
-                    <img src={writer?.profileImage}></img>
-                  )}
+                  {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
                 </p>
                 <div>
                   <h1>{writer?.nickname}</h1>
@@ -99,7 +82,7 @@ const GroupBuyDetail = () => {
           <S.BuyInfoWrap>
             <h1>{data?.title}</h1>
             <S.SaleInfo>
-              <h2>판매종료</h2>
+              <h2>{data?.enumShare ? "판매중" : "판매종료"}</h2>
               <p>{(data?.perUserPrice / data?.maxUser).toLocaleString()}원</p>
             </S.SaleInfo>
             <S.AddressTime>
@@ -125,7 +108,7 @@ const GroupBuyDetail = () => {
             <S.JoinUserWrap>
               {data?.users?.slice(0, -1).map((joinUser: JoinUserType) => {
                 return (
-                  <li>
+                  <li key={joinUser.id}>
                     <h1>
                       {joinUser.profileImage === null ? (
                         <img src="/imgs/basicUserImage.png"></img>
@@ -151,20 +134,23 @@ const GroupBuyDetail = () => {
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <GroupBuyChat id={writer.id} />
-          {writer && data?.currentUserCount === data?.maxUser ? (
+          {findWriter && data?.currentUserCount === data?.maxUser ? (
             <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
-          ) : findBuyUser ? (
-            <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
-          ) : (
-            <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
-              공동구매하기
-            </S.GroupBuyButton>
-          )}
+          ) : findWriter && data?.currentUserCount === 1 ? (
+            <S.GroupBuyButton>글내리기</S.GroupBuyButton>) : !findWriter && !joinUsers ? (
+              <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
+                공동구매하기
+              </S.GroupBuyButton>
+            ) : !findWriter && joinUsers ? (
+              <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
+            ) : null}
         </S.FnWrap>
       </S.Container>
     </>
   );
 };
+
+
 
 export default GroupBuyDetail;
 
