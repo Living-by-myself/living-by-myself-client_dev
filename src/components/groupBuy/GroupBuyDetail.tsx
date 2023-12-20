@@ -75,11 +75,11 @@ const GroupBuyDetail = () => {
                   <img></img>
                 </p>
                 <div>
-                  <h1>{data!.users[data?.users.length - 1].nickname}</h1>
-                  <h2>{data!.users[data?.users.length - 1].address}</h2>
+                  <h1>{data?.users[0].nickname}</h1>
+                  <h2>{data?.users[0].address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data!.users[data?.users.length - 1].level}</S.UserLevel>
+              <S.UserLevel>Lv. {data?.users[0].level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
@@ -133,7 +133,7 @@ const GroupBuyDetail = () => {
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <S.ChatButton>채팅하기</S.ChatButton>
-          {data?.users[data?.users.length - 1] && data?.currentUserCount === data?.maxUser ? (
+          {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
             <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
           ) : findBuyUser ? (
             <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>

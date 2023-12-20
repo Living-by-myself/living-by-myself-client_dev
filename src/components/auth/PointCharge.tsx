@@ -13,13 +13,13 @@ import styled from 'styled-components'
 const payOption = ["+1만", "+5만", "+10만", "+100만"]
 
 const PointCharge = () => {
+
   const { profile: user } = userStore();
   const [payValue, setPayValue] = useState(0)
   const navigate = useNavigate()
 
   const pointChargeButton = () => {
 
-    const { profile: user } = userStore();
     /* 1. 가맹점 식별하기 */
     if (!window.IMP) {
       return;
@@ -62,7 +62,8 @@ const PointCharge = () => {
       })
       console.log(res)
       toast('결제가 완료되었습니다.')
-      navigate('/mypage')
+      // navigate(-1)
+      window.history.back();
     } else {
       toast(`결제 실패: ${error_msg}`);
     }
