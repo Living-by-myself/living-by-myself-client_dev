@@ -133,10 +133,9 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
-          <GroupBuyChat id={id} />
+          <GroupBuyChat id={writer.id} />
           {findWriter && data?.currentUserCount === data?.maxUser ? (
-            // <GroupBuyClose id={id} />
-            <></>
+            <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
           ) : findWriter && data?.currentUserCount === 1 ? (
             <S.GroupBuyButton>글내리기</S.GroupBuyButton>) : !findWriter && !joinUsers ? (
               <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
