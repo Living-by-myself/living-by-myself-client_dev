@@ -3,7 +3,7 @@ import { COLORS } from 'src/styles/styleConstants';
 import styled, { css } from 'styled-components';
 import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
@@ -138,8 +138,10 @@ const GroupBuyDetail = () => {
             <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
           ) : findWriter && data?.currentUserCount === 1 ? (
             <S.GroupBuyButton>글내리기</S.GroupBuyButton>) : !findWriter && !joinUsers ? (
-              <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
-                공동구매하기
+              <S.GroupBuyButton 
+              >
+                <Link to={`/group-buy/${id}/order`}>
+                공동구매하기</Link>
               </S.GroupBuyButton>
             ) : !findWriter && joinUsers ? (
               <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>

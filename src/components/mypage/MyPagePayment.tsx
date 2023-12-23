@@ -23,7 +23,7 @@ const MyPagePayment = () => {
         <S.Label>보유 포인트</S.Label>
         <S.Point>{user?.cash ? getWonString(user.cash) : 0}원</S.Point>
       </S.Inner>
-      <S.PointCharging onClick={()=>navigate('/mypage/point-charge')}>충전하기</S.PointCharging>
+      <S.PointCharging onClick={()=>navigate('/mypage/point-charge',{state:{prevPage:'/mypage'}})}>충전하기</S.PointCharging>
     </S.Container>
   );
 };

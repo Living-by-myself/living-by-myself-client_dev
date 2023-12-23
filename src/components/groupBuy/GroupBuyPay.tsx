@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { styleFont } from 'src/styles/styleFont';
 import { COLORS } from 'src/styles/styleConstants';
 import axiosInstance from 'src/api/AxiosInstance';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserProfile } from 'src/api/user/user';
@@ -15,8 +15,11 @@ import { toast } from 'react-toastify';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
+  const paramsId = useParams()
+  const id = paramsId.id
   const location = useLocation();
-  const id = location.state?.id;
+  console.log(paramsId)
+  // const id = location.state?.id;
 
   const queryClient = useQueryClient();
 
@@ -85,7 +88,7 @@ const GroupBuyPay = () => {
             <h2>결제 후 포인트</h2>
             <p>{reaminingPoints.toLocaleString()}원</p>
           </S.PointRow>
-          <button onClick={() => navigate('/mypage/point-charge')}>충전하러 가기</button>
+          <button onClick={() => navigate('/mypage/point-charge', { state: { prevPage: `/group-buy/${id!}/order` } })}>충전하러 가기</button>
         </S.PointAfter>
       </S.ContainerInner>
       <S.PayButton onClick={goupBuyPayButton}>
