@@ -45,10 +45,17 @@ export type GroupBuyPreviewType = Pick<
   | 'viewCnt'
 >;
 
+export interface GroupBuyUserType{
+  id:number;
+  nickname:string;
+  profileImage:string;
+  address:string;
+  level:number;
+}
 export interface JoinUserType {
   id: number;
   nickname: string;
-  profileImage: string;
+  profileImage: string | null;
 }
 
 {
