@@ -12,6 +12,7 @@ import { getRelativeTimeString } from 'src/utilities/getDate';
 import Icon from '../icon/Icon';
 import { extractImageUrls } from 'src/utilities/image';
 import { toast } from 'react-toastify';
+import ConfirmButton from '../modal/ConfirmButton';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
@@ -42,16 +43,21 @@ const GroupBuyPay = () => {
   const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
 
   const goupBuyPayButton = async () => {
-    try {
-      const res = await axiosInstance.post(`/home/group-buying/${id}/application`);
 
+    try {
+      if(await ConfirmButton('groupBuy')){
+      await axiosInstance.post(`/home/group-buying/${id}/application`);
       toast('공동구매 신청 완료');
       mutation.mutate(id);
       navigate(`/group-buy/${id}`);
-    } catch (error: any) {
+    }
+  }
+ catch (error: any) {
       alert(error.response.data.msg);
     }
   };
+
+
 
   return (
     <S.Container>

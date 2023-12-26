@@ -13,10 +13,12 @@ import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
-import { JoinUserType } from 'src/types/groupBuy/types';
+import { GroupBuyUserType, JoinUserType } from 'src/types/groupBuy/types';
 import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
+import GroupBuyUserProfile from './GroupBuyUserProfile';
+import ConfirmButton from '../modal/ConfirmButton';
 
 
 const GroupBuyDetail = () => {
@@ -41,22 +43,24 @@ const GroupBuyDetail = () => {
 
   const cancelGroupBuyButton = async () => {
     try {
-      const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
-      mutation.mutate(id);
-      console.log('공구 취소', res);
-      toast('공동구매 취소가 완료되었습니다.')
+      if(await ConfirmButton('groupBuyCancle')){
+        await axiosInstance.delete(`/home/group-buying/${id}/application`);
+        mutation.mutate(id);
+        toast('공동구매 취소가 완료되었습니다.')
+      }
+
     } catch (error) {
       console.log(error);
     }
   };
 
 
-  const writer = data?.users[joinUser(data!.users!.length as number)];
+  const writer = data?.users[joinUser(data!.users!.length as number)] as JoinUserType;
 
   const findWriter = writer?.id.toString() === localStorage.getItem('id');
 
-  const joinUsers = data?.users.find((users: JoinUserType) => {
-    return users.id.toString() === localStorage.getItem('id')
+  const joinUsers = data?.users.find((user: JoinUserType) => {
+    return user.id.toString() === localStorage.getItem('id')
   })
 
 
@@ -65,19 +69,8 @@ const GroupBuyDetail = () => {
       <S.Container>
         <SwiperImage slide={data?.fileUrls} />
         <S.InfoInner>
-          <S.UserInfoWrap>
-            <S.UserInfoInner>
-              <S.UserInfo>
-                <p>
-                  {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
-                </p>
-                <div>
-                  <h1>{writer?.nickname}</h1>
-                  <h2>{writer?.address}</h2>
-                </div>
-              </S.UserInfo>
-              <S.UserLevel>Lv. {writer?.level}</S.UserLevel>
-            </S.UserInfoInner>
+          <S.UserInfoWrap>     
+          <GroupBuyUserProfile id={writer!.id} nickname={writer!.nickname} profileImage={writer!.profileImage}/>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
             <h1>{data?.title}</h1>
@@ -137,11 +130,10 @@ const GroupBuyDetail = () => {
           {findWriter && data?.currentUserCount === data?.maxUser ? (
             <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
           ) : findWriter && data?.currentUserCount === 1 ? (
-            <S.GroupBuyButton>글내리기</S.GroupBuyButton>) : !findWriter && !joinUsers ? (
-              <S.GroupBuyButton 
-              >
-                <Link to={`/group-buy/${id}/order`}>
-                공동구매하기</Link>
+            <S.GroupBuyButton>글내리기</S.GroupBuyButton>) :
+             !findWriter && !joinUsers ? (
+              <S.GroupBuyButton>
+                <Link to={`/group-buy/${id}/order`}>공동구매하기</Link>
               </S.GroupBuyButton>
             ) : !findWriter && joinUsers ? (
               <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
@@ -160,7 +152,10 @@ const S = {
   Container: styled.div`
     width: 100%;
     max-width: 400px;
+    overflow: scroll;
+    height:100vh;
     position: relative;
+    
   `,
   CustomSwiper: styled(Swiper)`
     width: 100%;
@@ -179,43 +174,7 @@ const S = {
     padding: 0px 10px 100px 10px;
   `,
   UserInfoWrap: styled.div``,
-  UserInfoInner: styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0px;
-    border-bottom: solid 1px ${COLORS.GRAY[400]};
-  `,
-  UserInfo: styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    p {
-      width: 44px;
-      height: 44px;
-      border-radius: 100%;
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-    div {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      h1 {
-        ${styleFont.body1}
-        font-weight: 600;
-      }
-      h2 {
-        ${styleFont.body2}
-        color: ${COLORS.GRAY[400]};
-      }
-    }
-  `,
-  UserLevel: styled.p`
-    ${styleFont.body2}
-    font-weight: 600;
-  `,
+
   BuyInfoWrap: styled.div`
     display: flex;
     flex-direction: column;
@@ -302,11 +261,13 @@ const S = {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    max-width: 400px;
     background-color: #fff;
     border-top: solid 1px ${COLORS.GRAY[500]};
-    position: sticky;
-    left: 0;
+    position: fixed;
+    left: 50%;
     bottom: 0;
+    transform: translate(-50%,0);
     z-index: 99;
     padding: 10px 10px;
   `,
