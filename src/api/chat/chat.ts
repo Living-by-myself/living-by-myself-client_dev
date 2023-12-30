@@ -4,11 +4,13 @@ import axiosInstance from '../AxiosInstance';
 export const getRoomList = async () => {
   try {
     const response = await axiosInstance.get('/home/chats/rooms');
-    console.log('채팅방 전체 목록 조회 성공!', response.data);
     return response.data;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
+// 채팅방 생성
 export const createChat = async (
   currentUsersId: number[],
   myNickname: string,
@@ -19,10 +21,8 @@ export const createChat = async (
     const response = await axiosInstance.post('/room', {
       usersId: currentUsersId,
       title: `${myNickname}, ${currentRoomTitle}`,
-      groupBuyingRoomId: currentUsersId.length > 1 ? groupBuyingRoomId : null
+      groupBuyingRoomId: currentUsersId.length > 0 ? groupBuyingRoomId : null
     });
-
-    console.log('채팅방 생성 성공!', response.data);
     return response.data;
   } catch (error) {
     console.log(error);

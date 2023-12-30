@@ -21,10 +21,11 @@ const ChatList = () => {
   const getChatList = async () => {
     try {
       const response = await axiosInstance.get(`/home/chats/rooms`);
-
       setChatList(response.data);
       return response;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const padZero = (number: number) => {

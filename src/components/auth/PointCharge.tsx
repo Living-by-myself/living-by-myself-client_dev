@@ -1,8 +1,10 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import axiosInstance from 'src/api/AxiosInstance'
-import userStore from 'src/store/userStore'
+import { getUserProfile } from 'src/api/user/user'
+import userStore, { UserProfile } from 'src/store/userStore'
 import { COLORS } from 'src/styles/styleConstants'
 import { styleFont } from 'src/styles/styleFont'
 import { RequestPayParams, RequestPayResponse } from 'src/types/mypage/PointCharge'
@@ -13,8 +15,7 @@ import styled from 'styled-components'
 const payOption = ["+1만", "+5만", "+10만", "+100만"]
 
 const PointCharge = () => {
-
-  const { profile: user } = userStore();
+  const { profile: user, setProfile } = userStore();
   const [payValue, setPayValue] = useState(0)
   const navigate = useNavigate()
 
@@ -60,12 +61,15 @@ const PointCharge = () => {
       const res = await axiosInstance.put('/home/users/cash', {
         cash: response!.paid_amount
       })
+      const paymentPoint = payValue + user!.cash
+      const newPoint = {...user,cash:paymentPoint}
+      setProfile(newPoint as UserProfile)
       console.log(res)
       toast('결제가 완료되었습니다.')
       // navigate(-1)
       window.history.back();
     } else {
-      toast(`결제 실패: ${error_msg}`);
+      toast('결제금액을 입력해주세요.');
     }
   }
 
@@ -74,11 +78,6 @@ const PointCharge = () => {
     const removedCommaValue = value.replaceAll(",", "")
     setPayValue(priceFormat(removedCommaValue.toLocaleString()))
   }
-
-  // const addComma = (pay:string) => {
-  //   const returnString = pay?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  //   return returnString
-  // }
 
   const priceFormat = (pay: string) => {
     const numberPay = parseInt(pay)

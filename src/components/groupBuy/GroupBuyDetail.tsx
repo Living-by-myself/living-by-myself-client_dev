@@ -5,22 +5,19 @@ import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
 import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
-import { async } from 'q';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import { toast } from 'react-toastify';
+import { JoinUserType } from 'src/types/groupBuy/types';
+import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
+import GroupBuyChat from './GroupBuyChat';
+import GroupBuyClose from './GroupBuyClose';
 
-interface JoinUserType {
-  id: number;
-  nickname: string;
-  fileUrls: string;
-}
 
 const GroupBuyDetail = () => {
   const navigate = useNavigate();
@@ -40,29 +37,29 @@ const GroupBuyDetail = () => {
   if (isError) return <div>에러</div>;
   console.log(data);
 
-  const findBuyUser = data?.users?.find((user: JoinUserType) => {
-    return user?.id.toString() === localStorage.getItem('id');
-  });
-  console.log(findBuyUser);
 
-  const closeGroupBuyButton = async () => {
-    try {
-      const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
-      mutation.mutate(id);
-
-      toast('공동구매 마감 완료');
-    } catch (error) {}
-  };
 
   const cancelGroupBuyButton = async () => {
     try {
       const res = await axiosInstance.delete(`/home/group-buying/${id}/application`);
       mutation.mutate(id);
       console.log('공구 취소', res);
+      toast('공동구매 취소가 완료되었습니다.')
     } catch (error) {
       console.log(error);
     }
   };
+
+
+  const writer = data?.users[joinUser(data!.users!.length as number)];
+
+  const findWriter = writer?.id.toString() === localStorage.getItem('id');
+
+  const joinUsers = data?.users.find((users: JoinUserType) => {
+    return users.id.toString() === localStorage.getItem('id')
+  })
+
+
   return (
     <>
       <S.Container>
@@ -72,20 +69,20 @@ const GroupBuyDetail = () => {
             <S.UserInfoInner>
               <S.UserInfo>
                 <p>
-                  <img></img>
+                  {writer?.profileImage === null ? <img src='/imgs/basicUserImage.png'></img> : <img src={writer?.profileImage}></img>}
                 </p>
                 <div>
-                  <h1>{data?.users[0].nickname}</h1>
-                  <h2>{data?.users[0].address}</h2>
+                  <h1>{writer?.nickname}</h1>
+                  <h2>{writer?.address}</h2>
                 </div>
               </S.UserInfo>
-              <S.UserLevel>Lv. {data?.users[0].level}</S.UserLevel>
+              <S.UserLevel>Lv. {writer?.level}</S.UserLevel>
             </S.UserInfoInner>
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
             <h1>{data?.title}</h1>
             <S.SaleInfo>
-              <h2>판매종료</h2>
+              <h2>{data?.enumShare ? "판매중" : "판매종료"}</h2>
               <p>{(data?.perUserPrice / data?.maxUser).toLocaleString()}원</p>
             </S.SaleInfo>
             <S.AddressTime>
@@ -111,11 +108,15 @@ const GroupBuyDetail = () => {
             <S.JoinUserWrap>
               {data?.users?.slice(0, -1).map((joinUser: JoinUserType) => {
                 return (
-                  <li>
+                  <li key={joinUser.id}>
                     <h1>
-                      <img src={joinUser.fileUrls}></img>
+                      {joinUser.profileImage === null ? (
+                        <img src="/imgs/basicUserImage.png"></img>
+                      ) : (
+                        <img src={joinUser.profileImage}></img>
+                      )}
                     </h1>
-                    <h2>{joinUser.nickname}</h2>
+                    <h2>{joinUserNickname(joinUser.nickname)}</h2>
                   </li>
                 );
               })}
@@ -132,21 +133,24 @@ const GroupBuyDetail = () => {
         </S.InfoInner>
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
-          <S.ChatButton>채팅하기</S.ChatButton>
-          {data?.users[0] && data?.currentUserCount === data?.maxUser ? (
-            <S.GroupBuyButton onClick={closeGroupBuyButton}>마감하기</S.GroupBuyButton>
-          ) : findBuyUser ? (
-            <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
-          ) : (
-            <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
-              공동구매하기
-            </S.GroupBuyButton>
-          )}
+          <GroupBuyChat id={writer.id} />
+          {findWriter && data?.currentUserCount === data?.maxUser ? (
+            <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
+          ) : findWriter && data?.currentUserCount === 1 ? (
+            <S.GroupBuyButton>글내리기</S.GroupBuyButton>) : !findWriter && !joinUsers ? (
+              <S.GroupBuyButton onClick={() => navigate(`/group-buy/${id!}/order`, { state: { id } })}>
+                공동구매하기
+              </S.GroupBuyButton>
+            ) : !findWriter && joinUsers ? (
+              <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
+            ) : null}
         </S.FnWrap>
       </S.Container>
     </>
   );
 };
+
+
 
 export default GroupBuyDetail;
 
@@ -187,7 +191,10 @@ const S = {
       width: 44px;
       height: 44px;
       border-radius: 100%;
-      background-color: #5a0000;
+      img {
+        width: 100%;
+        height: 100%;
+      }
     }
     div {
       display: flex;
@@ -257,16 +264,25 @@ const S = {
   `,
   JoinUserWrap: styled.div`
     display: flex;
+    margin-top: 20px;
+    gap: calc(20% / 3);
     width: 100%;
     li {
-      width: 25%;
+      width: 20%;
+      list-style: none;
+      text-align: center;
     }
     h1 {
       width: 100%;
+      margin-bottom: 5px;
       img {
         display: block;
         width: 100%;
       }
+    }
+    h2 {
+      ${styleFont.body2}
+      color: ${COLORS.GRAY[900]};
     }
   `,
   BuyMapWrap: styled.div`
@@ -300,21 +316,6 @@ const S = {
     padding: 0.8rem 3.6rem;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-  `,
-  ChatButton: styled.button`
-    border: solid 1px ${COLORS.GREEN[300]};
-    padding: 0.8rem 1.6rem;
-    color: ${COLORS.GREEN[300]};
     border-radius: 6px;
     font-weight: 600;
     font-size: 15px;
