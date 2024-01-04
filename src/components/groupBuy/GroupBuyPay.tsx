@@ -13,16 +13,13 @@ import Icon from '../icon/Icon';
 import { extractImageUrls } from 'src/utilities/image';
 import { toast } from 'react-toastify';
 import ConfirmButton from '../modal/ConfirmButton';
+import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
   const paramsId = useParams()
-  const id = paramsId.id
-  const location = useLocation();
-  console.log(paramsId)
-  // const id = location.state?.id;
-
-  const queryClient = useQueryClient();
+  const id = Number(paramsId.id)
+  const { groupBuyMutation } = useGroupBuyMutate(id);
 
   const { data: user } = useQuery({
     queryKey: ['cash'],
@@ -34,12 +31,6 @@ const GroupBuyPay = () => {
     queryFn: () => getGroupBuyDetailData(id)
   });
 
-  const mutation = useMutation(getGroupBuyDetailData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groupBuy', id]);
-    }
-  });
-
   const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
 
   const goupBuyPayButton = async () => {
@@ -48,7 +39,7 @@ const GroupBuyPay = () => {
       if(await ConfirmButton('groupBuy')){
       await axiosInstance.post(`/home/group-buying/${id}/application`);
       toast('공동구매 신청 완료');
-      mutation.mutate(id);
+      groupBuyMutation.mutate(id);
       navigate(`/group-buy/${id}`);
     }
   }

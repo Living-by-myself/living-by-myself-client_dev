@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import styled from 'styled-components'
-import { confirmModalText } from './ConfirmModalText'
+import { ConfirmModalTextType, confirmModalText } from './ConfirmModalText'
 import { COLORS } from 'src/styles/styleConstants'
 import { styleFont } from 'src/styles/styleFont'
 
 const ConfirmButton = (type: string) => {
-    const text = confirmModalText(type)
+    const text = confirmModalText(type) as ConfirmModalTextType;
     return new Promise<boolean>((resolve, reject) => {
         confirmAlert({
             customUI: ({ onClose }) => {

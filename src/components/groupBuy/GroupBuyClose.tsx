@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import axiosInstance from 'src/api/AxiosInstance';
 import { createChat } from 'src/api/chat/chat';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
+import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
 import { getUserProfile } from 'src/api/user/user';
 import { useRoomTitleStore } from 'src/store/chatStore';
 import { COLORS } from 'src/styles/styleConstants';
@@ -24,12 +25,7 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyClosePro
   const [usersId, setUsersId] = useState([] as number[]); // 참여 유저 닉네임 배열
   const { currentRoomTitle, setCurrentRoomTitle } = useRoomTitleStore();
   const [myProfile, setMyProfile] = useState({} as ChatUser);
-  const queryClient = useQueryClient();
-  const mutation = useMutation(getGroupBuyDetailData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groupBuy', id]);
-    }
-  });
+  const { groupBuyMutation } = useGroupBuyMutate(id);
   const roomTitle = usersNickname.join(', ');
 
   const getProfileUser = async () => {
@@ -40,8 +36,8 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyClosePro
   const closeGroupBuyButton = async () => {
     // 공동 구매 마감 api
     try {
-      const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
-      mutation.mutate(id);
+      await axiosInstance.patch(`/home/group-buying/${id}/close`);
+      groupBuyMutation.mutate(id);
 
       toast('공동구매 마감 완료');
     } catch (error) {

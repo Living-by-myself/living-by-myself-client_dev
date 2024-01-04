@@ -11,6 +11,7 @@ import { RequestPayParams, RequestPayResponse } from 'src/types/mypage/PointChar
 import styled from 'styled-components'
 
 
+
 const payOption = ["+1만", "+5만", "+10만", "+100만"]
 
 const PointCharge = () => {

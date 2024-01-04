@@ -19,40 +19,19 @@ import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
 import GroupBuyUserProfile from './GroupBuyUserProfile';
 import ConfirmButton from '../modal/ConfirmButton';
+import GroupBuyCancel from './GroupBuyCancel';
 
 
 const GroupBuyDetail = () => {
-  const navigate = useNavigate();
+
   const paramsId = useParams() as unknown as { id: number };
   const id = Number(paramsId.id);
-  const queryClient = useQueryClient();
-  const mutation = useMutation(getGroupBuyDetailData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groupBuy', id]);
-    }
-  });
+
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
-  if (isLoading) return <div>로딩중</div>;
-  if (isError) return <div>에러</div>;
-  console.log(data);
-
-
-
-  const cancelGroupBuyButton = async () => {
-    try {
-      if(await ConfirmButton('groupBuyCancle')){
-        await axiosInstance.delete(`/home/group-buying/${id}/application`);
-        mutation.mutate(id);
-        toast('공동구매 취소가 완료되었습니다.')
-      }
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
 
   const writer = data?.users[joinUser(data!.users!.length as number)] as JoinUserType;
@@ -63,7 +42,9 @@ const GroupBuyDetail = () => {
     return user.id.toString() === localStorage.getItem('id')
   })
 
-
+  if (isLoading) return <div>로딩중</div>;
+  if (isError) return <div>에러</div>;
+  
   return (
     <>
       <S.Container>
@@ -136,7 +117,7 @@ const GroupBuyDetail = () => {
                 <Link to={`/group-buy/${id}/order`}>공동구매하기</Link>
               </S.GroupBuyButton>
             ) : !findWriter && joinUsers ? (
-              <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
+              <GroupBuyCancel id={id}/>
             ) : null}
         </S.FnWrap>
       </S.Container>
