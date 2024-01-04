@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import axiosInstance from 'src/api/AxiosInstance'
 import { getUserProfile } from 'src/api/user/user'
@@ -15,9 +15,13 @@ import styled from 'styled-components'
 const payOption = ["+1만", "+5만", "+10만", "+100만"]
 
 const PointCharge = () => {
+
   const { profile: user, setProfile } = userStore();
   const [payValue, setPayValue] = useState(0)
   const navigate = useNavigate()
+  
+  const location = useLocation()
+
 
   const pointChargeButton = () => {
 
@@ -64,10 +68,10 @@ const PointCharge = () => {
       const paymentPoint = payValue + user!.cash
       const newPoint = {...user,cash:paymentPoint}
       setProfile(newPoint as UserProfile)
-      console.log(res)
       toast('결제가 완료되었습니다.')
-      // navigate(-1)
-      window.history.back();
+
+      navigate(location.state.prevPage)
+      
     } else {
       toast('결제금액을 입력해주세요.');
     }
