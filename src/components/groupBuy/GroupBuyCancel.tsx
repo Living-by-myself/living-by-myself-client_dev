@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import ConfirmButton from '../modal/ConfirmButton';
 import axiosInstance from 'src/api/AxiosInstance';
 import { toast } from 'react-toastify';
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
 
 interface Type {
@@ -39,7 +37,8 @@ const S = {
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    padding: 0.8rem 3.6rem;
+    width: 205px;
+    padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
     border-radius: 6px;
