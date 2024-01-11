@@ -76,7 +76,8 @@ const S = {
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    padding: 0.8rem 3.6rem;
+    width: 205px;
+    padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
     border-radius: 6px;
