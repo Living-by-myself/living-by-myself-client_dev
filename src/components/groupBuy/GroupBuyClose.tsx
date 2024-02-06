@@ -11,6 +11,7 @@ import { useRoomTitleStore } from 'src/store/chatStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { ChatUser } from 'src/types/chat/types';
 import styled from 'styled-components';
+import { ScrollHidden } from '../modal/HandleScroll';
 
 interface GroupBuyCloseProps {
   id: number; //paramsId
@@ -19,7 +20,7 @@ interface GroupBuyCloseProps {
   writerNickname: string;
 }
 
-const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyCloseProps) => {
+const GroupBuyClose = ({ id, users, writerId, writerNickname}: GroupBuyCloseProps) => {
   const navigate = useNavigate();
   const [usersNickname, setUsersNickname] = useState([] as string[]); // 참여 유저 닉네임 배열
   const [usersId, setUsersId] = useState([] as number[]); // 참여 유저 닉네임 배열
@@ -28,12 +29,14 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyClosePro
   const { groupBuyMutation } = useGroupBuyMutate(id);
   const roomTitle = usersNickname.join(', ');
 
+
   const getProfileUser = async () => {
     const myProfile = await getUserProfile();
     setMyProfile(myProfile);
   };
 
   const closeGroupBuyButton = async () => {
+    ScrollHidden()
     // 공동 구매 마감 api
     try {
       await axiosInstance.patch(`/home/group-buying/${id}/close`);

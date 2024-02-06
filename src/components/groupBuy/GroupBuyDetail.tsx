@@ -20,6 +20,7 @@ import GroupBuyCancel from './GroupBuyCancel';
 import GroupBuyJoinUsers from './GroupBuyJoinUsers';
 
 const GroupBuyDetail = () => {
+
   const paramsId = useParams() as unknown as { id: number };
   const id = Number(paramsId.id);
 
@@ -27,6 +28,8 @@ const GroupBuyDetail = () => {
     queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
+  console.log(data?.users)
+
 
   const writer = data?.users[joinUser(data!.users!.length as number)] as JoinUserType;
 
@@ -97,17 +100,6 @@ const GroupBuyDetail = () => {
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <GroupBuyChat id={writer.id} />
-          {/* {findWriter && data?.currentUserCount === data?.maxUser ? (
-            <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
-          ) : findWriter && data?.currentUserCount === 1 ? (
-            <S.GroupBuyButton>글내리기</S.GroupBuyButton>
-          ) : !findWriter && !joinUsers ? (
-            <S.GroupBuyButton>
-              <Link to={`/group-buy/${id}/order`}>공동구매하기</Link>
-            </S.GroupBuyButton>
-          ) : !findWriter && joinUsers ? (
-            <GroupBuyCancel id={id} />
-          ) : null} */}
           {findWriter && data?.currentUserCount === data?.maxUser && (
             <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
           )}
@@ -130,8 +122,7 @@ const S = {
   Container: styled.div`
     width: 100%;
     max-width: 400px;
-    overflow: scroll;
-    height: 100vh;
+    /* height: 100vh; */
     position: relative;
   `,
   CustomSwiper: styled(Swiper)`
