@@ -19,7 +19,7 @@ interface GroupBuyCloseProps {
   writerNickname: string;
 }
 
-const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyCloseProps) => {
+const GroupBuyClose = ({ id, users, writerId, writerNickname}: GroupBuyCloseProps) => {
   const navigate = useNavigate();
   const [usersNickname, setUsersNickname] = useState([] as string[]); // 참여 유저 닉네임 배열
   const [usersId, setUsersId] = useState([] as number[]); // 참여 유저 닉네임 배열
@@ -27,6 +27,7 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyClosePro
   const [myProfile, setMyProfile] = useState({} as ChatUser);
   const { groupBuyMutation } = useGroupBuyMutate(id);
   const roomTitle = usersNickname.join(', ');
+
 
   const getProfileUser = async () => {
     const myProfile = await getUserProfile();

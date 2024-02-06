@@ -1,15 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'
 import styled from 'styled-components'
 import { ConfirmModalTextType, confirmModalText } from './ConfirmModalText'
 import { COLORS } from 'src/styles/styleConstants'
 import { styleFont } from 'src/styles/styleFont'
+import { ScrollUnset } from './HandleScroll'
+
+
 
 const ConfirmButton = (type: string) => {
+
+
     const text = confirmModalText(type) as ConfirmModalTextType;
+
     return new Promise<boolean>((resolve, reject) => {
         confirmAlert({
             customUI: ({ onClose }) => {
+
                 return (
                     <>
                         <S.ConfirmContainer key={type}>
@@ -20,10 +27,12 @@ const ConfirmButton = (type: string) => {
                                     <button className='pointColor' onClick={() => {
                                         resolve(true);
                                         onClose();
+                                        ScrollUnset()
                                     }}>{text.true}</button>
                                     <button onClick={() => {
                                         resolve(false);
                                         onClose();
+                                        ScrollUnset()
                                     }}>{text.false}</button>
                                 </S.ButtonContainer>
                             </S.ContainerInner>
@@ -42,11 +51,12 @@ export default ConfirmButton
 
 const S = {
     BackgroundOverlay: styled.div`
-    position: absolute;
+    position: fixed;
+    overflow: hidden;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100lvh;
+    width: 100vw;
+    height: 100vh;
     z-index: 998;
     background-color: rgba(0,0,0,0.7);
     `,

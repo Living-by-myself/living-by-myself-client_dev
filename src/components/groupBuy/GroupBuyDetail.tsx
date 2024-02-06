@@ -1,28 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { COLORS } from 'src/styles/styleConstants';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
-import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 import GroupBuyBookmark from './GroupBuyBookmark';
-import { toast } from 'react-toastify';
-import { GroupBuyUserType, JoinUserType } from 'src/types/groupBuy/types';
+import { JoinUserType } from 'src/types/groupBuy/types';
 import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
 import GroupBuyUserProfile from './GroupBuyUserProfile';
-import ConfirmButton from '../modal/ConfirmButton';
 import GroupBuyCancel from './GroupBuyCancel';
+import { onScroll, useScrollStore } from 'src/store/scrollStore';
 
 
 const GroupBuyDetail = () => {
+
+  // const [position,setPosition] = useState(0)
+
+  // const onScroll = () => {
+  //   setPosition(window.scrollY);
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener('scroll', onScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', onScroll);
+  //   };
+  // }, []);
+
+  // console.log(position)
+  console.log(window.scrollY)
 
   const paramsId = useParams() as unknown as { id: number };
   const id = Number(paramsId.id);
@@ -32,6 +46,8 @@ const GroupBuyDetail = () => {
     queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id)
   });
+  console.log(data?.users)
+
 
 
   const writer = data?.users[joinUser(data!.users!.length as number)] as JoinUserType;
@@ -109,7 +125,7 @@ const GroupBuyDetail = () => {
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <GroupBuyChat id={writer.id} />
           {findWriter && data?.currentUserCount === data?.maxUser ? (
-            <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
+            <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname}/>
           ) : findWriter && data?.currentUserCount === 1 ? (
             <S.GroupBuyButton>글내리기</S.GroupBuyButton>) :
              !findWriter && !joinUsers ? (
@@ -133,9 +149,8 @@ const S = {
   Container: styled.div`
     width: 100%;
     max-width: 400px;
-    overflow: scroll;
-    height:100vh;
     position: relative;
+    top: ${window.scrollY}px;
     
   `,
   CustomSwiper: styled(Swiper)`

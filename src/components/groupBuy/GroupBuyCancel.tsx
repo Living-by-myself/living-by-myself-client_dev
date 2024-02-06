@@ -4,22 +4,24 @@ import styled from 'styled-components';
 import ConfirmButton from '../modal/ConfirmButton';
 import axiosInstance from 'src/api/AxiosInstance';
 import { toast } from 'react-toastify';
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
+import { ScrollHidden } from '../modal/HandleScroll';
 
 interface Type {
   id: number;
 }
 
-const GroupBuyCancel = ({ id }: Type) => {
+const GroupBuyCancel = ({ id}: Type) => {
   
   const { groupBuyMutation } = useGroupBuyMutate(id);
 
+  
   const cancelGroupBuyButton = async () => {
-    try {
+    ScrollHidden()
+    try { 
       if (await ConfirmButton('groupBuyCancle')) {
         await axiosInstance.delete(`/home/group-buying/${id}/application`);
+        
         groupBuyMutation.mutate(id);
         toast('공동구매 취소가 완료되었습니다.');
       }
@@ -28,8 +30,13 @@ const GroupBuyCancel = ({ id }: Type) => {
     }
   };
 
+  
+
   return <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>;
+
 };
+
+
 
 export default GroupBuyCancel;
 
