@@ -11,6 +11,7 @@ import { useRoomTitleStore } from 'src/store/chatStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { ChatUser } from 'src/types/chat/types';
 import styled from 'styled-components';
+import { ScrollHidden } from '../modal/HandleScroll';
 
 interface GroupBuyCloseProps {
   id: number; //paramsId
@@ -35,6 +36,7 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname}: GroupBuyCloseProp
   };
 
   const closeGroupBuyButton = async () => {
+    ScrollHidden()
     // 공동 구매 마감 api
     try {
       await axiosInstance.patch(`/home/group-buying/${id}/close`);
@@ -77,7 +79,8 @@ const S = {
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    padding: 0.8rem 3.6rem;
+    width: 205px;
+    padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
     border-radius: 6px;

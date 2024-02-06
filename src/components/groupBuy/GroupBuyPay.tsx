@@ -17,8 +17,8 @@ import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
-  const paramsId = useParams()
-  const id = Number(paramsId.id)
+  const paramsId = useParams();
+  const id = Number(paramsId.id);
   const { groupBuyMutation } = useGroupBuyMutate(id);
 
   const { data: user } = useQuery({
@@ -31,24 +31,20 @@ const GroupBuyPay = () => {
     queryFn: () => getGroupBuyDetailData(id)
   });
 
-  const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
-
   const goupBuyPayButton = async () => {
-
     try {
-      if(await ConfirmButton('groupBuy')){
-      await axiosInstance.post(`/home/group-buying/${id}/application`);
-      toast('공동구매 신청 완료');
-      groupBuyMutation.mutate(id);
-      navigate(`/group-buy/${id}`);
-    }
-  }
- catch (error: any) {
+      if (await ConfirmButton('groupBuy')) {
+        await axiosInstance.post(`/home/group-buying/${id}/application`);
+        toast('공동구매 신청 완료');
+        groupBuyMutation.mutate(id);
+        navigate(`/group-buy/${id}`);
+      }
+    } catch (error: any) {
       alert(error.response.data.msg);
     }
   };
 
-
+  const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
 
   return (
     <S.Container>
@@ -85,7 +81,9 @@ const GroupBuyPay = () => {
             <h2>결제 후 포인트</h2>
             <p>{reaminingPoints.toLocaleString()}원</p>
           </S.PointRow>
-          <button onClick={() => navigate('/mypage/point-charge', { state: { prevPage: `/group-buy/${id!}/order` } })}>충전하러 가기</button>
+          <button onClick={() => navigate('/mypage/point-charge', { state: { prevPage: `/group-buy/${id!}/order` } })}>
+            충전하러 가기
+          </button>
         </S.PointAfter>
       </S.ContainerInner>
       <S.PayButton onClick={goupBuyPayButton}>

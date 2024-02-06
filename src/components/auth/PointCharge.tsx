@@ -59,10 +59,9 @@ const PointCharge = () => {
       merchant_uid,
       error_msg,
     } = response;
-    console.log(response)
 
     if (success) {
-      const res = await axiosInstance.put('/home/users/cash', {
+      await axiosInstance.put('/home/users/cash', {
         cash: response!.paid_amount
       })
       const paymentPoint = payValue + user!.cash
