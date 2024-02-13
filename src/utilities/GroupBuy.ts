@@ -14,3 +14,11 @@ export  const joinUserNickname = (nickName: string) => {
       return nickName
     }
   }
+
+export const priceFormat = (price:number) => {
+  if(price>=1000){
+    return Math.floor(price / 1000) * 1000
+  }else{
+    return price
+  }
+}

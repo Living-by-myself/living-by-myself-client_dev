@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { validatePassword } from './Validate';
 import { findPasswordToken } from 'src/store/userStore';
 import { PasswordResetType } from 'src/types/user/types';
+import { CommonButton } from 'src/styles/styleBox';
 
 const schema = z
   .object({
@@ -115,23 +116,11 @@ const S = {
       padding: 0.8rem 1.2rem;
     }
   `,
-  Button: styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    padding: 0.8rem 1.2rem;
-    background-color: ${COLORS.GREEN[300]};
-    color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-  `,
+   Button: styled(CommonButton)`
+   padding: 0.8rem 1.2rem;
+   background-color: ${COLORS.GREEN[300]};
+   color: ${COLORS.GRAY[0]};
+ `,
   ErrorMessage: styled.p`
     color: ${COLORS.RED[300]};
   `

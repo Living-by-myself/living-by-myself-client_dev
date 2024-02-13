@@ -58,6 +58,7 @@ const S = {
     width: 100vw;
     height: 100vh;
     z-index: 998;
+    overflow: hidden;
     background-color: rgba(0,0,0,0.7);
     `,
     ConfirmContainer: styled.div`

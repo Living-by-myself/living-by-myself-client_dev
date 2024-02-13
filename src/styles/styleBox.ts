@@ -70,3 +70,20 @@ export const SkeletonItem = styled.div`
     animation: skeleton-gradient 1.5s infinite ease-in-out;
   }
 `;
+
+export const CommonButton = styled.button`
+display: inline-flex;
+align-items: center;
+justify-content: center;
+white-space: nowrap;
+padding: 0.8rem 1.2rem;
+border-radius: 6px;
+font-weight: 600;
+&:hover {
+  cursor: pointer;
+}
+&:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+`;

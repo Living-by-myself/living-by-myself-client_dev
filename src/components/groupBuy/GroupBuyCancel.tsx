@@ -6,6 +6,7 @@ import axiosInstance from 'src/api/AxiosInstance';
 import { toast } from 'react-toastify';
 import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
 import { ScrollHidden } from '../modal/HandleScroll';
+import { CommonButton } from 'src/styles/styleBox';
 
 interface Type {
   id: number;
@@ -41,24 +42,10 @@ const GroupBuyCancel = ({ id}: Type) => {
 export default GroupBuyCancel;
 
 const S = {
-  GroupBuyButton: styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
+  GroupBuyButton: styled(CommonButton)`
     width: 205px;
     padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
   `
 };

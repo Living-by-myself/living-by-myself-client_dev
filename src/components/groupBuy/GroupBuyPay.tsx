@@ -14,6 +14,7 @@ import { extractImageUrls } from 'src/utilities/image';
 import { toast } from 'react-toastify';
 import ConfirmButton from '../modal/ConfirmButton';
 import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
+import { CommonButton } from 'src/styles/styleBox';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const GroupBuyPay = () => {
       alert(error.response.data.msg);
     }
   };
-
+  const price = Math.floor(pay?.perUserPrice / pay?.maxUser)
   const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
 
   return (
@@ -73,7 +74,7 @@ const GroupBuyPay = () => {
           </S.PointRow>
           <S.PointRow>
             <h2>결제 포인트</h2>
-            <p className="pointColor">{(pay?.perUserPrice / pay?.maxUser).toLocaleString()}원</p>
+            <p className="pointColor">{price.toLocaleString()}원</p>
           </S.PointRow>
         </S.PointBefore>
         <S.PointAfter>
@@ -184,24 +185,9 @@ const S = {
     }
   `,
 
-  PayButton: styled.button`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    white-space: nowrap;
+  PayButton: styled(CommonButton)`
     padding: 0.8rem 3.6rem;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
   `
 };

@@ -11,13 +11,14 @@ import { useQuery } from '@tanstack/react-query';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
 import { JoinUserType } from 'src/types/groupBuy/types';
-import { joinUser } from 'src/utilities/GroupBuy';
+import { joinUser, priceFormat } from 'src/utilities/GroupBuy';
 import GroupBuyBookmark from './GroupBuyBookmark';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
 import GroupBuyUserProfile from './GroupBuyUserProfile';
 import GroupBuyCancel from './GroupBuyCancel';
 import GroupBuyJoinUsers from './GroupBuyJoinUsers';
+import { CommonButton } from 'src/styles/styleBox';
 
 const GroupBuyDetail = () => {
 
@@ -26,18 +27,17 @@ const GroupBuyDetail = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupBuy', id],
-    queryFn: () => getGroupBuyDetailData(id)
+    queryFn: () => getGroupBuyDetailData(id as number)
   });
   console.log(data?.users)
 
 
   const writer = data?.users[joinUser(data!.users!.length as number)] as JoinUserType;
-
   const findWriter = writer?.id.toString() === localStorage.getItem('id');
-
   const joinUsers = data?.users.find((user: JoinUserType) => {
     return user.id.toString() === localStorage.getItem('id');
   });
+  const price = Math.floor(data?.perUserPrice / data?.maxUser)
 
   if (isLoading) return <div>로딩중</div>;
   if (isError) return <div>에러</div>;
@@ -53,12 +53,12 @@ const GroupBuyDetail = () => {
           <S.BuyInfoWrap>
             <h1>{data?.title}</h1>
             <S.SaleInfo>
-              <h2>{data?.enumShare ? '판매중' : '판매종료'}</h2>
-              <p>{(data?.perUserPrice / data?.maxUser).toLocaleString()}원</p>
+              <h2>{data?.enumShare ? "판매중" : "판매종료"}</h2>
+              <p>{priceFormat(price).toLocaleString()}원</p>
             </S.SaleInfo>
             <S.AddressTime>
               {data?.address}
-              <span>· {getRelativeTimeString(data?.createdAt)}</span>
+              <span> · {getRelativeTimeString(data?.createdAt)}</span>
             </S.AddressTime>
             <h2>{data?.description}</h2>
           </S.BuyInfoWrap>
@@ -122,7 +122,6 @@ const S = {
   Container: styled.div`
     width: 100%;
     max-width: 400px;
-    /* height: 100vh; */
     position: relative;
   `,
   CustomSwiper: styled(Swiper)`
@@ -222,24 +221,10 @@ const S = {
     z-index: 99;
     padding: 10px 10px;
   `,
-  GroupBuyButton: styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
+  GroupBuyButton: styled(CommonButton)`
     width: 205px;
     padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
   `
 };
