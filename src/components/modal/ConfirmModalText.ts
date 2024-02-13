@@ -1,9 +1,13 @@
-interface ConfirmModalTextType {
+import { useEffect } from "react";
+
+export interface ConfirmModalTextType {
     title : string;
     message:string;
     true:string;
     false:string;
 }
+
+
 
 const groupBuy = {
     title:'정말로 결제 하시겠어요?',
@@ -18,13 +22,14 @@ const groupBuyCancle = {
     true:'취소하기',
     false:'돌아가기'
 }
-export const confirmModalText = (type:string):ConfirmModalTextType => {
-    let result:ConfirmModalTextType;
+export const confirmModalText = (type:string) => {
+
+    
     if(type === 'groupBuy'){
-        result = groupBuy;
+
+        return groupBuy
     }
     if(type === 'groupBuyCancle'){
-        result = groupBuyCancle;
+        return groupBuyCancle;
     }
-    return result!
 };

@@ -5,11 +5,14 @@ import { toast } from 'react-toastify';
 import axiosInstance from 'src/api/AxiosInstance';
 import { createChat } from 'src/api/chat/chat';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
+import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
 import { getUserProfile } from 'src/api/user/user';
 import { useRoomTitleStore } from 'src/store/chatStore';
 import { COLORS } from 'src/styles/styleConstants';
 import { ChatUser } from 'src/types/chat/types';
 import styled from 'styled-components';
+import { ScrollHidden } from '../modal/HandleScroll';
+import { CommonButton } from 'src/styles/styleBox';
 
 interface GroupBuyCloseProps {
   id: number; //paramsId
@@ -18,19 +21,15 @@ interface GroupBuyCloseProps {
   writerNickname: string;
 }
 
-const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyCloseProps) => {
+const GroupBuyClose = ({ id, users, writerId, writerNickname}: GroupBuyCloseProps) => {
   const navigate = useNavigate();
   const [usersNickname, setUsersNickname] = useState([] as string[]); // 참여 유저 닉네임 배열
   const [usersId, setUsersId] = useState([] as number[]); // 참여 유저 닉네임 배열
   const { currentRoomTitle, setCurrentRoomTitle } = useRoomTitleStore();
   const [myProfile, setMyProfile] = useState({} as ChatUser);
-  const queryClient = useQueryClient();
-  const mutation = useMutation(getGroupBuyDetailData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groupBuy', id]);
-    }
-  });
+  const { groupBuyMutation } = useGroupBuyMutate(id);
   const roomTitle = usersNickname.join(', ');
+
 
   const getProfileUser = async () => {
     const myProfile = await getUserProfile();
@@ -38,10 +37,11 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyClosePro
   };
 
   const closeGroupBuyButton = async () => {
+    ScrollHidden()
     // 공동 구매 마감 api
     try {
-      const res = await axiosInstance.patch(`/home/group-buying/${id}/close`);
-      mutation.mutate(id);
+      await axiosInstance.patch(`/home/group-buying/${id}/close`);
+      groupBuyMutation.mutate(id);
 
       toast('공동구매 마감 완료');
     } catch (error) {
@@ -75,24 +75,11 @@ const GroupBuyClose = ({ id, users, writerId, writerNickname }: GroupBuyClosePro
 };
 
 const S = {
-  GroupBuyButton: styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    padding: 0.8rem 3.6rem;
+  GroupBuyButton: styled(CommonButton)`
+    width: 205px;
+    padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
   `
 };
 

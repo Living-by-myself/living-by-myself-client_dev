@@ -9,6 +9,7 @@ import { useRef } from 'react';
 const MyPageUserBasicInfo = () => {
   const ref = useRef<HTMLInputElement>(null);
   const { profile: user, setProfile, isLogged } = userStore();
+  console.log(user)
 
   if (isLogged === false) return <>로딩중</>;
 

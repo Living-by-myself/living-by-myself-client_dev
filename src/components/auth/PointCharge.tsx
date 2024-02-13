@@ -11,6 +11,7 @@ import { RequestPayParams, RequestPayResponse } from 'src/types/mypage/PointChar
 import styled from 'styled-components'
 
 
+
 const payOption = ["+1만", "+5만", "+10만", "+100만"]
 
 const PointCharge = () => {
@@ -58,10 +59,9 @@ const PointCharge = () => {
       merchant_uid,
       error_msg,
     } = response;
-    console.log(response)
 
     if (success) {
-      const res = await axiosInstance.put('/home/users/cash', {
+      await axiosInstance.put('/home/users/cash', {
         cash: response!.paid_amount
       })
       const paymentPoint = payValue + user!.cash

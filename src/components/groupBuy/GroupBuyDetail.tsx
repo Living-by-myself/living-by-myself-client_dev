@@ -1,87 +1,54 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { COLORS } from 'src/styles/styleConstants';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Icon from '../icon/Icon';
 import { styleFont } from 'src/styles/styleFont';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import SwiperImage from './SwiperImage';
-import axiosInstance, { axiosBaseInstance } from 'src/api/AxiosInstance';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getGroupBuyDetailData } from 'src/api/groupBuy/groupBuy';
 import { getRelativeTimeString } from 'src/utilities/getDate';
+import { JoinUserType } from 'src/types/groupBuy/types';
+import { joinUser, priceFormat } from 'src/utilities/GroupBuy';
 import GroupBuyBookmark from './GroupBuyBookmark';
-import { toast } from 'react-toastify';
-import { GroupBuyUserType, JoinUserType } from 'src/types/groupBuy/types';
-import { joinUser, joinUserNickname } from 'src/utilities/GroupBuy';
 import GroupBuyChat from './GroupBuyChat';
 import GroupBuyClose from './GroupBuyClose';
 import GroupBuyUserProfile from './GroupBuyUserProfile';
-import ConfirmButton from '../modal/ConfirmButton';
-
+import GroupBuyCancel from './GroupBuyCancel';
+import GroupBuyJoinUsers from './GroupBuyJoinUsers';
+import { CommonButton } from 'src/styles/styleBox';
 
 const GroupBuyDetail = () => {
-  const navigate = useNavigate();
+
   const paramsId = useParams() as unknown as { id: number };
   const id = Number(paramsId.id);
-  const queryClient = useQueryClient();
-  const mutation = useMutation(getGroupBuyDetailData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groupBuy', id]);
-    }
-  });
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupBuy', id],
     queryFn: () => getGroupBuyDetailData(id as number)
   });
-  if (isLoading) return <div>로딩중</div>;
-  if (isError) return <div>에러</div>;
-
-  console.log("공동구매 데이터",data)
-
-
-
-
-  const cancelGroupBuyButton = async () => {
-    try {
-      if(await ConfirmButton('groupBuyCancle')){
-        await axiosInstance.delete(`/home/group-buying/${id}/application`);
-        mutation.mutate(id);
-        toast('공동구매 취소가 완료되었습니다.')
-      }
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  console.log(data?.users)
 
 
   const writer = data?.users[joinUser(data!.users!.length as number)] as JoinUserType;
-
   const findWriter = writer?.id.toString() === localStorage.getItem('id');
-
   const joinUsers = data?.users.find((user: JoinUserType) => {
-    return user.id.toString() === localStorage.getItem('id')
-  })
-
+    return user.id.toString() === localStorage.getItem('id');
+  });
   const price = Math.floor(data?.perUserPrice / data?.maxUser)
 
-  const priceFormat = (price:number) => {
-    if(price>=1000){
-      return Math.floor(price / 1000) * 1000
-    }else{
-      return price
-    }
-  }
+  if (isLoading) return <div>로딩중</div>;
+  if (isError) return <div>에러</div>;
 
   return (
     <>
       <S.Container>
         <SwiperImage slide={data?.fileUrls} />
         <S.InfoInner>
-          <S.UserInfoWrap>     
-          <GroupBuyUserProfile id={writer!.id} nickname={writer!.nickname} profileImage={writer!.profileImage}/>
+          <S.UserInfoWrap>
+            <GroupBuyUserProfile id={writer!.id} nickname={writer!.nickname} profileImage={writer!.profileImage} />
           </S.UserInfoWrap>
           <S.BuyInfoWrap>
             <h1>{data?.title}</h1>
@@ -112,16 +79,11 @@ const GroupBuyDetail = () => {
             <S.JoinUserWrap>
               {data?.users?.slice(0, -1).map((joinUser: JoinUserType) => {
                 return (
-                  <li key={joinUser.id}>
-                    <h1>
-                      {joinUser.profileImage === null ? (
-                        <img src="/imgs/basicUserImage.png"></img>
-                      ) : (
-                        <img src={joinUser.profileImage}></img>
-                      )}
-                    </h1>
-                    <h2>{joinUserNickname(joinUser.nickname)}</h2>
-                  </li>
+                  <GroupBuyJoinUsers
+                    id={joinUser.id}
+                    profileImage={joinUser.profileImage}
+                    nickname={joinUser.nickname}
+                  />
                 );
               })}
             </S.JoinUserWrap>
@@ -138,24 +100,21 @@ const GroupBuyDetail = () => {
         <S.FnWrap>
           <GroupBuyBookmark likeCount={data?.likeCount!} id={id} pickLike={data?.pickLike!} />
           <GroupBuyChat id={writer.id} />
-          {findWriter && data?.currentUserCount === data?.maxUser ? (
+          {findWriter && data?.currentUserCount === data?.maxUser && (
             <GroupBuyClose id={id} users={data.users} writerId={writer.id} writerNickname={writer.nickname} />
-          ) : findWriter && data?.currentUserCount === 1 ? (
-            <S.GroupBuyButton>글내리기</S.GroupBuyButton>) :
-             !findWriter && !joinUsers ? (
-              <S.GroupBuyButton>
-                <Link to={`/group-buy/${id}/order`}>공동구매하기</Link>
-              </S.GroupBuyButton>
-            ) : !findWriter && joinUsers ? (
-              <S.GroupBuyButton onClick={cancelGroupBuyButton}>취소하기</S.GroupBuyButton>
-            ) : null}
+          )}
+          {findWriter && data?.currentUserCount === 1 && <S.GroupBuyButton>글내리기</S.GroupBuyButton>}
+          {!findWriter && !joinUsers && (
+            <S.GroupBuyButton>
+              <Link to={`/group-buy/${id}/order`}>공동구매하기</Link>
+            </S.GroupBuyButton>
+          )}
+          {!findWriter && joinUsers && <GroupBuyCancel id={id} />}
         </S.FnWrap>
       </S.Container>
     </>
   );
 };
-
-
 
 export default GroupBuyDetail;
 
@@ -164,7 +123,6 @@ const S = {
     width: 100%;
     max-width: 400px;
     position: relative;
-    
   `,
   CustomSwiper: styled(Swiper)`
     width: 100%;
@@ -237,23 +195,6 @@ const S = {
     margin-top: 20px;
     gap: calc(20% / 3);
     width: 100%;
-    li {
-      width: 20%;
-      list-style: none;
-      text-align: center;
-    }
-    h1 {
-      width: 100%;
-      margin-bottom: 5px;
-      img {
-        display: block;
-        width: 100%;
-      }
-    }
-    h2 {
-      ${styleFont.body2}
-      color: ${COLORS.GRAY[900]};
-    }
   `,
   BuyMapWrap: styled.div`
     width: 100%;
@@ -276,27 +217,14 @@ const S = {
     position: fixed;
     left: 50%;
     bottom: 0;
-    transform: translate(-50%,0);
+    transform: translate(-50%, 0);
     z-index: 99;
     padding: 10px 10px;
   `,
-  GroupBuyButton: styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    padding: 0.8rem 3.6rem;
+  GroupBuyButton: styled(CommonButton)`
+    width: 205px;
+    padding: 0.8rem 0px;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
   `
 };

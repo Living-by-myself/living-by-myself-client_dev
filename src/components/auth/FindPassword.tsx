@@ -11,6 +11,7 @@ import { validateEmail, validatePhoneNumber } from './Validate';
 import { findPasswordToken } from 'src/store/userStore';
 import { FindPasswordType } from 'src/types/user/types';
 import { toast } from 'react-toastify';
+import { CommonButton } from 'src/styles/styleBox';
 
 const schema = z.object({
   username: z.string().refine(validateEmail, { message: '올바른 이메일을 입력해주세요.' }),
@@ -99,23 +100,6 @@ const FindPassword = () => {
 };
 
 export default FindPassword;
-
-const CommonButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  padding: 0.8rem 1.2rem;
-  border-radius: 6px;
-  font-weight: 600;
-  &:hover {
-    cursor: pointer;
-  }
-  &:disabled {
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-`;
 
 const S = {
   Container: styled.div`

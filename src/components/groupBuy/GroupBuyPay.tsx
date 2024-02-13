@@ -13,16 +13,14 @@ import Icon from '../icon/Icon';
 import { extractImageUrls } from 'src/utilities/image';
 import { toast } from 'react-toastify';
 import ConfirmButton from '../modal/ConfirmButton';
+import useGroupBuyMutate from 'src/api/groupBuy/groupBuyMutate';
+import { CommonButton } from 'src/styles/styleBox';
 
 const GroupBuyPay = () => {
   const navigate = useNavigate();
-  const paramsId = useParams()
-  const id = paramsId.id
-  const location = useLocation();
-  console.log(paramsId)
-  // const id = location.state?.id;
-
-  const queryClient = useQueryClient();
+  const paramsId = useParams();
+  const id = Number(paramsId.id);
+  const { groupBuyMutation } = useGroupBuyMutate(id);
 
   const { data: user } = useQuery({
     queryKey: ['cash'],
@@ -34,32 +32,20 @@ const GroupBuyPay = () => {
     queryFn: () => getGroupBuyDetailData(id)
   });
 
-  console.log("페이 데이터",pay)
-
-  const mutation = useMutation(getGroupBuyDetailData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groupBuy', id]);
-    }
-  });
-
-  const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
-
   const goupBuyPayButton = async () => {
-
     try {
-      if(await ConfirmButton('groupBuy')){
-      await axiosInstance.post(`/home/group-buying/${id}/application`);
-      toast('공동구매 신청 완료');
-      mutation.mutate(id);
-      navigate(`/group-buy/${id}`);
-    }
-  }
- catch (error: any) {
+      if (await ConfirmButton('groupBuy')) {
+        await axiosInstance.post(`/home/group-buying/${id}/application`);
+        toast('공동구매 신청 완료');
+        groupBuyMutation.mutate(id);
+        navigate(`/group-buy/${id}`);
+      }
+    } catch (error: any) {
       alert(error.response.data.msg);
     }
   };
-
-
+  const price = Math.floor(pay?.perUserPrice / pay?.maxUser)
+  const reaminingPoints = user?.cash - pay?.perUserPrice / pay?.maxUser;
 
   return (
     <S.Container>
@@ -88,7 +74,7 @@ const GroupBuyPay = () => {
           </S.PointRow>
           <S.PointRow>
             <h2>결제 포인트</h2>
-            <p className="pointColor">{(pay?.perUserPrice / pay?.maxUser).toLocaleString()}원</p>
+            <p className="pointColor">{price.toLocaleString()}원</p>
           </S.PointRow>
         </S.PointBefore>
         <S.PointAfter>
@@ -96,7 +82,9 @@ const GroupBuyPay = () => {
             <h2>결제 후 포인트</h2>
             <p>{reaminingPoints.toLocaleString()}원</p>
           </S.PointRow>
-          <button onClick={() => navigate('/mypage/point-charge', { state: { prevPage: `/group-buy/${id!}/order` } })}>충전하러 가기</button>
+          <button onClick={() => navigate('/mypage/point-charge', { state: { prevPage: `/group-buy/${id!}/order` } })}>
+            충전하러 가기
+          </button>
         </S.PointAfter>
       </S.ContainerInner>
       <S.PayButton onClick={goupBuyPayButton}>
@@ -197,24 +185,9 @@ const S = {
     }
   `,
 
-  PayButton: styled.button`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    white-space: nowrap;
+  PayButton: styled(CommonButton)`
     padding: 0.8rem 3.6rem;
     background-color: ${COLORS.GREEN[300]};
     color: ${COLORS.GRAY[0]};
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    &:hover {
-      cursor: pointer;
-    }
-    &:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
   `
 };
