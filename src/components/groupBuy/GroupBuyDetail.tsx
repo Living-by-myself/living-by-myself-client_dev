@@ -33,11 +33,13 @@ const GroupBuyDetail = () => {
   });
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupBuy', id],
-    queryFn: () => getGroupBuyDetailData(id)
+    queryFn: () => getGroupBuyDetailData(id as number)
   });
   if (isLoading) return <div>로딩중</div>;
   if (isError) return <div>에러</div>;
-  console.log(data);
+
+  console.log("공동구매 데이터",data)
+
 
 
 
@@ -63,6 +65,15 @@ const GroupBuyDetail = () => {
     return user.id.toString() === localStorage.getItem('id')
   })
 
+  const price = Math.floor(data?.perUserPrice / data?.maxUser)
+
+  const priceFormat = (price:number) => {
+    if(price>=1000){
+      return Math.floor(price / 1000) * 1000
+    }else{
+      return price
+    }
+  }
 
   return (
     <>
@@ -76,11 +87,11 @@ const GroupBuyDetail = () => {
             <h1>{data?.title}</h1>
             <S.SaleInfo>
               <h2>{data?.enumShare ? "판매중" : "판매종료"}</h2>
-              <p>{(data?.perUserPrice / data?.maxUser).toLocaleString()}원</p>
+              <p>{priceFormat(price).toLocaleString()}원</p>
             </S.SaleInfo>
             <S.AddressTime>
               {data?.address}
-              <span>· {getRelativeTimeString(data?.createdAt)}</span>
+              <span> · {getRelativeTimeString(data?.createdAt)}</span>
             </S.AddressTime>
             <h2>{data?.description}</h2>
           </S.BuyInfoWrap>
@@ -152,8 +163,6 @@ const S = {
   Container: styled.div`
     width: 100%;
     max-width: 400px;
-    overflow: scroll;
-    height:100vh;
     position: relative;
     
   `,

@@ -34,6 +34,8 @@ const GroupBuyPay = () => {
     queryFn: () => getGroupBuyDetailData(id)
   });
 
+  console.log("페이 데이터",pay)
+
   const mutation = useMutation(getGroupBuyDetailData, {
     onSuccess: () => {
       queryClient.invalidateQueries(['groupBuy', id]);
